@@ -1,0 +1,28 @@
+---
+import { Mail, Phone } from "lucide-react";
+import Headshot from "../Headshot.astro";
+---
+
+<div class="flex flex-row justify-between border-b-2 px-8 py-4">
+	<div class="flex items-center gap-4">
+		<Headshot />
+		<div>
+			<div class="flex flex-col">
+				<span class="text-xl font-semibold">Howard Dean Watts</span>
+				<span class="font-light">Staff Software Engineer</span>
+			</div>
+		</div>
+	</div>
+	<div class="flex flex-col justify-center">
+		<div class="flex items-center gap-2 border-b px-4 text-xs">
+			<Mail width={12} />
+			<a href="mailto:howard@hdwatts.com" class="underline">
+				howard@hdwatts.com
+			</a>
+		</div>
+		<div class="flex items-center gap-2 px-4 text-xs">
+			<Phone width={12} />
+			443-758-7382
+		</div>
+	</div>
+</div>

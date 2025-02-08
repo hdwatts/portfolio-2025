@@ -1,0 +1,13 @@
+@theme inline {
+	--animate-move-up: move-up 30s linear infinite;
+
+	@keyframes move-up {
+		0% {
+			transform: translateY(0%);
+		}
+
+		100% {
+			transform: translateY(-100%);
+		}
+	}
+}

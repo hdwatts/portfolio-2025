@@ -1,0 +1,114 @@
+---
+import { Plus } from "lucide-react";
+import ResumeHeader from "../../components/Resume/ResumeHeader.astro";
+import "../../styles/global.css";
+import EmploymentHistory from "../../components/Resume/EmploymentHistory.astro";
+---
+
+<html lang="en">
+	<body>
+		<div class="">
+			<ResumeHeader />
+
+			<div class="flex flex-col justify-between gap-2 px-8 py-4">
+				<div class="text-lg font-semibold">Employment History</div>
+				<div class="flex flex-col gap-2 text-sm">
+					<div class="text-base font-bold">
+						Chronograph Private Equity
+					</div>
+					<div class="flex justify-between">
+						<span class="font-semibold"
+							>Founding Staff Software Engineer</span
+						>
+						<div class="italic">2017 - Present</div>
+					</div>
+					<EmploymentHistory
+						text="Developed automation tools, including custom microservices and machine learning-powered AWS Lambda functions, significantly improving internal workflows. In a case study reduced a task processing time from 2.5 hours per document to just 1 minute."
+					/>
+					<EmploymentHistory
+						text="Designed, built, and maintained a high-performance Excel plugin, now used by thousands of employees at leading global fund managers."
+					/>
+					<EmploymentHistory
+						text="Engineered scalable, high-quality features to extract and transform a dataset encompassing over $29 trillion in assets, enhancing data accessibility and analysis."
+					/>
+					<EmploymentHistory
+						text="Established foundational best practices for codebase architecture, API design, data security, and employee onboarding, scaling the company from a 3-person startup to a 120-employee enterprise."
+					/>
+				</div>
+				<div class="flex flex-col gap-2 text-sm">
+					<div class="text-base font-bold">StructuredWeb</div>
+					<div class="flex justify-between">
+						<span class="font-semibold">Lead Software Engineer</span
+						>
+						<div class="italic">2016 - 2017</div>
+					</div>
+					<EmploymentHistory
+						text="Led an overhaul of our codebase to prepare for a security audit, making over 26,000 individual improvements across 2,134 files over a 2 month period in order to prevent XSS, CSRF, and SQL Injection attacks."
+					/>
+					<EmploymentHistory
+						text="Delivered features for high profile clients such as Intel and Amazon in .NET, C#, and ColdFusion."
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col justify-between gap-2 px-8 py-4">
+				<div class="text-lg font-semibold">Projects</div>
+				<div class="flex flex-col gap-2 text-sm">
+					<div class="text-base font-bold">
+						WordTree - A Daily Word Puzzle
+					</div>
+					<div class="flex justify-between">
+						<span class="font-semibold"
+							>Available at <a
+								href="https://www.wordtree.app"
+								class="text-blue-400 underline">WordTree.app</a
+							></span
+						>
+						<div class="italic">2023</div>
+					</div>
+					<EmploymentHistory
+						text="Designed, developed, and distributed a daily word puzzle game with over 1,000 monthly active users."
+					/>
+					<EmploymentHistory
+						text="Built using React Native and Expo to build for iOS, Android, and the web with one codebase."
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col justify-between gap-2 px-8">
+				<div class="text-lg font-semibold">Professional Skills</div>
+				<div class="flex flex-col gap-2 text-sm">
+					<div class="font-semibold">Technical Skills</div>
+					<div class="flex flex-wrap gap-4">
+						<div class="text-sm">TypeScript</div>
+						<div class="text-sm">SQL</div>
+						<div class="text-sm">Python</div>
+						<div class="text-sm">C#</div>
+						<div class="text-sm">React</div>
+						<div class="text-sm">Node</div>
+						<div class="text-sm">AWS</div>
+						<div class="text-sm">NextJS</div>
+						<div class="text-sm">.NET</div>
+						<div class="text-sm">ColdFusion</div>
+					</div>
+					<div class="font-semibold">Soft Skills</div>
+					<div class="flex flex-wrap gap-4">
+						<div class="text-sm">Communication</div>
+						<div class="text-sm">Product Planning</div>
+						<div class="text-sm">Product Design</div>
+						<div class="text-sm">Engineer Development</div>
+						<div class="text-sm">Team Growth</div>
+					</div>
+				</div>
+				<!-- <div class="flex flex-col justify-between px-8 py-4">
+				<div class="font-semibold">Education</div>
+				<div class="flex justify-between">
+					<div class="text-sm">
+						<span class="font-semibold">University of Maryland</span
+						> - College Park, Maryland
+					</div>
+					<div class="text-sm italic">2016</div>
+				</div>
+			</div> -->
+			</div>
+		</div>
+	</body>
+</html>
