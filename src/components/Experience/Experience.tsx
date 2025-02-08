@@ -61,7 +61,7 @@ export const Experience = () => (
 const ExperienceGroup = ({ top }: { top: number }) => {
 	return (
 		<div
-			className="animate-move-up absolute flex transform-gpu flex-col gap-6 will-change-transform"
+			className="animate-move-up absolute flex flex-col gap-6 will-change-transform"
 			style={{
 				top,
 				height:
