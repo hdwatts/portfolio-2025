@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 import { About } from "../components/About";
 import { Experience } from "../components/Experience/Experience";
 import Headshot from "../components/Headshot.astro";
@@ -13,5 +14,5 @@ import Theme from "../layouts/Theme.astro";
 		<Headshot slot="headshot" />
 	</WhoAmI>
 	<About />
-	<Experience client:load />
+	<Experience />
 </Layout>

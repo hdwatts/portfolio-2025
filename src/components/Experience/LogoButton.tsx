@@ -15,7 +15,6 @@ export const LogoButton = ({
 	url,
 }: LogoButtonProps) => (
 	<div
-		onClick={() => window.open(url, "_blank")}
 		className={cn(
 			"group padding-0 relative cursor-pointer border-0 bg-transparent outline-offset-4 hover:brightness-110",
 			"focus:not-[:focus-visible]!outline-none",
@@ -41,7 +40,9 @@ export const LogoButton = ({
 			)}
 			style={{ backgroundColor }}
 		/>
-		<span
+		<a
+			href={url}
+			target="_blank"
 			className={cn(
 				"relative flex flex-col items-center justify-center p-8",
 				"h-full w-full -translate-y-2 rounded-xl will-change-transform",
@@ -55,6 +56,6 @@ export const LogoButton = ({
 				<img src={src} width={100} height={100} alt={`${label} logo`} />
 			</div>
 			<span className="shrink text-3xl font-semibold">{label}</span>
-		</span>
+		</a>
 	</div>
 );
