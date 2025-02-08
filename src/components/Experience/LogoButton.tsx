@@ -44,7 +44,7 @@ export const LogoButton = ({
 			href={url}
 			target="_blank"
 			className={cn(
-				"relative flex flex-col items-center justify-center p-8",
+				"relative flex flex-col items-center justify-center p-8 select-none",
 				"h-full w-full -translate-y-2 rounded-xl will-change-transform",
 				"transition-transform ease-in-out",
 				"group-hover:-translate-y-4",

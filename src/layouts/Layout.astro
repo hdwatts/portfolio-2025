@@ -12,7 +12,6 @@ import { CodeXml } from "lucide-react";
 		<meta name="generator" content={Astro.generator} />
 		<title>Welcome | Howard Dean Watts</title>
 	</head>
-	<Analytics />
 	<body class="bg-background">
 		<header
 			class="border-grid bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 mb-10 w-full border-b backdrop-blur"
@@ -51,7 +50,12 @@ import { CodeXml } from "lucide-react";
 				<slot />
 			</main>
 		</div>
-		<footer class="mt-10 h-14 w-full">@hdwatts</footer>
+		<footer
+			class="text-secondary mt-10 flex h-14 w-full justify-center text-sm"
+		>
+			© hdwatts, 2025
+		</footer>
+		<Analytics />
 	</body>
 </html>
 

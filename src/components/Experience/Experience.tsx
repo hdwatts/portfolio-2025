@@ -9,7 +9,7 @@ import { ExperienceRow } from "./ExperienceRow";
 
 export const Experience = () => (
 	<div className="relative flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">
-		<div className="z-10 flex min-w-md flex-col gap-6 p-8 lg:max-w-lg lg:p-16">
+		<div className="z-10 flex min-w-sm flex-col gap-6 p-8 lg:max-w-lg lg:p-16">
 			<h2 className="text-3xl font-bold">Technical Experience</h2>
 			<p>
 				With over a decade of professional experience as a software
@@ -48,10 +48,12 @@ export const Experience = () => (
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-t from-transparent from-60%" />
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-60%" />
 			</div>
-			<div className="z-10 flex justify-end gap-1 text-xs text-gray-500">
-				<p>Want to see how I built this animation?</p>
-				<p>Read the full breakdown in my blog post!</p>
-			</div>
+			{/* <div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-500">
+				<p>
+					Want to see how I built this animation? Read the full
+					breakdown in my blog post!
+				</p>
+			</div> */}
 		</div>
 	</div>
 );

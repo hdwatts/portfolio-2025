@@ -17,23 +17,23 @@ export const WhoAmI = ({ headshot }: WhoAmIProps) => (
 				<span>New York, NY</span>
 			</Badge>
 		</div>
-		<div className="flex h-32 flex-col justify-between">
+		<div className="flex h-32 flex-col gap-4 md:justify-between">
 			<div className="flex flex-col">
 				<div className="mb-2 flex w-full justify-between text-xl font-semibold">
 					<span>Howard Dean Watts</span>
 				</div>
-				<span>
+				<span className="text-sm md:text-base">
 					Founding Staff Software Engineer at{" "}
 					<Link href="https://www.chronograph.pe">
 						Chronograph.pe
 					</Link>
 				</span>
-				<span>
+				<span className="text-sm md:text-base">
 					Creator of{" "}
 					<Link href="https://www.wordtree.app">WordTree.app</Link>
 				</span>
 			</div>
-			<div className="flex gap-4 text-sm">
+			<div className="flex gap-4 text-xs md:text-sm">
 				<span className="font-semibold">Connect:</span>
 				<Link href="https://www.linkedin.com/in/hdwatts/">
 					Linkedin
