@@ -37,7 +37,7 @@ export const EXPERIENCE_DATA: LogoButtonProps[] = [
     {
         label: "shadcn/ui",
         src: ShadcnUrl,
-        backgroundColor: "var(--color-background)",
+        backgroundColor: "hsl(0 0% 3.9%)",
         url: 'https://ui.shadcn.com/',
     },
     {
@@ -49,7 +49,7 @@ export const EXPERIENCE_DATA: LogoButtonProps[] = [
     {
         label: "Rust",
         src: RustLogo,
-        backgroundColor: "var(--color-background)",
+        backgroundColor: "hsl(0 0% 3.9%)",
         url: 'https://www.rust-lang.org/',
     },
     {
@@ -109,7 +109,7 @@ export const EXPERIENCE_DATA: LogoButtonProps[] = [
     {
         label: 'serverless',
         src: ServerlessLogo,
-        backgroundColor: "var(--color-background)",
+        backgroundColor: "hsl(0 0% 3.9%)",
         url: 'https://www.serverless.com/'
     },
     {

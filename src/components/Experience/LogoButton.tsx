@@ -55,7 +55,12 @@ export const LogoButton = ({
 			<div className="flex grow justify-center">
 				<img src={src} width={100} height={100} alt={`${label} logo`} />
 			</div>
-			<span className="shrink text-3xl font-semibold">{label}</span>
+			<span
+				className="text-primary shrink text-3xl"
+				style={{ color: "hsl(0 0% 98%)" }}
+			>
+				{label}
+			</span>
 		</a>
 	</div>
 );

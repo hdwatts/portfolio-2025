@@ -10,9 +10,7 @@ import "../styles/global.css";
 		) {
 			return localStorage.getItem("theme");
 		}
-		return window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
+		return "dark";
 	};
 	const isDark = getThemePreference() === "dark";
 	document.documentElement.classList[isDark ? "add" : "remove"]("dark");

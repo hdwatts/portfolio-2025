@@ -6,6 +6,7 @@ import {
 	LOGOS_ROW_PADDING,
 } from "./constants";
 import { ExperienceRow } from "./ExperienceRow";
+import { cn } from "../../lib/utils";
 
 export const Experience = () => (
 	<div className="relative flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">
@@ -19,11 +20,16 @@ export const Experience = () => (
 			<p>
 				I'm passionate about continuously learning and applying new
 				technologies to build innovative solutions. Here's a selection
-				of tools I've worked with throughout my career
+				of tools I've worked with throughout my career.
 			</p>
 		</div>
-		<div className="flex grow flex-col overflow-hidden">
-			<div className="bg-secondary flex h-[500px] w-[95vw] overflow-hidden lg:w-full">
+		<div className="relative flex grow flex-col overflow-hidden">
+			<div
+				className="flex h-[500px] w-[95vw] overflow-hidden lg:w-full"
+				style={{
+					backgroundColor: "hsl(0 0% 14.9%)",
+				}}
+			>
 				<div className="hover:*:paused relative flex h-full w-full -rotate-x-50 -rotate-z-20 flex-col gap-6">
 					<ExperienceGroup
 						top={
@@ -45,9 +51,10 @@ export const Experience = () => (
 				{/* Inset gradient overlay */}
 				<div className="to-background pointer-events-none absolute top-0 left-0 h-full w-full bg-linear-to-r from-transparent from-80%" />
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-l from-transparent from-80%" />
-				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-t from-transparent from-60%" />
-				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-60%" />
+				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-t from-transparent from-80%" />
+				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-80%" />
 			</div>
+
 			{/* <div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-500">
 				<p>
 					Want to see how I built this animation? Read the full
