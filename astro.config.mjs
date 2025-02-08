@@ -6,11 +6,11 @@ import vercelStatic from '@astrojs/vercel';
 import pdf from 'astro-pdf'
 
 export default defineConfig({
-  integrations: [react(), pdf({
+  integrations: [react()/*, pdf({
     pages: {
       '/hidden__/resume': { path: 'resume.pdf' }
     }
-  })],
+  })*/],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }
