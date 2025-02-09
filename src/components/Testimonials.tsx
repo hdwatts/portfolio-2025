@@ -28,7 +28,7 @@ const CarouselQuote = ({
 		>
 			<div
 				className={cn(
-					"bg-primary background-size-[4px_4px]",
+					"bg-primary background-size-[4px_4px] select-none",
 					"bg-[repeating-radial-gradient(circle_at_0_0,transparent_0,#FAFAFA_5px),repeating-linear-gradient(#dadada55,#dadada)]",
 					"relative z-10 flex h-[300px] flex-col outline-2 outline-gray-700",
 					"my-4 items-center justify-center rounded-3xl p-12 text-sm md:text-base",
