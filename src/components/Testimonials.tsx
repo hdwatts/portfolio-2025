@@ -58,7 +58,7 @@ export const Testimonials = () => {
 					from="Engineering manager"
 				/>
 				<CarouselQuote
-					text="Really appreciate all the help [Dean] gave but more importantly the laughs and making the transition into my first real job pretty seamless."
+					text="Really appreciate all the help [Dean] gave but more importantly am thankful for the laughs and for making the transition into my first real job pretty seamless."
 					from="Former coworker"
 				/>
 				<CarouselQuote
