@@ -67,11 +67,11 @@ const CarouselQuote = ({
 							"bg-primary background-size-[4px_4px] select-none",
 							"bg-[repeating-radial-gradient(circle_at_0_0,transparent_0,#FAFAFA_5px),repeating-linear-gradient(#dadada55,#dadada)]",
 							"relative z-10 flex h-[300px] flex-col outline-2 outline-[#dadada]",
-							"my-4 items-center justify-center rounded-3xl p-12 text-sm md:text-base",
+							"my-4 items-center justify-center rounded-3xl px-4 py-4 text-sm md:px-12 md:text-base",
 						)}
 					>
 						<div
-							className="text-accent font-sans text-base xl:text-lg"
+							className="text-accent flex grow items-center font-sans text-xs sm:text-base lg:text-base xl:text-lg"
 							style={{
 								textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
 							}}
@@ -79,7 +79,7 @@ const CarouselQuote = ({
 							"{text}"
 						</div>
 						<div
-							className="text-accent absolute right-12 bottom-4 text-right font-sans text-xs"
+							className="text-accent w-full text-right font-sans text-xs"
 							style={{
 								textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
 							}}
@@ -103,7 +103,7 @@ export const Testimonials = () => {
 	);
 
 	return (
-		<Carousel opts={{ loop: true }} plugins={[autoPlay]}>
+		<Carousel opts={{ loop: true }} plugins={[autoPlay]} className="w-full">
 			<CarouselContent className="-ml-12 py-4">
 				<CarouselQuote
 					text="[Dean] has helped me develop as an engineer more than he probably realizes."
@@ -142,8 +142,14 @@ export const Testimonials = () => {
 					index={6}
 				/>
 			</CarouselContent>
-			<CarouselPrevious autoPlay={autoPlay} className="text-primary" />
-			<CarouselNext autoPlay={autoPlay} className="text-primary" />
+			<CarouselPrevious
+				autoPlay={autoPlay}
+				className="text-primary hidden lg:flex"
+			/>
+			<CarouselNext
+				autoPlay={autoPlay}
+				className="text-primary hidden lg:flex"
+			/>
 		</Carousel>
 	);
 };
