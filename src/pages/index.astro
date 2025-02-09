@@ -1,12 +1,23 @@
 ---
 export const prerender = true;
+import { Pause, Play } from "lucide-react";
 import { About } from "../components/About";
 import { Experience } from "../components/Experience/Experience";
 import Headshot from "../components/Headshot.astro";
 import { WhoAmI } from "../components/WhoAmI";
 import Layout from "../layouts/Layout.astro";
 import Theme from "../layouts/Theme.astro";
+import PauseAnimationButton from "../components/PauseAnimationButton.astro";
 ---
+
+<script is:inline>
+	function togglePause() {
+		const main = document.querySelector("main");
+		main.classList.toggle("**:paused");
+		document.getElementById("pause-button").classList.toggle("hidden");
+		document.getElementById("play-button").classList.toggle("hidden");
+	}
+</script>
 
 <Theme />
 <Layout>
@@ -15,4 +26,5 @@ import Theme from "../layouts/Theme.astro";
 	</WhoAmI>
 	<About />
 	<Experience />
+	<PauseAnimationButton />
 </Layout>

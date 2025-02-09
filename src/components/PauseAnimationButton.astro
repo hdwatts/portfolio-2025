@@ -1,0 +1,18 @@
+---
+import { Pause, Play } from "lucide-react";
+---
+
+<div
+	onclick="togglePause()"
+	class="group bg-background/80 outline-accent fixed bottom-8 left-8 z-20 h-8 w-8 cursor-pointer rounded outline-1 hover:scale-110"
+>
+	<div class="relative flex h-full w-full items-center justify-center">
+		<Pause id="pause-button" />
+		<Play id="play-button" className="hidden" />
+		<div
+			class="outline-accent bg-secondary/80 invisible absolute top-0 left-10 w-[130px] rounded-xl px-4 py-1 outline group-hover:visible"
+		>
+			<span class="text-primary text-xs">Pause Animations</span>
+		</div>
+	</div>
+</div>
