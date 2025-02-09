@@ -1,4 +1,5 @@
 import Autoplay from "embla-carousel-autoplay";
+import throttle from "lodash/throttle";
 import { Quote } from "lucide-react";
 import {
 	Carousel,
@@ -7,7 +8,7 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "./Carousel";
-import { useState } from "react";
+import { useCallback, useState, type MouseEvent } from "react";
 import { cn } from "../lib/utils";
 
 const CarouselQuote = ({
@@ -18,31 +19,67 @@ const CarouselQuote = ({
 	text: string;
 	from: string;
 	index: number;
-}) => (
-	<CarouselItem className="text-background flex justify-center pl-4">
-		<div
-			className="animate-card-effect relative"
-			style={{
-				animationDelay: `${0.33 * index}s`,
-			}}
+}) => {
+	const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+	const onMouseMove = useCallback(
+		throttle((e: MouseEvent<HTMLDivElement>) => {
+			const card = e.currentTarget;
+			const box = card.getBoundingClientRect();
+			const x = e.clientX - box.left;
+			const y = e.clientY - box.top;
+			const centerX = box.width / 2;
+			const centerY = box.height / 2;
+			const rotateX = (y - centerY) / 15;
+			const rotateY = (centerX - x) / 15;
+
+			setRotate({ x: rotateX, y: rotateY });
+		}, 100),
+		[],
+	);
+
+	const onMouseLeave = () => {
+		setRotate({ x: 0, y: 0 });
+	};
+	return (
+		<CarouselItem
+			className={cn("text-background flex justify-center pl-12")}
 		>
 			<div
 				className={cn(
-					"bg-primary background-size-[4px_4px] select-none",
-					"bg-[repeating-radial-gradient(circle_at_0_0,transparent_0,#FAFAFA_5px),repeating-linear-gradient(#dadada55,#dadada)]",
-					"relative z-10 flex h-[300px] flex-col outline-2 outline-gray-700",
-					"my-4 items-center justify-center rounded-3xl p-12 text-sm md:text-base",
+					"animate-card-effect relative m-16 h-[350px]",
+					"hover:paused",
 				)}
 			>
-				<div className="font-sans sm:text-lg">"{text}"</div>
-				<div className="text-accent absolute right-12 bottom-4 text-right font-sans text-xs">
-					{from.toUpperCase()}
+				<div
+					onMouseMove={onMouseMove}
+					onMouseLeave={onMouseLeave}
+					style={{
+						animationDirection:
+							index % 2 === 0 ? "normal" : "reverse",
+						transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1, 1, 1)`,
+					}}
+					className={cn(
+						"bg-primary background-size-[4px_4px] select-none",
+						"bg-[repeating-radial-gradient(circle_at_0_0,transparent_0,#FAFAFA_5px),repeating-linear-gradient(#dadada55,#dadada)]",
+						"relative z-10 flex h-[300px] flex-col outline-2 outline-gray-700",
+						"my-4 items-center justify-center rounded-3xl p-12 text-sm md:text-base",
+						"transition-[transform_400ms_cubic-bezier(0.03,0.98,0.52,0.99)_0s]",
+					)}
+				>
+					<div className="font-sans text-base xl:text-lg">
+						"{text}"
+					</div>
+					<div className="text-accent absolute right-12 bottom-4 text-right font-sans text-xs">
+						{from.toUpperCase()}
+					</div>
 				</div>
+				<div className="pulse absolute -inset-2 rounded-lg bg-gradient-to-r from-gray-600 via-slate-400 to-gray-600 opacity-75 blur-xl" />
+				{/* <div className="absolute top-0 left-0 z-0 my-4 h-[305px] w-[calc(100%+5px)] rounded-4xl bg-gray-700" /> */}
 			</div>
-			<div className="absolute top-0 left-0 z-0 my-4 h-[305px] w-[calc(100%+5px)] rounded-4xl bg-gray-700" />
-		</div>
-	</CarouselItem>
-);
+		</CarouselItem>
+	);
+};
 
 export const Testimonials = () => {
 	const [autoPlay] = useState(() =>
@@ -54,7 +91,7 @@ export const Testimonials = () => {
 
 	return (
 		<Carousel opts={{ loop: true }} plugins={[autoPlay]}>
-			<CarouselContent className="-ml-4 py-4">
+			<CarouselContent className="-ml-12 py-4">
 				<CarouselQuote
 					text="[Dean] has helped me develop as an engineer more than he probably realizes."
 					from="Junior engineer post promotion"
