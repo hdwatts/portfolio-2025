@@ -209,6 +209,7 @@ const CarouselPrevious = ({
 		<button
 			className={cn(
 				"outline-secondary flex cursor-pointer items-center justify-center outline",
+				"hover:outline-primary transition-colors",
 				"absolute h-8 w-8 rounded-full",
 				orientation === "horizontal"
 					? "top-1/2 -left-12 -translate-y-1/2"
@@ -244,6 +245,7 @@ const CarouselNext = ({
 		<button
 			className={cn(
 				"outline-secondary flex cursor-pointer items-center justify-center outline",
+				"hover:outline-primary transition-colors",
 				"absolute h-8 w-8 rounded-full",
 				orientation === "horizontal"
 					? "top-1/2 -right-12 -translate-y-1/2"
