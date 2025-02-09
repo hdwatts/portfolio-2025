@@ -11,7 +11,7 @@ import { useState } from "react";
 
 const CarouselQuote = ({ text, from }: { text: string; from: string }) => (
 	<CarouselItem className="flex justify-center">
-		<div className="relative flex w-[500px] justify-center p-12 italic">
+		<div className="relative flex w-[500px] justify-center p-12 text-sm italic md:text-base">
 			<Quote className="absolute top-0 left-0 transform-[scale(-1,1)]" />
 			{text}
 			<div className="absolute bottom-1 text-xs">~ {from}</div>
@@ -30,7 +30,7 @@ export const Testimonials = () => {
 
 	return (
 		<Carousel
-			className="outline-secondary rounded-3xl p-8 outline"
+			className="outline-secondary rounded-3xl p-4 outline md:p-8"
 			opts={{ loop: true }}
 			plugins={[autoPlay]}
 		>
