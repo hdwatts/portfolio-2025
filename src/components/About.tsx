@@ -10,7 +10,7 @@ export const About = () => (
 				className="animate-wave origin-bottom"
 			/>
 		</div>
-		<p className="border-l-4 px-4 lg:px-8">
+		<p className="border-l-4 px-4 text-justify lg:px-8">
 			Hey there. I am a software developer based in New York, currently at{" "}
 			<Link href="https://www.chronograph.pe">
 				Chronograph Private Equity

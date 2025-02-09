@@ -12,12 +12,12 @@ export const Experience = () => (
 	<div className="relative flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">
 		<div className="z-10 flex min-w-sm flex-col gap-6 p-8 lg:max-w-lg lg:p-16">
 			<h2 className="text-3xl font-bold">Technical Experience</h2>
-			<p>
+			<p className="text-justify">
 				With over a decade of professional experience as a software
 				engineer, I've had the opportunity to work with a wide range of
 				cutting-edge technologies.
 			</p>
-			<p>
+			<p className="text-justify">
 				I'm passionate about continuously learning and applying new
 				technologies to build innovative solutions. Here's a selection
 				of tools I've worked with throughout my career.
