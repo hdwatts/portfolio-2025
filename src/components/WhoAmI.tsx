@@ -6,8 +6,8 @@ type WhoAmIProps = {
 	headshot?: React.ReactElement;
 };
 export const WhoAmI = ({ headshot }: WhoAmIProps) => (
-	<div className="flex max-w-2xl flex-col items-center gap-8 rounded-2xl px-5 sm:flex-row sm:gap-16">
-		<div className="flex flex-col items-center justify-center gap-2">
+	<div className="flex max-w-2xl flex-col items-center rounded-2xl px-5 sm:flex-row sm:gap-16">
+		<div className="mb-8 flex flex-col items-center justify-center gap-2">
 			{headshot}
 			<Badge
 				className="flex w-48 justify-center gap-1 sm:w-fit"
