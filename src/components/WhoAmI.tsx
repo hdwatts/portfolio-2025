@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { Handshake, MapPin } from "lucide-react";
 import { Link } from "./Link";
 import { Badge } from "./Badge";
 
@@ -33,8 +33,11 @@ export const WhoAmI = ({ headshot }: WhoAmIProps) => (
 					<Link href="https://www.wordtree.app">WordTree.app</Link>
 				</span>
 			</div>
-			<div className="flex gap-4 text-xs md:text-sm">
-				<span className="font-semibold">Connect:</span>
+			<div className="flex items-center gap-4 text-xs md:text-sm">
+				<span className="flex items-center gap-2 font-semibold">
+					<Handshake width={16} />
+					Connect:
+				</span>
 				<Link href="https://www.linkedin.com/in/hdwatts/">
 					Linkedin
 				</Link>
