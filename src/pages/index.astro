@@ -9,6 +9,8 @@ import Layout from "../layouts/Layout.astro";
 import Theme from "../layouts/Theme.astro";
 import PauseAnimationButton from "../components/PauseAnimationButton.astro";
 import { LoaderCircle } from "lucide-react";
+import WordTreeSection from "../components/WordTreeSection.astro";
+import { Testimonials } from "../components/Testimonials";
 ---
 
 <script is:inline>
@@ -33,49 +35,32 @@ import { LoaderCircle } from "lucide-react";
 		class="flex w-full max-w-[1200px] flex-col-reverse justify-between lg:flex-row"
 	>
 		<div
-			class="flex min-w-[360px] flex-col gap-6 p-8 lg:max-w-[1280px] lg:p-16"
+			class="flex w-full min-w-[360px] flex-col justify-center px-16 lg:max-w-[1280px]"
 		>
-			<a
-				href="https://www.wordtree.app"
-				target="_blank"
-				class="outline-accent bg-accent relative block w-full -rotate-3 rounded-lg pr-8 outline-6 transition-transform hover:scale-105 hover:rotate-3"
-			>
-				<video
-					autoplay
-					loop
-					muted
-					playsinline
-					class="bg-background aspect-video rounded-lg"
-				>
-					<source
-						src="/video/wordtree-demo.mp4"
-						type="video/mp4"
-						class="aspect-video min-h-full min-w-full"
-					/>
-				</video>
-				<div
-					class="bg-secondary absolute top-[calc(50%-12px)] right-0 h-6 w-6 rounded-full outline outline-gray-600"
-				>
-				</div>
-			</a>
+			<Testimonials client:load />
 		</div>
-		<div class="flex flex-col gap-6 p-8 lg:max-w-sm">
-			<h2 class="text-2xl font-bold">WordTree</h2>
+		<div class="flex flex-col gap-6 p-8 lg:max-w-lg">
+			<h2 class="text-2xl font-bold">Soft Skills / Testimonials</h2>
 			<p class="text-justify">
-				<a
-					href="https://www.wordtree.app"
-					class="underline"
-					target="_blank">WordTree</a
-				> is a cross-platform app built with React Native and Expo. It challenges
-				players to think strategically and plan ahead while testing their
-				vocabulary.
+				Working in software is not an individual sport. It requires
+				empathy, communication, and collaboration. Strong technical
+				skills are important, but the ability to listen, adapt, and work
+				effectively with others is what truly drives impactful software
+				development and team growth.
 			</p>
 			<p class="text-justify">
-				What started as a fun side project created in 2023 while
-				experimenting with developing cross-platform applications,
-				WordTree now has over 1,000 monthly active users. Give it a try!
+				In that vein, soft skills are a key to being a force multiplier.
+				Whether through mentorship, clear documentation, or refining
+				developer workflows, it is best to raise the floor so that every
+				engineer can contribute at their best. Great teams aren't just
+				built on individual talent but on the systems and support that
+				help everyone thrive. By investing in people as much as in code,
+				we can ensure long-term success for both the team and the
+				software we create.
 			</p>
 		</div>
-		<PauseAnimationButton />
 	</div>
+	<WordTreeSection />
+
+	<PauseAnimationButton />
 </Layout>
