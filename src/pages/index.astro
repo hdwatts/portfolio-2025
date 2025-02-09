@@ -8,6 +8,7 @@ import { WhoAmI } from "../components/WhoAmI";
 import Layout from "../layouts/Layout.astro";
 import Theme from "../layouts/Theme.astro";
 import PauseAnimationButton from "../components/PauseAnimationButton.astro";
+import { LoaderCircle } from "lucide-react";
 ---
 
 <script is:inline>
@@ -28,14 +29,22 @@ import PauseAnimationButton from "../components/PauseAnimationButton.astro";
 	</WhoAmI>
 	<About />
 	<Experience />
-	<div class="flex w-full max-w-[1200px] flex-col lg:flex-row">
+	<div
+		class="flex w-full max-w-[1200px] flex-col justify-between lg:flex-row"
+	>
 		<div class="flex flex-col gap-6 p-8 lg:max-w-[1280px] lg:p-16">
 			<a
 				href="https://www.wordtree.app"
 				target="_blank"
-				class="outline-accent bg-accent relative block h-auto w-full -rotate-3 rounded-lg pr-8 outline-6 transition-transform hover:scale-105 hover:rotate-3"
+				class="outline-accent bg-accent relative block h-auto min-h-[200px] w-full -rotate-3 rounded-lg pr-8 outline-6 transition-transform hover:scale-105 hover:rotate-3"
 			>
-				<video autoplay loop muted playsinline>
+				<video
+					autoplay
+					loop
+					muted
+					playsinline
+					class="bg-background relative h-full w-full"
+				>
 					<source
 						src="/video/wordtree-demo.mov"
 						type="video/quicktime"
