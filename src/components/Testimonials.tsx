@@ -65,6 +65,10 @@ export const Testimonials = () => {
 					text="[He has] technical abilities that seem to know no bounds."
 					from="Senior engineer"
 				/>
+				<CarouselQuote
+					text={`[Dean has] set the baseline for what it means to be a good coworker. I have found myself saying "What would Dean do?"`}
+					from="Former coworker"
+				/>
 			</CarouselContent>
 			<CarouselPrevious autoPlay={autoPlay} />
 			<CarouselNext autoPlay={autoPlay} />
