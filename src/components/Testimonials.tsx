@@ -66,14 +66,14 @@ const CarouselQuote = ({
 						className={cn(
 							"bg-primary background-size-[4px_4px] select-none",
 							"bg-[repeating-radial-gradient(circle_at_0_0,transparent_0,#FAFAFA_5px),repeating-linear-gradient(#dadada55,#dadada)]",
-							"relative z-10 flex h-[300px] flex-col outline-2 outline-gray-700",
+							"relative z-10 flex h-[300px] flex-col outline-2 outline-[#dadada]",
 							"my-4 items-center justify-center rounded-3xl p-12 text-sm md:text-base",
 						)}
 					>
 						<div
 							className="text-accent font-sans text-base xl:text-lg"
 							style={{
-								textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
+								textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
 							}}
 						>
 							"{text}"
@@ -81,14 +81,13 @@ const CarouselQuote = ({
 						<div
 							className="text-accent absolute right-12 bottom-4 text-right font-sans text-xs"
 							style={{
-								textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
+								textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
 							}}
 						>
 							{from.toUpperCase()}
 						</div>
 					</div>
 					<div className="pulse absolute -inset-4 rounded-lg bg-gradient-to-r from-gray-600 via-slate-400 to-gray-600 opacity-85 blur-xl" />
-					{/* <div className="absolute top-0 left-0 z-0 my-4 h-[305px] w-[calc(100%+5px)] rounded-4xl bg-gray-700" /> */}
 				</div>
 			</div>
 		</CarouselItem>
