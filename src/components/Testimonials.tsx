@@ -30,7 +30,7 @@ export const Testimonials = () => {
 
 	return (
 		<Carousel
-			className="outline-secondary rounded-3xl p-4 outline md:p-8"
+			className="outline-secondary rounded-3xl p-4 shadow-xl shadow-slate-700 outline md:p-8"
 			opts={{ loop: true }}
 			plugins={[autoPlay]}
 		>
@@ -44,8 +44,7 @@ export const Testimonials = () => {
 					from="Former engineering manager"
 				/>
 				<CarouselQuote
-					text="Dean excels in working on large projects, no matter the
-				complexity he is on top of it and getting it done well."
+					text="Dean excels in working on large projects, no matter the complexity he is on top of it and getting it done well."
 					from="Senior coworker"
 				/>
 				<CarouselQuote
@@ -60,10 +59,6 @@ export const Testimonials = () => {
 				<CarouselQuote
 					text="Really appreciate all the help [Dean] gave but more importantly am thankful for the laughs and for making the transition into my first real job pretty seamless."
 					from="Former coworker"
-				/>
-				<CarouselQuote
-					text="[He has] technical abilities that seem to know no bounds."
-					from="Senior engineer"
 				/>
 				<CarouselQuote
 					text={`[Dean has] set the baseline for what it means to be a good coworker. I have found myself saying "What would Dean do?"`}

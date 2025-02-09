@@ -1,5 +1,5 @@
 @theme inline {
-	--animate-move-up: move-up 30s linear infinite;
+	--animate-move-up: move-up 30s linear infinite alternate;
 
 	@keyframes move-up {
 		0% {
@@ -7,7 +7,7 @@
 		}
 
 		100% {
-			transform: translateY(-100%);
+			transform: translateY(-50%);
 		}
 	}
 }

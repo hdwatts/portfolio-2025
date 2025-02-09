@@ -30,23 +30,28 @@ export const Experience = () => (
 					backgroundColor: "hsl(0 0% 14.9%)",
 				}}
 			>
-				<div className="hover:*:paused relative flex h-full w-full -rotate-x-50 -rotate-z-20 flex-col gap-6">
-					<ExperienceGroup
-						top={
-							-1 *
-							(LOGOS_ROW_HEIGHT +
-								LOGOS_NUM_ROWS *
-									(LOGOS_ROW_PADDING + LOGOS_ROW_HEIGHT))
-						}
-					/>
-					<ExperienceGroup top={-LOGOS_ROW_HEIGHT} />
-					<ExperienceGroup
-						top={
-							LOGOS_NUM_ROWS *
-								(LOGOS_ROW_PADDING + LOGOS_ROW_HEIGHT) -
-							LOGOS_ROW_HEIGHT
-						}
-					/>
+				<div className="group/container relative flex h-full w-full -rotate-x-50 -rotate-z-20 flex-col gap-6">
+					<div
+						className="group-hover/container:paused animate-move-up absolute flex flex-col justify-end gap-6 will-change-transform"
+						style={{
+							top: -LOGOS_ROW_HEIGHT - LOGOS_ROW_PADDING,
+						}}
+					>
+						<ExperienceRow rowIdx={0} />
+						<ExperienceRow rowIdx={1} />
+						<ExperienceRow rowIdx={2} />
+						<ExperienceRow rowIdx={3} />
+						<ExperienceRow rowIdx={4} />
+						<ExperienceRow rowIdx={5} />
+						<ExperienceRow rowIdx={6} />
+						<ExperienceRow rowIdx={7} />
+						<ExperienceRow rowIdx={8} />
+						<ExperienceRow rowIdx={9} />
+						<ExperienceRow rowIdx={10} />
+						<ExperienceRow rowIdx={11} />
+						<ExperienceRow rowIdx={12} />
+						<ExperienceRow rowIdx={13} />
+					</div>
 				</div>
 				{/* Inset gradient overlay */}
 				<div className="to-background pointer-events-none absolute top-0 left-0 h-full w-full bg-linear-to-r from-transparent from-80%" />
@@ -64,32 +69,3 @@ export const Experience = () => (
 		</div>
 	</div>
 );
-
-const ExperienceGroup = ({ top }: { top: number }) => {
-	return (
-		<div
-			className="animate-move-up absolute flex flex-col gap-6 will-change-transform"
-			style={{
-				top,
-				height:
-					LOGOS_NUM_ROWS *
-						(LOGOS_ROW_PADDING + LOGOS_ROW_HEIGHT) *
-						2 +
-					LOGOS_ROW_PADDING * 2,
-			}}
-		>
-			<ExperienceRow rowIdx={0} />
-			<ExperienceRow rowIdx={1} />
-			<ExperienceRow rowIdx={2} />
-			<ExperienceRow rowIdx={3} />
-			<ExperienceRow rowIdx={4} />
-			<ExperienceRow rowIdx={5} />
-			<ExperienceRow rowIdx={0} />
-			<ExperienceRow rowIdx={1} />
-			<ExperienceRow rowIdx={2} />
-			<ExperienceRow rowIdx={3} />
-			<ExperienceRow rowIdx={4} />
-			<ExperienceRow rowIdx={5} />
-		</div>
-	);
-};
