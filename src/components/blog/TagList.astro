@@ -1,0 +1,22 @@
+---
+import { Tag } from "lucide-react";
+import { Badge } from "../Badge";
+
+interface Props {
+	tags: string[];
+}
+const { tags } = Astro.props;
+---
+
+<div class="flex items-center gap-2">
+	<div>
+		<Tag width={18} height={18} />
+	</div>
+	{
+		tags.map((tag) => (
+			<a href={`/blog/tags/${tag.toLowerCase()}`}>
+				<Badge variant="secondary">{tag}</Badge>
+			</a>
+		))
+	}
+</div>

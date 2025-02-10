@@ -8,7 +8,10 @@
     "dist"
   ],
   "compilerOptions": {
+    "strictNullChecks": true, // add if using `base` template
+    "allowJs": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   }
 }
+  

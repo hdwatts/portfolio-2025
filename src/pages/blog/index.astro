@@ -1,0 +1,23 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Theme from "../../layouts/Theme.astro";
+import { TypographyH1, TypographyH2 } from "../../components/blog/Typography";
+import PostList from "../../components/blog/PostList.astro";
+
+const posts = (await getCollection("blog")).filter(
+	(post) => post.data.isPublished || import.meta.env.DEV,
+);
+---
+
+<Theme />
+<Layout>
+	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
+		<div class="mb-4 flex flex-col gap-4 border-b py-4">
+			<TypographyH1>Blog Posts</TypographyH1>
+		</div>
+		<div class="min-h-[400px]">
+			<PostList posts={posts} />
+		</div>
+	</div>
+</Layout>

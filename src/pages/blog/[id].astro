@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Theme from "../../layouts/Theme.astro";
+import {
+	TypographyBlockquote,
+	TypographyH1,
+	TypographyH2,
+	TypographyH3,
+	TypographyH4,
+	TypographyP,
+} from "../../components/blog/Typography";
+import { Badge } from "../../components/Badge";
+import { Link } from "../../components/Link";
+import { ArrowLeft } from "lucide-react";
+import ReturnToBlog from "../../components/blog/ReturnToBlog.astro";
+import TagList from "../../components/blog/TagList.astro";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("blog");
+	return posts.map((post) => ({
+		params: { id: post.data.slug },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Theme />
+<Layout>
+	<div class="flex w-full max-w-[1200px] flex-col justify-between">
+		<div class="mb-4 flex flex-col gap-4 border-b py-4">
+			<ReturnToBlog />
+			<div class="relative flex h-[400px] overflow-hidden rounded-2xl">
+				<img src={post.data.thumbnailUrl} class="absolute z-0" />
+				<div
+					class="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-0% to-80%"
+				>
+				</div>
+				<TypographyH1 className="absolute bottom-4 z-10 mx-12"
+					>{post.data.title}</TypographyH1
+				>
+			</div>
+			<div class="flex gap-2">
+				<TagList tags={post.data.tags} />
+			</div>
+		</div>
+		<div>
+			<Content
+				components={{
+					h1: TypographyH1,
+					h2: TypographyH2,
+					h3: TypographyH3,
+					h4: TypographyH4,
+					p: TypographyP,
+					blockquote: TypographyBlockquote,
+				}}
+			/>
+		</div>
+	</div>
+</Layout>

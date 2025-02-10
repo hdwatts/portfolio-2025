@@ -71,7 +71,10 @@ const CarouselQuote = ({
 						)}
 					>
 						<div
-							className="text-accent flex grow items-center font-sans text-xs sm:text-base lg:text-base xl:text-lg"
+							className={cn(
+								"text-accent flex grow items-center font-sans",
+								"text-lg lg:text-base xl:text-lg",
+							)}
 							style={{
 								textShadow: "1px 1px 1px rgba(0,0,0,0.4)",
 							}}
@@ -87,7 +90,7 @@ const CarouselQuote = ({
 							{from.toUpperCase()}
 						</div>
 					</div>
-					<div className="pulse absolute -inset-4 rounded-lg bg-gradient-to-r from-gray-600 via-slate-400 to-gray-600 opacity-85 blur-xl" />
+					<div className="absolute -inset-4 animate-pulse rounded-lg bg-gradient-to-r from-gray-600 via-slate-400 to-gray-600 opacity-85 blur-xl" />
 				</div>
 			</div>
 		</CarouselItem>

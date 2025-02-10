@@ -1,0 +1,45 @@
+---
+import { Tag } from "lucide-react";
+import { TypographyH2 } from "./Typography";
+import { Badge } from "../Badge";
+import TagList from "./TagList.astro";
+
+interface Props {
+	posts: {
+		data: {
+			slug: string;
+			title: string;
+			tags: string[];
+			thumbnailUrl: string;
+		};
+	}[];
+}
+const { posts } = Astro.props;
+---
+
+{
+	posts.length === 0 ? (
+		<div class="flex w-full justify-center">No posts here.</div>
+	) : null
+}
+
+{
+	posts.map((post) => (
+		<div class="flex flex-col items-center gap-16 p-4 lg:flex-row">
+			<div class="cursor-pointer opacity-80 transition-opacity hover:opacity-100">
+				<a href={`/blog/${post.data.slug}`}>
+					<img src={post.data.thumbnailUrl} class="rounded-3xl" />
+				</a>
+			</div>
+			<div class="flex min-w-[50%] grow flex-col gap-4">
+				<a
+					href={`/blog/${post.data.slug}`}
+					class="opacity-80 transition-opacity hover:opacity-100"
+				>
+					<TypographyH2>{post.data.title}</TypographyH2>
+				</a>
+				<TagList tags={post.data.tags} />
+			</div>
+		</div>
+	))
+}
