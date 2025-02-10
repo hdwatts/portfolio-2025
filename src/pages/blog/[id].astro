@@ -9,6 +9,7 @@ import {
 	TypographyH3,
 	TypographyH4,
 	TypographyP,
+	TypographyUL,
 } from "../../components/blog/Typography";
 import { Badge } from "../../components/Badge";
 import { Link } from "../../components/Link";
@@ -30,7 +31,7 @@ const { Content } = await render(post);
 
 <Theme />
 <Layout>
-	<div class="flex w-full max-w-[1200px] flex-col justify-between">
+	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
 		<div class="mb-4 flex flex-col gap-4 border-b py-4">
 			<ReturnToBlog />
 			<div class="relative flex h-[400px] overflow-hidden rounded-2xl">
@@ -56,6 +57,8 @@ const { Content } = await render(post);
 					h4: TypographyH4,
 					p: TypographyP,
 					blockquote: TypographyBlockquote,
+					ul: TypographyUL,
+					a: Link,
 				}}
 			/>
 		</div>

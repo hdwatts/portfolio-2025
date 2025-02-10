@@ -25,15 +25,17 @@ const CarouselQuote = ({
 	const onMouseMove = useCallback(
 		throttle((e: MouseEvent<HTMLDivElement>) => {
 			const card = e.currentTarget;
-			const box = card.getBoundingClientRect();
-			const x = e.clientX - box.left;
-			const y = e.clientY - box.top;
-			const centerX = box.width / 2;
-			const centerY = box.height / 2;
-			const rotateX = (y - centerY) / 15;
-			const rotateY = (centerX - x) / 15;
+			if (card) {
+				const box = card.getBoundingClientRect();
+				const x = e.clientX - box.left;
+				const y = e.clientY - box.top;
+				const centerX = box.width / 2;
+				const centerY = box.height / 2;
+				const rotateX = (y - centerY) / 15;
+				const rotateY = (centerX - x) / 15;
 
-			setRotate({ x: rotateX, y: rotateY });
+				setRotate({ x: rotateX, y: rotateY });
+			}
 		}, 100),
 		[],
 	);

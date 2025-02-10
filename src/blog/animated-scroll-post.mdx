@@ -1,13 +1,95 @@
 ---
 title: "Enhancing My Portfolio With Tailwind CSS: The Infinite Scrolling Showcase"
 tags: [React, tailwindcss]
-slug: test-post
-thumbnailUrl: /blog/animated-scroll-post.png
+slug: enhancing-portfolio-animated-scroll
+thumbnailUrl: /blog/animated-scroll-post/thumbnail.png
 isPublished: false
 ---
 
-## First point
+In this post I'll walk through how I made the infinite scroll
+tech stack showcase that is on the home page. It was accomplished
+with Tailwind CSS and nearly entirely just using it's utility
+classes.
 
-## Test h2
+> Note: I'm using the new 4.0 version of Tailwind CSS.
 
-My second point is this...
+## Requirements Gathering
+
+When I started rebuilding my portfolio at the start of 2025,
+I had a vision for how I wanted to display the various libraries,
+frameworks, and languages I've used throughout my career.
+
+<div class="my-4 flex flex-col items-center justify-center gap-2">
+	<img
+		class="outline-secondary rounded-2xl outline"
+		src="/blog/animated-scroll-post/vision.png"
+		width={400}
+		alt="The vision I had for my infinite scrolling showcase."
+	/>
+	<div class="text-xs">The vision...simple right?</div>
+</div>
+
+Let's break down the requirements:
+
+- We need a collection of tiles in a grid
+- Each tile needs to have a logo corresponding to something I've worked with professionally
+- The tiles need to be rotated to provide a nice 3D effect
+- The tiles need to be clickable and direct the user to a URL
+- Each row of tiles needs to be offset from eachother
+- The tiles need to be animated to appear to scroll through a viewport
+- The scrolling needs to appear to go on infinitely
+- When the user hovers over the viewport, the scrolling needs to pause
+
+Separately, for my own growth, I wanted to see if I could create this
+entirely in Tailwind CSS.
+
+...ok that's a serious list of requirements, let's get to work!
+
+## The Tile
+
+To start. We need to make ourselves a button. I really like Josh Comeau's
+[Building a Magical 3D Button](https://www.joshwcomeau.com/animation/3d-button/)
+as a starting point. However, I had to adjust it to work with Tailwind.
+
+```astro live
+<div class="bg-primary h-full w-full p-12">
+	{/* The container */}
+	<div
+		className={"group/button padding-0 relative cursor-pointer border-0" +
+			" bg-transparent outline-offset-4 hover:brightness-110" +
+			" focus:not-[:focus-visible]!outline-none" +
+			" transition-[filter]"}
+	>
+		{/* The shadow */}
+		<span
+			className={"absolute top-0 left-0 translate-y-1 rounded-xl will-change-transform" +
+				" h-full w-full bg-black opacity-25" +
+				" transition-transform ease-in-out" +
+				" group-hover/button:translate-y-2" +
+				" group-active/button:translate-y-0.5"}></span>
+		{/* The edge */}
+		<span
+			className="absolute top-0 left-0 h-full w-full rounded-xl bg-[#141f2e] brightness-50"
+		></span>
+		{/* The top of the button */}
+		<a
+			className={"relative flex flex-col items-center justify-center p-8 select-none" +
+				" h-full w-full -translate-y-2 rounded-xl bg-[#141f2e] will-change-transform" +
+				" transition-transform ease-in-out" +
+				" group-hover/button:-translate-y-3" +
+				" group-active/button:-translate-y-0.5 group-active/button:duration-75"}
+		>
+			<div className="flex grow justify-center">
+				{/* Logo here */}
+			</div>
+			<span
+				className="text-primary shrink text-3xl"
+				style={{ color: "hsl(0 0% 98%)" }}
+			>
+				{/* Text here */}
+				Button
+			</span>
+		</a>
+	</div>
+</div>
+```

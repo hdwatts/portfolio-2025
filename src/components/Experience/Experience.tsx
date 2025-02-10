@@ -6,7 +6,6 @@ import {
 	LOGOS_ROW_PADDING,
 } from "./constants";
 import { ExperienceRow } from "./ExperienceRow";
-import { cn } from "../../lib/utils";
 
 export const Experience = () => (
 	<div className="relative flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">

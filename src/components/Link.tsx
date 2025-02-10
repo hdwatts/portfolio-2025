@@ -4,10 +4,12 @@ import { cn } from "../lib/utils";
 type LinkProps = {
 	href: string;
 	className?: string;
+	target?: string;
 };
 export const Link = ({
 	className,
 	href,
+	target = "_blank",
 	children,
 }: PropsWithChildren<LinkProps>) => (
 	<a
@@ -15,6 +17,7 @@ export const Link = ({
 			"underline opacity-80 transition-opacity hover:opacity-100",
 			className,
 		)}
+		target={target}
 		href={href}
 	>
 		{children}
