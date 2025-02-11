@@ -33,11 +33,15 @@ export async function getStaticPaths() {
 		props: { tag, posts },
 	}));
 }
+const capitalizeFirstLetter = (val: string) => {
+	return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+};
+
 const { posts, tag } = Astro.props;
 ---
 
 <Theme />
-<Layout>
+<Layout title={`Posts Tagged ${capitalizeFirstLetter(tag)}`}>
 	<div class="flex w-full max-w-[1200px] flex-col justify-between p-12">
 		<ReturnToBlog />
 		<div class="mb-4 flex items-center gap-4 border-b py-4">

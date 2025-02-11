@@ -1,19 +1,14 @@
 ---
-import { Tag } from "lucide-react";
 import { TypographyH2 } from "./Typography";
-import { Badge } from "../Badge";
 import TagList from "./TagList.astro";
+import type { CollectionEntry } from "astro:content";
 
-interface Props {
-	posts: {
-		data: {
-			slug: string;
-			title: string;
-			tags: string[];
-			thumbnailUrl: string;
-		};
-	}[];
-}
+type BlogPost = CollectionEntry<"blog">;
+
+type Props = {
+	posts: BlogPost[];
+};
+
 const { posts } = Astro.props;
 ---
 

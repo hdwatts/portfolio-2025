@@ -183,3 +183,32 @@
   }
 }
 
+
+pre {
+  padding: 8px 16px;
+  overflow: auto;
+  border-radius: 1rem;
+}
+
+code {
+  padding: 4px;
+  border-radius: 1rem;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  direction: ltr;
+  font-size: 14px;
+}
+
+code {
+  background-color: hsl(var(--secondary));
+  border-radius: 0;
+  }
+
+pre>code {
+  padding: 0;
+  line-height: 1.5;
+  word-break: normal;
+  white-space: pre;
+  word-spacing: normal;
+  background-color: unset;
+  tab-size: 4;
+}

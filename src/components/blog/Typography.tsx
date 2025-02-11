@@ -37,7 +37,7 @@ export const TypographyH3: React.FC<
 	return (
 		<h3
 			className={cn(
-				"scroll-m-20 text-2xl font-semibold tracking-tight",
+				"my-8 scroll-m-20 text-2xl font-semibold tracking-tight",
 				className,
 			)}
 		>
@@ -70,4 +70,11 @@ export const TypographyBlockquote: React.FC<PropsWithChildren> = ({
 
 export const TypographyUL: React.FC<PropsWithChildren> = ({ children }) => (
 	<ul className="mt-4 list-inside list-disc">{children}</ul>
+);
+export const TypographyOL: React.FC<PropsWithChildren> = ({ children }) => (
+	<ol className="mt-4 list-inside list-decimal">{children}</ol>
+);
+
+export const TypographLI: React.FC<PropsWithChildren> = ({ children }) => (
+	<li className="my-2">{children}</li>
 );

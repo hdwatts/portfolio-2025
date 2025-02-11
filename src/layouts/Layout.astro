@@ -1,43 +1,25 @@
 ---
+type Props = {
+	title: string;
+	description?: string;
+	image?: string;
+	articleDate?: string;
+};
 import Analytics from "@vercel/analytics/astro";
 import { CodeXml } from "lucide-react";
+import BaseHead from "../components/BaseHead.astro";
+const { title, description, image, articleDate } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Welcome | Howard Dean Watts</title>
-		<meta
-			name="description"
-			content="Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of tools to automate the extraction of unstructured data from our clients."
+		<BaseHead
+			title={title}
+			description={description}
+			ogImage={image}
+			articleDate={articleDate}
 		/>
-
-		<!-- Facebook Meta Tags -->
-		<meta property="og:url" content="https://hdwatts.com" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Welcome | Howard Dean Watts" />
-		<meta
-			property="og:description"
-			content="Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of tools to automate the extraction of unstructured data from our clients."
-		/>
-		<meta property="og:image" content="/og-image.png" />
-
-		<!-- Twitter Meta Tags -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta property="twitter:domain" content="hdwatts.com" />
-		<meta property="twitter:url" content="https://hdwatts.com" />
-		<meta name="twitter:title" content="Welcome | Howard Dean Watts" />
-		<meta
-			name="twitter:description"
-			content="Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of tools to automate the extraction of unstructured data from our clients."
-		/>
-		<meta name="twitter:image" content="/og-image.png" />
-
-		<!-- Meta Tags Generated via https://www.opengraph.xyz -->
 	</head>
 	<body class="bg-background">
 		<header

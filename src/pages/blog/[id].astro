@@ -3,19 +3,22 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Theme from "../../layouts/Theme.astro";
 import {
+	TypographLI,
 	TypographyBlockquote,
 	TypographyH1,
 	TypographyH2,
 	TypographyH3,
 	TypographyH4,
+	TypographyOL,
 	TypographyP,
 	TypographyUL,
 } from "../../components/blog/Typography";
 import { Badge } from "../../components/Badge";
 import { Link } from "../../components/Link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calendar } from "lucide-react";
 import ReturnToBlog from "../../components/blog/ReturnToBlog.astro";
 import TagList from "../../components/blog/TagList.astro";
+import { BlogImage } from "../../components/blog/BlogImage";
 
 export async function getStaticPaths() {
 	const posts = await getCollection("blog");
@@ -30,7 +33,12 @@ const { Content } = await render(post);
 ---
 
 <Theme />
-<Layout>
+<Layout
+	title={post.data.title}
+	description={post.data.description}
+	image={post.data.thumbnailUrl}
+	articleDate={post.data.datePublished.toISOString()}
+>
 	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
 		<div class="mb-4 flex flex-col gap-4 border-b py-4">
 			<ReturnToBlog />
@@ -44,8 +52,14 @@ const { Content } = await render(post);
 					>{post.data.title}</TypographyH1
 				>
 			</div>
-			<div class="flex gap-2">
-				<TagList tags={post.data.tags} />
+			<div class="flex flex-wrap justify-between gap-4">
+				<div class="flex gap-2">
+					<TagList tags={post.data.tags} />
+				</div>
+				<div class="flex items-center gap-2 text-sm">
+					<Calendar width={18} height={18} />
+					{post.data.datePublished.toDateString()}
+				</div>
 			</div>
 		</div>
 		<div>
@@ -58,7 +72,10 @@ const { Content } = await render(post);
 					p: TypographyP,
 					blockquote: TypographyBlockquote,
 					ul: TypographyUL,
+					li: TypographLI,
+					ol: TypographyOL,
 					a: Link,
+					BlogImage,
 				}}
 			/>
 		</div>
