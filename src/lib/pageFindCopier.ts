@@ -12,7 +12,7 @@ export function pagefindCopier(): AstroIntegration {
         buildLogger.info("Copying pagefind files from dist to Vercel output");
 
         try {
-          const distPath = "./dist/client";
+          const distPath = "./dist";
           const vercelPath = "./.vercel/output/static";
           const pagefindSourceDir = path.join(distPath, "pagefind");
           const pagefindDestDir = path.join(vercelPath, "pagefind");

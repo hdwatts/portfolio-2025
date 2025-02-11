@@ -19,7 +19,7 @@ pages: {
   {
     filter: (page) => !page.includes('hidden__'),
   }
-), pagefindCopier()],
+)],//, pagefindCopier()],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }
