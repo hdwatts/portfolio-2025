@@ -9,17 +9,20 @@ type LinkProps = {
 export const Link = ({
 	className,
 	href,
-	target = "_blank",
+	target,
 	children,
-}: PropsWithChildren<LinkProps>) => (
-	<a
-		className={cn(
-			"underline opacity-80 transition-opacity hover:opacity-100",
-			className,
-		)}
-		target={target}
-		href={href}
-	>
-		{children}
-	</a>
-);
+}: PropsWithChildren<LinkProps>) => {
+	const defaultTarget = href.startsWith("/") ? target : "_blank";
+	return (
+		<a
+			className={cn(
+				"underline opacity-80 transition-opacity hover:opacity-100",
+				className,
+			)}
+			target={target ?? defaultTarget}
+			href={href}
+		>
+			{children}
+		</a>
+	);
+};
