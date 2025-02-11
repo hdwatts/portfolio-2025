@@ -64,8 +64,11 @@ export const Experience = () => (
 				<p>
 					Curious how I built this animation? Read the full breakdown
 					in{" "}
-					<Link href="/blog/enhancing-portfolio-animated-scroll">
-						my blog post
+					<Link
+						href="/blog/enhancing-portfolio-animated-scroll"
+						className="hover:text-primary text-gray-500 opacity-100 transition-colors"
+					>
+						this blog post
 					</Link>
 					!
 				</p>
