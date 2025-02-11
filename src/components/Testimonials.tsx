@@ -1,6 +1,5 @@
 import Autoplay from "embla-carousel-autoplay";
 import throttle from "lodash/throttle";
-import { Quote } from "lucide-react";
 import {
 	Carousel,
 	CarouselContent,

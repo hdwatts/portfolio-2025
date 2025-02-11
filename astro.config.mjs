@@ -14,7 +14,11 @@ export default defineConfig({
 pages: {
 '/hidden__/resume': { path: 'resume.pdf' }
 }
-})*/, mdx(), sitemap()],
+})*/, mdx(), sitemap(
+  {
+    filter: (page) => !page.includes('hiden__'),
+  }
+)],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }

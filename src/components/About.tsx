@@ -1,4 +1,4 @@
-import { Hand, LucideQuote, Quote } from "lucide-react";
+import { Hand } from "lucide-react";
 import { Link } from "./Link";
 
 export const About = () => (

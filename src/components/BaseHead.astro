@@ -14,7 +14,6 @@ const {
 	ogImage,
 	articleDate,
 } = Astro.props;
-console.log(Astro.url.pathname, Astro.site);
 const socialImageURL = new URL(ogImage ? ogImage : "/og-image.png", Astro.url)
 	.href;
 

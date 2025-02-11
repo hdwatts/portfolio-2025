@@ -13,17 +13,6 @@ import WordTreeSection from "../components/WordTreeSection.astro";
 import { Testimonials } from "../components/Testimonials";
 ---
 
-<script is:inline>
-	function togglePause() {
-		const main = document.querySelector("main");
-		main.classList.toggle("**:paused");
-		document.getElementById("pause-button").classList.toggle("hidden");
-		document.getElementById("play-button").classList.toggle("hidden");
-		const video = document.querySelector("video");
-		video.paused ? video.play() : video.pause();
-	}
-</script>
-
 <Theme />
 <Layout title="Welcome">
 	<WhoAmI>

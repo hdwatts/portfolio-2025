@@ -212,3 +212,37 @@ pre>code {
   background-color: unset;
   tab-size: 4;
 }
+
+#pagefind__search {
+  .pagefind-ui__form {
+    color: hsl(var(--primary));
+
+    .pagefind-ui__search-input {
+      transition: all 250ms;
+      background-color: var(--background);
+      border-color: hsl(var(--secondary));
+      &:focus {
+        border-color: hsl(var(--primary));
+        outline-color: hsl(var(--primary));
+      }
+      &:focus-visible {
+        border-color: hsl(var(--primary));
+          outline: 2px solid hsl(var(--primary));
+          box-shadow: none;
+      }
+    }
+    button {
+      background-color: var(--background);
+      color: hsl(var(--primary));
+    }
+    .pagefind-ui__search-input::before {
+      background-color: hsl(var(--primary));
+    }
+    .pagefind-ui__result-link {
+      color: hsl(var(--primary));
+    }
+    mark {
+      background-color: oklch(.924 .12 95.746)
+    }
+  }
+}
