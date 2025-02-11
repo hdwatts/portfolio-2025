@@ -42,7 +42,7 @@ const { posts, tag } = Astro.props;
 
 <Theme />
 <Layout title={`Posts Tagged ${capitalizeFirstLetter(tag)}`}>
-	<div class="flex w-full max-w-[1200px] flex-col justify-between p-12">
+	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
 		<ReturnToBlog />
 		<div class="mb-4 flex items-center gap-4 border-b py-4">
 			<div><TagIcon width={28} height={28} /></div>
