@@ -88,12 +88,25 @@ export const Search = () => {
 					onValueChange={onChange}
 				/>
 				<CommandList>
+					{import.meta.env.DEV ? (
+						<div className="mx-auto my-4 text-center text-xs">
+							<p>
+								Search is only available in production builds.{" "}
+								<br />
+								If you get out of date or no results try running{" "}
+								<code className="text-xs!">npm run build</code>.
+								<br />
+								(This warning only appears in development)
+							</p>
+						</div>
+					) : null}
 					<CommandGroup>
 						<CommandItem onSelect={() => navigate("/")}>
 							<HomeIcon />
 							Go Home
 						</CommandItem>
 					</CommandGroup>
+
 					<CommandSeparator alwaysRender />
 					{!results.length && searchTerm ? (
 						<div className="flex justify-center py-4 text-sm">
