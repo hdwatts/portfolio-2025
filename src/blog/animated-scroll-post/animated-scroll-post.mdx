@@ -58,7 +58,7 @@ To start. We need to make ourselves a button. I really like Josh Comeau's
 as a starting point. It uses standard CSS classes, so now seems like as good a time
 as any to dip our feet into converting components to use tailwind classes.
 
-<div class="bg-secondary my-8 flex w-full flex-col items-center gap-6 rounded-2xl p-8">
+<div data-pagefind-ignore class="bg-secondary my-8 flex w-full flex-col items-center gap-6 rounded-2xl p-8">
 	<LogoButton backgroundColor="rgb(23 25 30)" src={AstroLogo} label="Astro" />
 	<div class="text-sm italic">Click me!</div>
 </div>
@@ -239,7 +239,7 @@ component and understand their effects.
 
 ## Rows of Tiles
 
-<div class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
+<div data-pagefind-ignore class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
 	<div class="h-[600px] max-w-[600px] overflow-hidden">
 		<div className="group/container flex w-[1200px] flex-col gap-6">
 			<div className="flex flex-col gap-6">
@@ -331,7 +331,7 @@ component and understand their effects.
 </div>
 
 ```tsx
-<div class="h-[600px] max-w-[600px] overflow-hidden">
+<div data-pagefind-ignore class="h-[600px] max-w-[600px] overflow-hidden">
 	<div className="group/container flex w-[1200px] flex-col gap-6">
 		<div className="flex flex-col gap-6">
 			<div className="flex gap-6 odd:-translate-x-32">{/* Tiles */}</div>
@@ -389,7 +389,7 @@ the container is hovered.
     <div className="group-hover/container:paused animate-move-up ..."
 ```
 
-<div class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
+<div data-pagefind-ignore class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
 	<div class="h-[600px] max-w-[600px] overflow-hidden">
 		<div className="group/container flex w-[1200px] flex-col gap-6">
 			<div className="group-hover/container:paused animate-move-up flex flex-col gap-6">
@@ -535,7 +535,7 @@ of our image.
     <div className="... absolute -left-[250px] -top-[150px]">
 ```
 
-<div class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
+<div data-pagefind-ignore class="bg-secondary my-8 flex w-full flex-col items-center gap-6 overflow-hidden rounded-2xl p-8">
 	<div class="h-[600px] max-w-[600px] overflow-hidden">
 		<div className="group/container flex w-[1200px] flex-col gap-6 -rotate-x-50 -rotate-z-20 relative">
 			<div className="group-hover/container:paused absolute animate-move-up flex flex-col gap-6 -left-[250px] -top-[150px]">

@@ -217,6 +217,10 @@ pre>code {
   .pagefind-ui__form {
     color: hsl(var(--primary));
 
+    &::before {
+      background-color: hsl(var(--primary));
+    }
+
     .pagefind-ui__search-input {
       transition: all 250ms;
       background-color: var(--background);
@@ -226,9 +230,12 @@ pre>code {
         outline-color: hsl(var(--primary));
       }
       &:focus-visible {
+        background-color: var(--accent);
+        color: var(--accent-foreground);
         border-color: hsl(var(--primary));
-          outline: 2px solid hsl(var(--primary));
-          box-shadow: none;
+        border-width: 1px;
+        outline: none;
+        box-shadow: none;
       }
     }
     button {
