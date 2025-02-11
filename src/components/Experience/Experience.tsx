@@ -57,7 +57,7 @@ export const Experience = () => (
 				<div className="to-background pointer-events-none absolute top-0 left-0 h-full w-full bg-linear-to-r from-transparent from-80%" />
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-l from-transparent from-80%" />
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-t from-transparent from-80%" />
-				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-80%" />
+				<div className="to-background pointer-events-none absolute bottom-10 h-full w-full bg-linear-to-b from-transparent from-80%" />
 			</div>
 
 			<div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-400">
