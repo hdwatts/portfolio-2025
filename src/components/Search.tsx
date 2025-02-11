@@ -12,10 +12,29 @@ import {
 import { DialogTitle } from "./Dialog";
 import { HomeIcon } from "lucide-react";
 
+type SearchResultData = {
+	meta: { image: string; title: string };
+	excerpt: string;
+	url: string;
+};
+
+type SearchResult = {
+	data: () => Promise<SearchResultData>;
+};
+
+type SearchResponse = {
+	results: SearchResult[];
+};
+
+type DecoratedWindow = {
+	loadPagefind?: () => void;
+	pagefind?: { debouncedSearch: (value: string) => SearchResponse };
+};
+
 export const Search = () => {
 	const [open, setOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState<string>();
-	const [results, setResults] = useState<string[]>([]);
+	const [results, setResults] = useState<SearchResultData[]>([]);
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -29,15 +48,17 @@ export const Search = () => {
 
 	const onChange = async (value: string) => {
 		setSearchTerm(value);
-		await window?.loadPagefind?.();
-		if (window?.pagefind) {
-			const search = await pagefind.debouncedSearch(value);
+		const decoratedWindow = window as DecoratedWindow;
+		await decoratedWindow?.loadPagefind?.();
+		if (decoratedWindow?.pagefind) {
+			const search =
+				await decoratedWindow.pagefind.debouncedSearch(value);
 			if (search) {
 				const data = [];
 				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
 					data.push(await search.results[a].data());
 				}
-
+				console.log(data);
 				setResults(data);
 			}
 		}
@@ -85,16 +106,26 @@ export const Search = () => {
 								<CommandItem
 									key={result.url}
 									onSelect={() => navigate(result.url)}
-									className="flex flex-col"
+									className="flex flex-nowrap items-center justify-center gap-2"
 								>
-									<div className="text-base font-bold">
-										{result.meta.title}
+									<div className="min-w-[150px]">
+										<img
+											src={result.meta.image}
+											width={150}
+											className="outline-secondary rounded-2xl outline"
+										/>
 									</div>
-									<span
-										dangerouslySetInnerHTML={{
-											__html: result.excerpt,
-										}}
-									/>
+									<div className="border-primary flex shrink flex-col gap-4 border-l-2 pl-4">
+										<div className="w-full overflow-hidden text-sm font-bold sm:text-base">
+											{result.meta.title}
+										</div>
+										<div
+											className="text-xs sm:text-sm"
+											dangerouslySetInnerHTML={{
+												__html: result.excerpt,
+											}}
+										/>
+									</div>
 								</CommandItem>
 							))}
 						</CommandGroup>

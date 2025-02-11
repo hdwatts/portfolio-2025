@@ -76,13 +76,10 @@ const { title, description, image, articleDate } = Astro.props;
 	}
 </style>
 <script is:inline>
-	let pagefind;
 	window.loadPagefind = async () => {
-		if (!pagefind) {
-			pagefind = await import("/pagefind/pagefind.js");
-			pagefind.init({
-				showImages: false,
-			});
+		if (!window.pagefind) {
+			window.pagefind = await import("/pagefind/pagefind.js");
+			window.pagefind.init();
 			window.pagefind = pagefind;
 		}
 	};
