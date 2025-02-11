@@ -6,6 +6,7 @@ import {
 	LOGOS_ROW_PADDING,
 } from "./constants";
 import { ExperienceRow } from "./ExperienceRow";
+import { Link } from "../Link";
 
 export const Experience = () => (
 	<div className="relative flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">
@@ -59,12 +60,16 @@ export const Experience = () => (
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-80%" />
 			</div>
 
-			{/* <div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-500">
+			<div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-500">
 				<p>
-					Want to see how I built this animation? Read the full
-					breakdown in my blog post!
+					Curious how I built this animation? Read the full breakdown
+					in{" "}
+					<Link href="/blog/enhancing-portfolio-animated-scroll">
+						my blog post
+					</Link>
+					!
 				</p>
-			</div> */}
+			</div>
 		</div>
 	</div>
 );
