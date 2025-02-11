@@ -6,12 +6,14 @@ import vercelStatic from '@astrojs/vercel';
 import pdf from 'astro-pdf'
 import mdx from '@astrojs/mdx';
 
+import sitemap from '@astrojs/sitemap';
+
 export default defineConfig({
   integrations: [react()/*, pdf({
 pages: {
 '/hidden__/resume': { path: 'resume.pdf' }
 }
-})*/, mdx()],
+})*/, mdx(), sitemap()],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }
