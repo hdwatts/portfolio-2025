@@ -9,6 +9,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
+  site: 'https://hdwatts.com',
   integrations: [react()/*, pdf({
 pages: {
 '/hidden__/resume': { path: 'resume.pdf' }
