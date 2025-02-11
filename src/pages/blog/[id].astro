@@ -39,10 +39,7 @@ const { Content } = await render(post);
 	image={post.data.thumbnailUrl}
 	articleDate={post.data.datePublished.toISOString()}
 >
-	<div
-		data-pagefind-body
-		class="flex w-full max-w-[900px] flex-col justify-between px-12"
-	>
+	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
 		<div class="mb-4 flex flex-col gap-4 border-b py-4">
 			<ReturnToBlog />
 			<div class="relative flex h-[400px] overflow-hidden rounded-2xl">
@@ -65,7 +62,7 @@ const { Content } = await render(post);
 				</div>
 			</div>
 		</div>
-		<div>
+		<div data-pagefind-body>
 			<Content
 				components={{
 					h1: TypographyH1,
