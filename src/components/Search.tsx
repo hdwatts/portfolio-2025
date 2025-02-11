@@ -2,10 +2,12 @@
 
 import "@pagefind/default-ui/css/ui.css";
 import { Button } from "./Button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Cross, X } from "lucide-react";
 
 export const Search = () => {
 	const rootRef = useRef<HTMLDivElement | null>(null);
+	const [didRun, setDidRun] = useState(false);
 	useEffect(() => {
 		const openBtn = rootRef.current?.querySelector<HTMLButtonElement>(
 			"button[data-open-modal]",
@@ -67,7 +69,7 @@ export const Search = () => {
 		};
 		window.addEventListener("keydown", listenForSlash);
 
-		if (!import.meta.env.DEV) {
+		if (!didRun) {
 			const onIdle =
 				window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
 			onIdle(async () => {
@@ -82,12 +84,16 @@ export const Search = () => {
 					showImages: false,
 				});
 			});
+			setDidRun(true);
 		}
 
 		return () => {
 			window.removeEventListener("keydown", listenForSlash);
+			openBtn.removeEventListener("click", openModal);
+			closeBtn.removeEventListener("click", closeModal);
+			document.removeEventListener("astro:after-swap", closeModal);
 		};
-	}, []);
+	}, [didRun]);
 	return (
 		<div id="search" ref={rootRef} className="ms-auto">
 			<div className="w-full flex-1 md:w-auto md:flex-none">
@@ -116,27 +122,33 @@ export const Search = () => {
 							Search Blog Posts
 						</div>
 						<Button
-							className="ms-auto cursor-pointer"
-							variant="secondary"
+							className="focus-visible:ring-ring border-input hover:bg-accent hover:text-accent-foreground bg-muted/50 text-muted-foreground relative inline-flex h-8 w-fit cursor-pointer items-center justify-start gap-2 rounded-[0.5rem] border px-4 py-2 text-sm font-normal whitespace-nowrap shadow-none transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 sm:pr-12 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+							variant="outline"
 							data-close-modal
 						>
-							Close
+							<span className="text-primary inline-flex text-xs">
+								Close
+							</span>
+							<kbd className="bg-muted pointer-events-none absolute top-[0.3rem] right-[0.3rem] hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
+								<span className="text-xs">Esc</span>
+							</kbd>
 						</Button>
 					</div>
-					{false && import.meta.env.DEV ? (
-						<div className="mx-auto text-center">
+					{import.meta.env.DEV ? (
+						<div className="mx-auto text-center text-xs">
 							<p>
 								Search is only available in production builds.{" "}
 								<br />
-								Try building and previewing the site to test it
-								out locally.
+								If you get out of date results try running{" "}
+								<code className="text-xs!">npm run build</code>.
+								<br />
+								This warning only appears in development.
 							</p>
 						</div>
-					) : (
-						<div className="search-container">
-							<div id="pagefind__search" />
-						</div>
-					)}
+					) : null}
+					<div className="search-container">
+						<div id="pagefind__search" />
+					</div>
 				</div>
 			</dialog>
 		</div>
