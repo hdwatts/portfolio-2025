@@ -7,6 +7,7 @@ import pdf from 'astro-pdf'
 import mdx from '@astrojs/mdx';
 
 import sitemap from '@astrojs/sitemap';
+import { pagefindCopier } from './src/lib/pageFindCopier';
 
 export default defineConfig({
   site: 'https://hdwatts.com',
@@ -18,7 +19,7 @@ pages: {
   {
     filter: (page) => !page.includes('hidden__'),
   }
-)],
+), pagefindCopier()],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }
