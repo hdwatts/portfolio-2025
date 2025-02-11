@@ -16,7 +16,7 @@ pages: {
 }
 })*/, mdx(), sitemap(
   {
-    filter: (page) => !page.includes('hiden__'),
+    filter: (page) => !page.includes('hidden__'),
   }
 )],
   output: 'static',
