@@ -60,13 +60,13 @@ export const Experience = () => (
 				<div className="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-80%" />
 			</div>
 
-			<div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-500">
+			<div className="z-10 flex justify-end gap-1 p-4 text-xs text-gray-400">
 				<p>
 					Curious how I built this animation? Read the full breakdown
 					in{" "}
 					<Link
 						href="/blog/enhancing-portfolio-animated-scroll"
-						className="hover:text-primary text-gray-500 opacity-100 transition-colors"
+						className="hover:text-primary text-gray-400 opacity-100 transition-colors"
 					>
 						this blog post
 					</Link>
