@@ -1,8 +1,7 @@
 import { navigate } from "astro:transitions/client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	CommandDialog,
-	CommandEmpty,
 	CommandGroup,
 	CommandInput,
 	CommandItem,
@@ -26,15 +25,36 @@ type SearchResponse = {
 	results: SearchResult[];
 };
 
-type DecoratedWindow = {
-	loadPagefind?: () => void;
-	pagefind?: { debouncedSearch: (value: string) => SearchResponse };
+type Pagefind = {
+	init: () => void;
+	debouncedSearch: (value: string) => SearchResponse;
+};
+
+const initPagefind = async (): Promise<Pagefind> => {
+	try {
+		const module = import.meta.env.DEV
+			? "../../dist/pagefind/pagefind.js"
+			: "/pagefind/pagefind.js";
+		const pagefind = (await import(/* @vite-ignore */ module)) as Pagefind;
+
+		pagefind.init();
+
+		return pagefind;
+	} catch (e) {
+		return {
+			init: () => {},
+			debouncedSearch: (v: string) => ({
+				results: [],
+			}),
+		};
+	}
 };
 
 export const Search = () => {
 	const [open, setOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState<string>();
 	const [results, setResults] = useState<SearchResultData[]>([]);
+	const [pagefind, setPagefind] = useState<Pagefind>();
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -48,17 +68,18 @@ export const Search = () => {
 
 	const onChange = async (value: string) => {
 		setSearchTerm(value);
-		const decoratedWindow = window as DecoratedWindow;
-		await decoratedWindow?.loadPagefind?.();
-		if (decoratedWindow?.pagefind) {
-			const search =
-				await decoratedWindow.pagefind.debouncedSearch(value);
+		let _pagefind = pagefind;
+		if (!_pagefind) {
+			_pagefind = await initPagefind();
+			setPagefind(_pagefind);
+		}
+		if (_pagefind) {
+			const search = await _pagefind.debouncedSearch(value);
 			if (search) {
 				const data = [];
 				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
 					data.push(await search.results[a].data());
 				}
-				console.log(data);
 				setResults(data);
 			}
 		}
