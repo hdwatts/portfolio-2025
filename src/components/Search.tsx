@@ -122,6 +122,7 @@ export const Search = () => {
 						value={searchTerm}
 						onValueChange={onChange}
 						isLoading={isSearching}
+						autoFocus
 					/>
 				) : (
 					<div className="flex justify-center py-4 text-sm">
