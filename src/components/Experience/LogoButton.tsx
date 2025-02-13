@@ -52,7 +52,7 @@ export const LogoButton = ({
 			)}
 			style={{ backgroundColor }}
 		>
-			<div className="flex grow justify-center">
+			<div className="pointer-events-none flex grow justify-center">
 				<img src={src} width={100} height={100} alt={`${label} logo`} />
 			</div>
 			<span
