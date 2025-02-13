@@ -5,16 +5,18 @@ tags: [react, pagefind, tailwindcss, astro, vercel, shadcn/ui]
 slug: pagefind-static-search-astro-vercel-react
 thumbnailUrl: /blog/search-bar-post/thumbnail.png
 isPublished: false
-datePublished: "Feb 20 2025"
+datePublished: "Feb 13 2025"
 ---
 
-[Pagefind](https://pagefind.app/) is a library that allows you to host a static search index for your users to query against. The key differentiating feature here is that it is a purely **static** implementation, so there is no extra infrastructure needed for my portfolio site. It is also packed with features, which I've only begun to scratch the service of...but the most important feature is it's speed and small bandwidth footprint.
+[Pagefind](https://pagefind.app/) is a library that enables static search indexing, allowing users to query a website's content without requiring additional infrastructure. Its key differentiator is that it is entirely static — meaning my portfolio site doesn't need extra backend services to support search functionality. Pagefind is also packed with features, many of which I've only begun to explore. However, the most important aspects for me are its speed and minimal bandwidth footprint.
+
+## Why Pagefind?
 
 Per the Pagefind maintainers:
 
 > The goal of Pagefind is that websites with tens of thousands of pages should be searchable by someone in their browser, while consuming as little bandwidth as possible. [...] Pagefind can run a full-text search on a 10,000 page site with a total network payload under 300kB, including the Pagefind library itself. For most sites, this will be closer to 100kB.
 
-Doing a quick test on my small blog, we can see their predictions are spot on.
+Running a quick test on my small blog confirmed that their predictions were spot on.
 
 <BlogImage
 	src="/blog/search-bar-post/low-bandwidth.png"
@@ -23,12 +25,439 @@ Doing a quick test on my small blog, we can see their predictions are spot on.
 	caption="Only 92.7 kB transferred"
 />
 
-## Importing the library
+There are alternative search options, but they often require third-party services or additional infrastructure. So, how do we integrate Pagefind into an Astro-powered site?
 
-## Exclude code in pagefind.yml
+## Building the index
 
-- pagefind.yml
+First, install Pagefind as a development dependency:
+
+`npm i -D pagefind`
+
+You might be surprised that it's a dev dependency. That's because Pagefind itself is just a CLI tool; it doesn't run on the client. Instead, we use the CLI to generate the necessary JavaScript files, which are then loaded dynamically. To ensure this happens automatically, add it to the build script in `package.json`:
+
+```json
+{
+	"scripts": {
+		"build": "astro build && pagefind --site dist"
+	}
+}
+```
+
+> Note: If your output directory differs from `dist`, adjust the script accordingly.
+
+Now, when the build script runs, Astro first generates the static site, then Pagefind indexes the output. By default, Pagefind places its output in a `/pagefind` directory within the output folder.
+
+One key takeaway: the search index is not automatically regenerated on hot reload. To see changes, you'll need to rebuild the site with `npm run build`.
+
+## Accessing the library
+
+Pagefind's documentation is somewhat sparse on setup specifics. Searching the Astro ecosystem, most recommendations suggest using the default Pagefind UI. However, I wanted a custom UI that fit my theme and was built with React.
+
+Initially, I tried copying the Pagefind output into Astro's public folder and following the [official instructions](https://pagefind.app/docs/api/). However, this approach resulted in an error:
+
+`Cannot import non-asset file /pagefind/pagefind.js which is inside /public`
+
+To resolve this, I set up different import strategies for development and production builds:
+
+```tsx
+const initPagefind = async (): Promise<Pagefind> => {
+	try {
+		// Note: Your path to dist may be different from mine.
+		const module = import.meta.env.DEV
+			? "../../dist/pagefind/pagefind.js"
+			: "/pagefind/pagefind.js";
+		const pagefind = (await import(/* @vite-ignore */ module)) as Pagefind;
+
+		pagefind.init();
+
+		return pagefind;
+	} catch (e) {
+		return {
+			init: () => {},
+			debouncedSearch: (v: string) => ({
+				results: [],
+			}),
+		};
+	}
+};
+```
+
+This worked seamlessly!
+
+## Building the UI
+
+I used the [shadcn/ui Command component](https://ui.shadcn.com/docs/components/command) as the foundation for my search interface. I recommend following its installation instructions if you want to implement something similar.
+
+To trigger the search bar, I added a button in my header that calls a function when clicked.
+
+```tsx
+<button
+	onClick={() => openSearchBar(true)}
+	className="focus-visible:ring-ring border-input hover:bg-accent hover:text-accent-foreground bg-muted/50 text-muted-foreground relative inline-flex h-8 w-full items-center justify-start gap-2 rounded-[0.5rem] border px-4 py-2 text-sm font-normal whitespace-nowrap shadow-none transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 sm:pr-12 md:w-40 lg:w-56 xl:w-64 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+>
+	<span className="hidden lg:inline-flex">Search blog posts...</span>
+	<span className="inline-flex lg:hidden">Search...</span>
+	<kbd className="bg-muted pointer-events-none absolute top-[0.3rem] right-[0.3rem] hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
+		<span className="text-xs">⌘</span>K
+	</kbd>
+</button>
+```
+
+Additionally, I wanted users to be able to open the search with CMD+K (or CTRL+K on Windows/Linux):
+
+```tsx
+useEffect(() => {
+	const down = (e: KeyboardEvent) => {
+		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			openSearchBar((open) => !open);
+		}
+	};
+	document.addEventListener("keydown", down);
+	return () => document.removeEventListener("keydown", down);
+}, []);
+```
+
+And finally for the search bar itself, I added a default "Go Home" option and then built a simple UI around the search results.
+
+```tsx
+<CommandDialog open={open} onOpenChange={openSearchBar}>
+	<DialogTitle className="hidden items-center"></DialogTitle>
+	{!isLoading ? (
+		<CommandInput
+			placeholder="Type to search..."
+			value={searchTerm}
+			onValueChange={onChange}
+			autoFocus
+		/>
+	) : (
+		<div className="flex justify-center py-4 text-sm">
+			Loading search...
+		</div>
+	)}
+	<CommandList>
+		<CommandGroup>
+			<CommandItem onSelect={() => navigate("/")}>
+				<HomeIcon />
+				Go Home
+			</CommandItem>
+		</CommandGroup>
+
+		<CommandSeparator alwaysRender />
+		{!results.length && searchTerm ? (
+			<div className="flex justify-center py-4 text-sm">
+				No results found
+			</div>
+		) : null}
+		{results.length ? (
+			<CommandGroup heading="Search Results">
+				{results.map((result) => (
+					<CommandItem
+						key={result.raw_url}
+						onSelect={() => navigate(result.raw_url)}
+						className="flex flex-nowrap items-center justify-center gap-2"
+					>
+						<div className="min-w-[150px]">
+							<img
+								src={result.meta.image}
+								width={150}
+								className="outline-secondary rounded-2xl outline"
+							/>
+						</div>
+						<div className="border-primary flex shrink flex-col gap-4 border-l-2 pl-4">
+							<div className="w-full overflow-hidden text-sm font-bold sm:text-base">
+								{result.meta.title}
+							</div>
+							<div
+								className="text-xs sm:text-sm"
+								dangerouslySetInnerHTML={{
+									__html: result.excerpt,
+								}}
+							/>
+						</div>
+					</CommandItem>
+				))}
+			</CommandGroup>
+		) : null}
+	</CommandList>
+	{import.meta.env.DEV ? <CommandSeparator alwaysRender /> : null}
+	{import.meta.env.DEV ? (
+		<div className="mx-auto my-4 text-center text-xs">
+			<p>
+				Search is only available in production builds. <br />
+				If you get out of date or no results try running{" "}
+				<code className="text-xs!">npm run build</code>.
+				<br />
+				(This warning only appears in development)
+			</p>
+		</div>
+	) : null}
+</CommandDialog>
+```
+
+## Searching with pagefind
+
+To keep the initial page load lightweight, I ensured the Pagefind library was only imported when the search bar was opened:
+
+```tsx
+const [open, isOpen] = useState(false);
+const [isLoading, setIsLoading] = useState(false);
+const [pagefind, setPagefind] = useState<Pagefind>();
+
+const openSearchBar = async (open: SetStateAction<boolean>) => {
+	setOpen(open);
+	if (!pagefind && !isLoading) {
+		setIsLoading(true);
+		setPagefind(await initPagefind());
+		setIsLoading(false);
+	}
+};
+```
+
+Once the search bar is open, we can call debouncedSearch to query Pagefind. The function runs at most once every 300ms to prevent unnecessary searches on every keystroke.
+
+```tsx
+const SEARCH_LIMIT = 5;
+const [isSearching, setIsSearching] = useState(false);
+const [searchTerm, setSearchTerm] = useState<string>();
+const [results, setResults] = useState<SearchResultData[]>([]);
+
+const onChange = async (value: string) => {
+	setSearchTerm(value);
+
+	if (pagefind) {
+		setIsSearching(true);
+		const search = await pagefind.debouncedSearch(value);
+		if (search) {
+			const data = [];
+			for (
+				let a = 0;
+				a < Math.min(search.results.length, SEARCH_LIMIT);
+				a++
+			) {
+				data.push(await search.results[a].data());
+			}
+			setIsSearching(false);
+			setResults(data);
+		}
+	}
+};
+```
+
+## The Final Component
+
+<BlogImage
+	src="/blog/search-bar-post/search-ui.png"
+	height={400}
+	alt="The final component"
+	caption="The end result"
+/>
+
+Here is the end result of the code used for the component on my blog.
+
+```tsx
+type SearchResultData = {
+	meta: { image: string; title: string };
+	excerpt: string;
+	raw_url: string;
+};
+
+type SearchResult = {
+	data: () => Promise<SearchResultData>;
+};
+
+type SearchResponse = {
+	results: SearchResult[];
+};
+
+type Pagefind = {
+	init: () => void;
+	debouncedSearch: (value: string) => SearchResponse;
+};
+
+const initPagefind = async (): Promise<Pagefind> => {
+	try {
+		const module = import.meta.env.DEV
+			? "../../dist/pagefind/pagefind.js"
+			: "/pagefind/pagefind.js";
+		const pagefind = (await import(/* @vite-ignore */ module)) as Pagefind;
+
+		pagefind.init();
+
+		return pagefind;
+	} catch (e) {
+		return {
+			init: () => {},
+			debouncedSearch: (v: string) => ({
+				results: [],
+			}),
+		};
+	}
+};
+
+export const Search = () => {
+	const [open, setOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isSearching, setIsSearching] = useState(false);
+	const [searchTerm, setSearchTerm] = useState<string>();
+	const [results, setResults] = useState<SearchResultData[]>([]);
+	const [pagefind, setPagefind] = useState<Pagefind>();
+
+	const openSearchBar = async (open: SetStateAction<boolean>) => {
+		setOpen(open);
+		if (!pagefind && !isLoading) {
+			setIsLoading(true);
+			setPagefind(await initPagefind());
+			setIsLoading(false);
+		}
+	};
+	useEffect(() => {
+		const down = (e: KeyboardEvent) => {
+			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+				e.preventDefault();
+				openSearchBar((open) => !open);
+			}
+		};
+		document.addEventListener("keydown", down);
+		return () => document.removeEventListener("keydown", down);
+	}, []);
+
+	const onChange = async (value: string) => {
+		setSearchTerm(value);
+		if (pagefind) {
+			setIsSearching(true);
+			const search = await pagefind.debouncedSearch(value);
+			if (search) {
+				const data = [];
+				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
+					data.push(await search.results[a].data());
+				}
+				setIsSearching(false);
+				setResults(data);
+			}
+		}
+	};
+
+	return (
+		<div id="pagefind__search" className="ms-auto">
+			<div className="w-full flex-1 md:w-auto md:flex-none">
+				<button
+					onClick={() => openSearchBar(true)}
+					className="focus-visible:ring-ring border-input hover:bg-accent hover:text-accent-foreground bg-muted/50 text-muted-foreground relative inline-flex h-8 w-full items-center justify-start gap-2 rounded-[0.5rem] border px-4 py-2 text-sm font-normal whitespace-nowrap shadow-none transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 sm:pr-12 md:w-40 lg:w-56 xl:w-64 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+				>
+					<span className="hidden lg:inline-flex">
+						Search blog posts...
+					</span>
+					<span className="inline-flex lg:hidden">Search...</span>
+					<kbd className="bg-muted pointer-events-none absolute top-[0.3rem] right-[0.3rem] hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
+						<span className="text-xs">⌘</span>K
+					</kbd>
+				</button>
+			</div>
+			<CommandDialog open={open} onOpenChange={openSearchBar}>
+				<DialogTitle className="hidden items-center"></DialogTitle>
+				{!isLoading ? (
+					<CommandInput
+						placeholder="Type to search..."
+						value={searchTerm}
+						onValueChange={onChange}
+						isLoading={isSearching}
+						autoFocus
+					/>
+				) : (
+					<div className="flex justify-center py-4 text-sm">
+						Loading search...
+					</div>
+				)}
+				<CommandList>
+					<CommandGroup>
+						<CommandItem onSelect={() => navigate("/")}>
+							<HomeIcon />
+							Go Home
+						</CommandItem>
+					</CommandGroup>
+
+					<CommandSeparator alwaysRender />
+					{!results.length && searchTerm ? (
+						<div className="flex justify-center py-4 text-sm">
+							No results found
+						</div>
+					) : null}
+					{results.length ? (
+						<CommandGroup heading="Search Results">
+							{results.map((result) => (
+								<CommandItem
+									key={result.raw_url}
+									onSelect={() => navigate(result.raw_url)}
+									className="flex flex-nowrap items-center justify-center gap-2"
+								>
+									<div className="min-w-[150px]">
+										<img
+											src={result.meta.image}
+											width={150}
+											className="outline-secondary rounded-2xl outline"
+										/>
+									</div>
+									<div className="border-primary flex shrink flex-col gap-4 border-l-2 pl-4">
+										<div className="w-full overflow-hidden text-sm font-bold sm:text-base">
+											{result.meta.title}
+										</div>
+										<div
+											className="text-xs sm:text-sm"
+											dangerouslySetInnerHTML={{
+												__html: result.excerpt,
+											}}
+										/>
+									</div>
+								</CommandItem>
+							))}
+						</CommandGroup>
+					) : null}
+				</CommandList>
+				{import.meta.env.DEV ? <CommandSeparator alwaysRender /> : null}
+				{import.meta.env.DEV ? (
+					<div className="mx-auto my-4 text-center text-xs">
+						<p>
+							Search is only available in production builds.{" "}
+							<br />
+							If you get out of date or no results try running{" "}
+							<code className="text-xs!">npm run build</code>.
+							<br />
+							(This warning only appears in development)
+						</p>
+					</div>
+				) : null}
+			</CommandDialog>
+		</div>
+	);
+};
+```
 
 ## Deploying to Vercel
 
-- vercel.json
+The component worked perfectly in development, but when I deployed to Vercel, my Pagefind files were missing! This happened because Vercel's Astro integration moves the output to `.vercel/output/static` before running the build command.
+
+To fix this, I created a `vercel.json` file:
+
+```json
+{
+	"buildCommand": "astro build && pagefind --site .vercel/output/static"
+}
+```
+
+## Including and Excluding Items from Pagefind
+
+By default, Pagefind indexes everything in the HTML body. To specify what should be indexed, I added a `data-pagefind-body` attribute to my main blog layout:
+
+`<div data-pagefind-body>`
+
+To exclude elements, I created a `pagefind.yml` file and specified unwanted selectors. In my case, I wanted to exclude code blocks:
+
+```yml
+exclude_selectors:
+    - .astro-code
+```
+
+## Conclusion
+
+And there you have it! This is how I implemented a lightning-fast, low-bandwidth, statically hosted search for my blog. Next, I plan to explore advanced features like custom filters, weights, and sorting to further refine the search experience.

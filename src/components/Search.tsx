@@ -79,14 +79,9 @@ export const Search = () => {
 
 	const onChange = async (value: string) => {
 		setSearchTerm(value);
-		let _pagefind = pagefind;
-		if (!_pagefind) {
-			_pagefind = await initPagefind();
-			setPagefind(_pagefind);
-		}
-		if (_pagefind) {
+		if (pagefind) {
 			setIsSearching(true);
-			const search = await _pagefind.debouncedSearch(value);
+			const search = await pagefind.debouncedSearch(value);
 			if (search) {
 				const data = [];
 				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
