@@ -1,5 +1,5 @@
 import { navigate } from "astro:transitions/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import {
 	CommandDialog,
 	CommandGroup,
@@ -52,14 +52,25 @@ const initPagefind = async (): Promise<Pagefind> => {
 
 export const Search = () => {
 	const [open, setOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isSearching, setIsSearching] = useState(false);
 	const [searchTerm, setSearchTerm] = useState<string>();
 	const [results, setResults] = useState<SearchResultData[]>([]);
 	const [pagefind, setPagefind] = useState<Pagefind>();
+
+	const openSearchBar = async (open: SetStateAction<boolean>) => {
+		setOpen(open);
+		if (!pagefind && !isLoading) {
+			setIsLoading(true);
+			setPagefind(await initPagefind());
+			setIsLoading(false);
+		}
+	};
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 				e.preventDefault();
-				setOpen((open) => !open);
+				openSearchBar((open) => !open);
 			}
 		};
 		document.addEventListener("keydown", down);
@@ -74,13 +85,14 @@ export const Search = () => {
 			setPagefind(_pagefind);
 		}
 		if (_pagefind) {
+			setIsSearching(true);
 			const search = await _pagefind.debouncedSearch(value);
 			if (search) {
 				const data = [];
 				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
 					data.push(await search.results[a].data());
 				}
-				console.log(data);
+				setIsSearching(false);
 				setResults(data);
 			}
 		}
@@ -90,7 +102,7 @@ export const Search = () => {
 		<div id="pagefind__search" className="ms-auto">
 			<div className="w-full flex-1 md:w-auto md:flex-none">
 				<button
-					onClick={() => setOpen(true)}
+					onClick={() => openSearchBar(true)}
 					className="focus-visible:ring-ring border-input hover:bg-accent hover:text-accent-foreground bg-muted/50 text-muted-foreground relative inline-flex h-8 w-full items-center justify-start gap-2 rounded-[0.5rem] border px-4 py-2 text-sm font-normal whitespace-nowrap shadow-none transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 sm:pr-12 md:w-40 lg:w-56 xl:w-64 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
 				>
 					<span className="hidden lg:inline-flex">
@@ -102,13 +114,20 @@ export const Search = () => {
 					</kbd>
 				</button>
 			</div>
-			<CommandDialog open={open} onOpenChange={setOpen}>
+			<CommandDialog open={open} onOpenChange={openSearchBar}>
 				<DialogTitle className="hidden items-center"></DialogTitle>
-				<CommandInput
-					placeholder="Type to search..."
-					value={searchTerm}
-					onValueChange={onChange}
-				/>
+				{!isLoading ? (
+					<CommandInput
+						placeholder="Type to search..."
+						value={searchTerm}
+						onValueChange={onChange}
+						isLoading={isSearching}
+					/>
+				) : (
+					<div className="flex justify-center py-4 text-sm">
+						Loading search...
+					</div>
+				)}
 				<CommandList>
 					<CommandGroup>
 						<CommandItem onSelect={() => navigate("/")}>
