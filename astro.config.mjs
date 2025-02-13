@@ -5,7 +5,7 @@ import react from '@astrojs/react';
 import vercelStatic from '@astrojs/vercel';
 import pdf from 'astro-pdf'
 import mdx from '@astrojs/mdx';
-import pagefind from "astro-pagefind";
+
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
   {
     filter: (page) => !page.includes('hidden__'),
   }
-), pagefind()],
+)],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }

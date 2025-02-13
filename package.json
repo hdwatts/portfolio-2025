@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -21,7 +21,6 @@
     "@vercel/analytics": "^1.4.1",
     "astro": "^5.2.5",
     "astro-live-code": "^0.0.5",
-    "astro-pagefind": "^1.8.0",
     "astro-pdf": "^1.7.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
