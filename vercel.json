@@ -1,3 +1,0 @@
-{
-  "buildCommand": "astro build && pagefind --site .vercel/output/static"
-}

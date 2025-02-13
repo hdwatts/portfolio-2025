@@ -5,21 +5,16 @@ import react from '@astrojs/react';
 import vercelStatic from '@astrojs/vercel';
 import pdf from 'astro-pdf'
 import mdx from '@astrojs/mdx';
-
+import pagefind from "astro-pagefind";
 import sitemap from '@astrojs/sitemap';
-import { pagefindCopier } from './src/lib/pageFindCopier';
 
 export default defineConfig({
   site: 'https://hdwatts.com',
-  integrations: [react()/*, pdf({
-pages: {
-'/hidden__/resume': { path: 'resume.pdf' }
-}
-})*/, mdx(), sitemap(
+  integrations: [react(), mdx(), sitemap(
   {
     filter: (page) => !page.includes('hidden__'),
   }
-)],//, pagefindCopier()],
+), pagefind()],
   output: 'static',
   adapter: vercelStatic({
     webAnalytics: { enabled: true }

@@ -60,10 +60,28 @@ const siteTitle = `${title} ${titleSeparator} Howard Dean Watts`;
 
 <link rel="sitemap" href="/sitemap-index.xml" />
 
+<!-- Google tag (gtag.js) -->
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PJGYL19J0K"
+></script>
+<script>
+	// @ts-expect-error
+	window.dataLayer = window.dataLayer || [];
+	function gtag() {
+		// @ts-expect-error
+		dataLayer.push(arguments);
+	}
+	// @ts-expect-error
+	gtag("js", new Date());
+	// @ts-expect-error
+	gtag("config", "G-PJGYL19J0K");
+</script>
+
 <!-- RSS auto-discovery -->
-<!-- <link
+<link
 	rel="alternate"
 	type="application/rss+xml"
-	title={siteConfig.title}
+	title="Howard Dean Watts"
 	href="/rss.xml"
-/> -->
+/>

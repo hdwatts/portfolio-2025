@@ -2,11 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../../../layouts/Layout.astro";
 import Theme from "../../../layouts/Theme.astro";
-import {
-	TypographyH1,
-	TypographyH2,
-} from "../../../components/blog/Typography";
-import { Badge } from "../../../components/Badge";
+import { TypographyH1 } from "../../../components/blog/Typography";
 import { Tag as TagIcon } from "lucide-react";
 import PostList from "../../../components/blog/PostList.astro";
 import ReturnToBlog from "../../../components/blog/ReturnToBlog.astro";
@@ -18,7 +14,7 @@ export async function getStaticPaths() {
 	const postsByTag = posts.reduce<Record<string, typeof posts>>(
 		(acc, post) => {
 			for (const _tag of post.data.tags) {
-				const tag = _tag.toLowerCase();
+				const tag = encodeURIComponent(_tag.toLowerCase());
 				if (!acc[tag]) {
 					acc[tag] = [];
 				}
@@ -41,12 +37,14 @@ const { posts, tag } = Astro.props;
 ---
 
 <Theme />
-<Layout title={`Posts Tagged ${capitalizeFirstLetter(tag)}`}>
+<Layout
+	title={`Posts Tagged ${capitalizeFirstLetter(decodeURIComponent(tag))}`}
+>
 	<div class="flex w-full max-w-[900px] flex-col justify-between px-12">
 		<ReturnToBlog />
 		<div class="mb-4 flex items-center gap-4 border-b py-4">
 			<div><TagIcon width={28} height={28} /></div>
-			<TypographyH1>{tag}</TypographyH1>
+			<TypographyH1>{decodeURIComponent(tag)}</TypographyH1>
 		</div>
 		<div class="min-h-[400px]">
 			<PostList posts={posts} />

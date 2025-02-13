@@ -14,7 +14,7 @@ import { HomeIcon } from "lucide-react";
 type SearchResultData = {
 	meta: { image: string; title: string };
 	excerpt: string;
-	url: string;
+	raw_url: string;
 };
 
 type SearchResult = {
@@ -80,6 +80,7 @@ export const Search = () => {
 				for (let a = 0; a < Math.min(search.results.length, 5); a++) {
 					data.push(await search.results[a].data());
 				}
+				console.log(data);
 				setResults(data);
 			}
 		}
@@ -126,8 +127,8 @@ export const Search = () => {
 						<CommandGroup heading="Search Results">
 							{results.map((result) => (
 								<CommandItem
-									key={result.url}
-									onSelect={() => navigate(result.url)}
+									key={result.raw_url}
+									onSelect={() => navigate(result.raw_url)}
 									className="flex flex-nowrap items-center justify-center gap-2"
 								>
 									<div className="min-w-[150px]">
