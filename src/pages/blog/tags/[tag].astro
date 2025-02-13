@@ -8,9 +8,12 @@ import PostList from "../../../components/blog/PostList.astro";
 import ReturnToBlog from "../../../components/blog/ReturnToBlog.astro";
 
 export async function getStaticPaths() {
-	const posts = (await getCollection("blog")).filter(
-		(post) => post.data.isPublished || import.meta.env.DEV,
-	);
+	const posts = (await getCollection("blog"))
+		.filter((post) => post.data.isPublished || import.meta.env.DEV)
+		.sort(
+			(a, b) =>
+				b.data.datePublished.getTime() - a.data.datePublished.getTime(),
+		);
 	const postsByTag = posts.reduce<Record<string, typeof posts>>(
 		(acc, post) => {
 			for (const _tag of post.data.tags) {

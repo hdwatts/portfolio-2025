@@ -21,9 +21,12 @@ import TagList from "../../components/blog/TagList.astro";
 import { BlogImage } from "../../components/blog/BlogImage";
 
 export async function getStaticPaths() {
-	const posts = (await getCollection("blog")).filter(
-		(post) => post.data.isPublished || import.meta.env.DEV,
-	);
+	const posts = (await getCollection("blog"))
+		.filter((post) => post.data.isPublished || import.meta.env.DEV)
+		.sort(
+			(a, b) =>
+				b.data.datePublished.getTime() - a.data.datePublished.getTime(),
+		);
 	return posts.map((post) => ({
 		params: { id: post.data.slug },
 		props: { post },
