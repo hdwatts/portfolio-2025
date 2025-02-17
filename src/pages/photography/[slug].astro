@@ -49,8 +49,13 @@ const { photo } = Astro.props;
 		<Link href="/photography" className="flex items-center gap-1 text-sm"
 			><ArrowLeft width={14} />All Photos</Link
 		>
-		<div class="flex items-center justify-between gap-8" data-pagefind-body>
-			<TypographyH1>{photo.data.title}</TypographyH1>
+		<div
+			class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-8"
+			data-pagefind-body
+		>
+			<TypographyH1 className="text-2xl md:text-3xl"
+				>{photo.data.title}</TypographyH1
+			>
 			<Badge
 				className="flex h-fit w-fit justify-center gap-1 text-nowrap"
 				variant="secondary"
