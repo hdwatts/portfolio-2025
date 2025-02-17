@@ -52,8 +52,8 @@ const photos = await getPhotos();
 		class="flex w-full max-w-[1200px] flex-col justify-between gap-4 px-12"
 	>
 		<Masonry
-			class="flex flex-wrap"
-			columnClass="px-2 first:pl-0 last:pr-0"
+			class="flex gap-4"
+			columnClass=""
 			breakpointCols={{
 				default: 3,
 				1100: 3,
@@ -92,3 +92,9 @@ const photos = await getPhotos();
 	</div>
 </Layout>
 <script is:inline type="module" src="data:,"></script>
+
+<style is:global>
+	[data-masonry-container]:not(.initialized) {
+		flex-wrap: wrap;
+	}
+</style>
