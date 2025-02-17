@@ -537,5 +537,75 @@
 		"title": "Stein am Rhein Sunset",
 		"description": "The sun setting along the river next to Stein am Rhein.",
 		"location": "Stein am Rhein, Switzerland"
+	},
+	{
+		"slug": "aruba-flamingos-on-beach",
+		"src": "./aruba/1.jpg",
+		"title": "Flamingos on the Beach",
+		"description": "The flamingos of Renaissance Island walking along the beach.",
+		"location": "Renaissance Island, Aruba"
+	},
+	{
+		"slug": "aruba-flamingos-in-the-water",
+		"src": "./aruba/2.jpg",
+		"title": "Flamingos in the Water",
+		"description": "My wife in the water with the flamingos of Renaissance Island.",
+		"location": "Renaissance Island, Aruba"
+	},
+	{
+		"slug": "canada-mosaicultures-mother-nature",
+		"src": "./canada/2.jpg",
+		"title": "Mother Nature",
+		"description": "The mother nature sculpture from the Mosaiculture exhibit in Quebec.",
+		"location": "Quebec City, Canada"
+	},
+	{
+		"slug": "canada-montreal-gp-lando-norris",
+		"src": "./canada/3.jpg",
+		"title": "Lando Norris on Turn 10",
+		"description": "Lando Norris for McLaren during a wet qualifying run at the Formula 1 2022 Canadian Grand Prix.",
+		"location": "Circuit Gilles Villeneuve, Montreal, Canada"
+	},
+	{
+		"slug": "canada-montreal-gp-max-verstappen",
+		"src": "./canada/4.jpg",
+		"title": "Max Verstappen on Turn 10",
+		"description": "Max Verstappen at the Formula 1 2022 Canadian Grand Prix.",
+		"location": "Circuit Gilles Villeneuve, Montreal, Canada"
+	},
+	{
+		"slug": "canada-montreal-gp-charles-leclrec-lockup",
+		"src": "./canada/5.jpg",
+		"title": "Charles Leclrec Locks Up Chasing Max Verstappen",
+		"description": "Charles Leclrec locks up trying to make a move on Max Verstappen for first place at the Formula 1 2022 Canadian Grand Prix.",
+		"location": "Circuit Gilles Villeneuve, Montreal, Canada"
+	},
+	{
+		"slug": "iceland-northern-lights-1",
+		"src": "./iceland/1.jpg",
+		"title": "Icelandic Northern Lights",
+		"description": "My wife and I taking in the northern lights in Iceland.",
+		"location": "Thingvellir National Park, Iceland"
+	},
+	{
+		"slug": "iceland-northern-lights-2",
+		"src": "./iceland/2.jpg",
+		"title": "Icelandic Northern Lights",
+		"description": "My wife and I taking in the northern lights outside of our hotel in Iceland.",
+		"location": "Thingvellir National Park, Iceland"
+	},
+	{
+		"slug": "iceland-fjaorargljufur-canyon",
+		"src": "./iceland/3.jpg",
+		"title": "Fjaðrárgljúfur Canyon",
+		"description": "An over 2 million year old deep & winding river canyon in Iceland.",
+		"location": "Fjaðrárgljúfur Canyon, Iceland"
+	},
+	{
+		"slug": "virginia-cow-mountains",
+		"src": "./virginia/1.jpg",
+		"title": "Blue Ridge Mountains Cow",
+		"description": "A cow relaxing with the mountains of the Shanendoah National Park in the background.",
+		"location": "Madison County, Virginia, USA"
 	}
 ]
