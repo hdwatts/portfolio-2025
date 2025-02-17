@@ -27,10 +27,10 @@
 				loop
 				muted
 				playsinline
-				class="bg-background aspect-video rounded-lg"
+				class="lazy-video bg-background aspect-video rounded-lg"
 			>
 				<source
-					src="/video/wordtree-demo.mp4"
+					data-src="/video/wordtree-demo.mp4"
 					type="video/mp4"
 					class="aspect-video min-h-full min-w-full"
 				/>
@@ -42,3 +42,40 @@
 		</a>
 	</div>
 </div>
+
+<script is:inline>
+	document.addEventListener("DOMContentLoaded", function () {
+		var lazyVideos = [].slice.call(
+			document.querySelectorAll("video.lazy-video"),
+		);
+
+		if ("IntersectionObserver" in window) {
+			var lazyVideoObserver = new IntersectionObserver(function (
+				entries,
+				observer,
+			) {
+				entries.forEach(function (video) {
+					if (video.isIntersecting) {
+						for (var source in video.target.children) {
+							var videoSource = video.target.children[source];
+							if (
+								typeof videoSource.tagName === "string" &&
+								videoSource.tagName === "SOURCE"
+							) {
+								videoSource.src = videoSource.dataset.src;
+							}
+						}
+
+						video.target.load();
+						video.target.classList.remove("lazy");
+						lazyVideoObserver.unobserve(video.target);
+					}
+				});
+			});
+
+			lazyVideos.forEach(function (lazyVideo) {
+				lazyVideoObserver.observe(lazyVideo);
+			});
+		}
+	});
+</script>
