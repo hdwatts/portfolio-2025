@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Theme from "../../layouts/Theme.astro";
 import {
@@ -13,21 +13,16 @@ import {
 	TypographyP,
 	TypographyUL,
 } from "../../components/blog/Typography";
-import { Badge } from "../../components/Badge";
 import { Link } from "../../components/Link";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import ReturnToBlog from "../../components/blog/ReturnToBlog.astro";
 import TagList from "../../components/blog/TagList.astro";
 import BlogImage from "../../components/blog/BlogImage.astro";
 import { Image } from "astro:assets";
+import { getPosts } from "../../lib/getPosts";
 
 export async function getStaticPaths() {
-	const posts = (await getCollection("blog"))
-		.filter((post) => post.data.isPublished || import.meta.env.DEV)
-		.sort(
-			(a, b) =>
-				b.data.datePublished.getTime() - a.data.datePublished.getTime(),
-		);
+	const posts = await getPosts();
 	return posts.map((post) => ({
 		params: { id: post.data.slug },
 		props: { post },

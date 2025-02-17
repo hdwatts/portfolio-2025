@@ -1,16 +1,11 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Theme from "../../layouts/Theme.astro";
-import { TypographyH1, TypographyH2 } from "../../components/blog/Typography";
+import { TypographyH1 } from "../../components/blog/Typography";
 import PostList from "../../components/blog/PostList.astro";
+import { getPosts } from "../../lib/getPosts";
 
-const posts = (await getCollection("blog"))
-	.filter((post) => post.data.isPublished || import.meta.env.DEV)
-	.sort(
-		(a, b) =>
-			b.data.datePublished.getTime() - a.data.datePublished.getTime(),
-	);
+const posts = await getPosts();
 ---
 
 <Theme />

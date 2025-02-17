@@ -1,16 +1,14 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Theme from "../../layouts/Theme.astro";
-import { TypographyH1, TypographyH2 } from "../../components/blog/Typography";
+import { TypographyH1 } from "../../components/blog/Typography";
 import { Image } from "astro:assets";
 import { Camera } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Masonry } from "astro-masonry";
+import { getPhotos } from "../../lib/getPhotos";
 
-const photos = (await getCollection("photographs")).sort(
-	() => Math.random() - 0.5,
-);
+const photos = await getPhotos();
 ---
 
 <Theme />
@@ -51,43 +49,42 @@ const photos = (await getCollection("photographs")).sort(
 	</div>
 
 	<div class="flex w-full max-w-[900px] flex-col justify-between gap-4 px-12">
-		<div class="min-h-[400px]">
-			<Masonry
-				class="flex gap-4"
-				columnClass=""
-				breakpointCols={{
-					default: 3,
-					1100: 3,
-					700: 2,
-					500: 1,
-				}}
-			>
-				{
-					photos.map((photo) => (
-						<a
-							href={`/photography/${photo.data.slug}`}
-							class={cn(
-								"group/image relative z-0 mb-4 block cursor-pointer overflow-hidden rounded hover:z-10",
-							)}
-						>
-							<Image
-								transition:name={photo.data.slug}
-								src={photo.data.src}
-								alt={photo.data.title}
-								width={400}
-								loading="lazy"
-								class="bg-secondary transition-all group-hover/image:scale-105"
-							/>
-							<div class="absolute bottom-0 z-10 flex h-full w-full items-end opacity-0 group-hover/image:opacity-100">
-								<div class="bg-secondary absolute z-0 h-full w-full opacity-50" />
-								<div class="z-10 px-4 py-2 font-sans text-xs">
-									{photo.data.title}
-								</div>
+		<Masonry
+			class="flex gap-4"
+			columnClass=""
+			breakpointCols={{
+				default: 3,
+				1100: 3,
+				700: 2,
+				500: 1,
+			}}
+		>
+			{
+				photos.map((photo) => (
+					<a
+						href={`/photography/${photo.data.slug}`}
+						class={cn(
+							"group/image relative z-0 mb-4 block cursor-pointer overflow-hidden rounded hover:z-10",
+						)}
+					>
+						<Image
+							transition:name={photo.data.slug}
+							src={photo.data.src}
+							alt={photo.data.title}
+							width={400}
+							loading="lazy"
+							class="bg-secondary transition-all group-hover/image:scale-105"
+						/>
+						<div class="absolute bottom-0 z-10 flex h-full w-full items-end opacity-0 group-hover/image:opacity-100">
+							<div class="bg-secondary absolute z-0 h-full w-full opacity-50" />
+							<div class="z-10 px-4 py-2 font-sans text-xs">
+								{photo.data.title}
 							</div>
-						</a>
-					))
-				}
-			</Masonry>
-		</div>
+						</div>
+					</a>
+				))
+			}
+		</Masonry>
 	</div>
 </Layout>
+<script is:inline type="module" src="data:,"></script>
