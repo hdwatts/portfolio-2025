@@ -73,6 +73,8 @@ const photos = await getPhotos();
 							alt={photo.data.title}
 							width={400}
 							loading="lazy"
+							quality="max"
+							densities={[1, 1.5, 2]}
 							class="bg-secondary transition-all group-hover/image:scale-105"
 						/>
 						<div class="absolute bottom-0 z-10 flex h-full w-full items-end opacity-0 group-hover/image:opacity-100">
