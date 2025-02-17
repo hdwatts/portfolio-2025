@@ -1,0 +1,93 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Theme from "../../layouts/Theme.astro";
+import { TypographyH1, TypographyH2 } from "../../components/blog/Typography";
+import { Image } from "astro:assets";
+import { Camera } from "lucide-react";
+import { cn } from "../../lib/utils";
+import { Masonry } from "astro-masonry";
+
+const photos = (await getCollection("photographs")).sort(
+	() => Math.random() - 0.5,
+);
+---
+
+<Theme />
+<Layout title="Photography">
+	<div class="flex w-full max-w-[900px] flex-col justify-between gap-4 px-12">
+		<div class="flex flex-col gap-4 border-b py-4">
+			<TypographyH1>Photography</TypographyH1>
+		</div>
+	</div>
+	<div
+		class="text-accent-foreground relative flex w-full max-w-2xl flex-col items-center gap-8 md:flex-row"
+	>
+		<div class="md:absolute md:-left-12 lg:-left-16">
+			<div class="relative overflow-visible">
+				<div
+					class="from-primary absolute -top-2 -right-2 size-8 animate-ping rounded-full bg-radial to-transparent to-70%"
+					style={{
+						animationDuration: "5s",
+						animationTimingFunction:
+							"cubic-bezier(0,1.57,.48,1.18)",
+					}}
+				>
+				</div>
+				<Camera
+					width={32}
+					height={32}
+					className="animate-wave origin-bottom"
+					style={{
+						animationDuration: "5s",
+					}}
+				/>
+			</div>
+		</div>
+		<p class="border-l-4 px-4 font-sans lg:px-8">
+			Photography became a passion of mine through my wife and I's shared
+			love of travel. This collection showcases some of my favorite shots.
+		</p>
+	</div>
+
+	<div class="flex w-full max-w-[900px] flex-col justify-between gap-4 px-12">
+		<div class="min-h-[400px]">
+			<Masonry
+				class="flex gap-4"
+				columnClass=""
+				breakpointCols={{
+					default: 3,
+					1100: 3,
+					700: 2,
+					500: 1,
+				}}
+			>
+				{
+					photos.map((photo) => (
+						<a
+							href={`/photography/${photo.data.slug}`}
+							class={cn(
+								"group/image relative z-0 mb-4 block cursor-pointer overflow-hidden rounded hover:z-10",
+							)}
+						>
+							<Image
+								transition:name={photo.data.slug}
+								src={photo.data.src}
+								alt={photo.data.title}
+								width={400}
+								loading="lazy"
+								class="bg-secondary transition-all group-hover/image:scale-105"
+							/>
+							<div class="absolute bottom-0 z-10 flex h-full w-full items-end opacity-0 group-hover/image:opacity-100">
+								<div class="bg-secondary absolute z-0 h-full w-full opacity-50" />
+								<div class="z-10 px-4 py-2 font-sans text-xs">
+									{photo.data.title}
+								</div>
+							</div>
+						</a>
+					))
+				}
+			</Masonry>
+		</div>
+	</div>
+</Layout>

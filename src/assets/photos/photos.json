@@ -1,0 +1,541 @@
+[
+	{
+		"slug": "wild-mare-and-foal-on-sandy-dunes",
+		"src": "./animals/1.jpg",
+		"title": "Wild Mare and Foal on Sandy Dunes",
+		"description": "A wild pinto horse stands protectively over its young foal resting on the sandy dunes, surrounded by lush green vegetation.",
+		"location": "Assateague Island, Maryland, USA"
+	},
+	{
+		"slug": "galloping-wild-horses-in-coastal-landscape",
+		"src": "./animals/2.jpg",
+		"title": "Galloping Wild Horses in Coastal Landscape",
+		"description": "A group of wild horses, including a chestnut horse, a pinto horse, and a young foal, gallop through a mix of grassy and sandy terrain, embodying the spirit of freedom in nature.",
+		"location": "Assateague Island, Maryland, USA"
+	},
+	{
+		"slug": "osprey-in-flight-with-caught-fish",
+		"src": "./animals/3.jpg",
+		"title": "Osprey in Flight with Caught Fish",
+		"description": "An osprey soars through the bright blue sky, its wings fully extended while clutching a freshly caught fish in its talons, showcasing the power and precision of this bird of prey.",
+		"location": "Severn River, Maryland, USA"
+	},
+	{
+		"slug": "goat-reclining",
+		"src": "./animals/4.jpg",
+		"title": "Reclining Goat",
+		"description": "A goat I found relaxing on the slopes of the Lauterbrunnen Valley.",
+		"location": "Lauterbrunnen Valley, Switzerland"
+	},
+	{
+		"slug": "cat-relaxing",
+		"src": "./animals/5.jpg",
+		"title": "Relaxing Cat",
+		"description": "A peacefully resting cat I stumbled upon outside a church on an island in Stein am Rhein.",
+		"location": "Stein am Rhein, Switzerland"
+	},
+	{
+		"slug": "monkey-caught-in-rain",
+		"src": "./animals/6.jpg",
+		"title": "Monkey Caught in a Rainstorm",
+		"description": "An Ecuadorian Monkey suddenly finding themselves stuck in a rainstorm.",
+		"location": "Guayaquil, Ecuador"
+	},
+	{
+		"slug": "swimming-galapagos-penguin",
+		"src": "./animals/7.jpg",
+		"title": "Swimming Galapagos Penguin",
+		"description": "The only penguin found north of the equator, we caught this playful penguin swimming around us.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "galapagos-land-iguana",
+		"src": "./animals/8.jpg",
+		"title": "Galapagos Land Iguana Resting in the Rain",
+		"description": "A galapagos land iguana resting in the rain.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "sleepy-seal",
+		"src": "./animals/10.jpg",
+		"title": "Sleepy Seal",
+		"description": "A seal that was sound asleep moves to adjust itself.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "galapagos-chatting-birds",
+		"src": "./animals/11.jpg",
+		"title": "Chatting Birds",
+		"description": "Two swallow-tailed gulls deep in conversation.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "flying-albatross",
+		"src": "./animals/12.jpg",
+		"title": "Flying Albatross",
+		"description": "An albatross returning from a long flight to nest on the Galapagos Islands.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "swedish-lynx",
+		"src": "./animals/16.jpg",
+		"title": "Lynx in Swedish Woods",
+		"description": "A Lynx spotted in the woods outside Stockholm.",
+		"location": "Stockholm, Sweden"
+	},
+	{
+		"slug": "freshly-hatched-blue-footed-booby",
+		"src": "./animals/15.jpg",
+		"title": "Newborn Blue Footed Booby",
+		"description": "While observing the mother sitting in her nest, she adjusted herself just enough to let me capture the chick that had just hatched.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "galapagos-tortoise-in-woods",
+		"src": "./animals/14.jpg",
+		"title": "Giant Tortoise",
+		"description": "A giant tortoise nibbling on leaves in the woods.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "sally-lightfoot-crab",
+		"src": "./animals/13.jpg",
+		"title": "Sally Lightfoot Crab",
+		"description": "A colorful sally lightfoot crab nicely contrasted against the black volcanic rocks.",
+		"location": "Galapagos Islands, Ecuador"
+	},
+	{
+		"slug": "austria-hohensalzburg-fortress",
+		"src": "./austria/1.jpg",
+		"title": "Hohensalzburg Fortress",
+		"description": "The Hohensalzburg Fortress peeking through the trees.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "austria-above-salzburg",
+		"src": "./austria/2.jpg",
+		"title": "Above Salzburg's Old Town",
+		"description": "Taken from across the Salzach River in Salzburg looking out over the Old Town.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "salzburg-to-the-alps",
+		"src": "./austria/3.jpg",
+		"title": "From Salzburg to the Alps",
+		"description": "Salzburg's Old Town with the Austrian Alps in the distance.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "salzburg-sunset",
+		"src": "./austria/5.jpg",
+		"title": "Salzburg Sunset",
+		"description": "A sunset over Salzburg as we descend down the stairs.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "hellbrunn-castle-statue",
+		"src": "./austria/6.jpg",
+		"title": "Hellbrunn Castle Statue",
+		"description": "Hellbrunn Castle is known for its trick fountains.",
+		"location": "Hellbrunn Castle, Salzburg, Austria"
+	},
+	{
+		"slug": "redbull-flying-bulls-over-spielberg",
+		"src": "./austria/8.jpg",
+		"title": "Redbull Flying Bulls over Spielberg",
+		"description": "The Redbull Flying Bulls performing over the crowd at Formula 1 Austrian Grand Prix.",
+		"location": "Red Bull Ring, Spielberg, Austria"
+	},
+	{
+		"slug": "2023-austrian-grand-prix-race-start",
+		"src": "./austria/9.jpg",
+		"title": "2023 Austrian Grand Prix Race Start",
+		"description": "The grid shortly after race start and heading into turn 2.",
+		"location": "Red Bull Ring, Spielberg, Austria"
+	},
+	{
+		"slug": "sunset-hohensalzburg-fortress",
+		"src": "./austria/12.jpg",
+		"title": "Hohensalzburg Fortress at Sunset",
+		"description": "The sun setting behind the Hohensalzburg Fortress.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "couple-walking-towards-hohensalzburg-fortress",
+		"src": "./austria/14.jpg",
+		"title": "Couple Walking Towards Fortress",
+		"description": "A couple heading up to the fortress as storm clouds roll in.",
+		"location": "Salzburg, Austria"
+	},
+	{
+		"slug": "wolfgangsee-shoreline",
+		"src": "./austria/15.jpg",
+		"title": "Wolfgangsee Shoreline",
+		"description": "The shoreline of Wolfgangsee as a ferry comes in to dock.",
+		"location": "St. Wolfgang, Austria"
+	},
+	{
+		"slug": "looking-out-schafbergbahn-window",
+		"src": "./austria/16.jpg",
+		"title": "Looking Out the Schafbergbahn Window",
+		"description": "The Schafbergbahn is the steepest cog railway in Austria and takes you up to the top of the Schafsberg Mountain.",
+		"location": "Schafberg, St. Wolfgang, Austria"
+	},
+	{
+		"slug": "schafberg-mountain-fog",
+		"src": "./austria/17.jpg",
+		"title": "Schafberg Mountain Fog",
+		"description": "At the top of the Schafberg, there was an extremely thick fog that was blocked by the mountain ridge.",
+		"location": "Schafberg, St. Wolfgang, Austria"
+	},
+	{
+		"slug": "schafberg-mountain-clear",
+		"src": "./austria/18.jpg",
+		"title": "Schafberg Mountain Top",
+		"description": "The view from the top of Schafberg Mountain once the fog had cleared.",
+		"location": "Schafberg, St. Wolfgang, Austria"
+	},
+	{
+		"slug": "schafberg-mountain-hike",
+		"src": "./austria/19.jpg",
+		"title": "Hiking Down Schafberg Mountain",
+		"description": "Hiking down Schafberg Mountain, taking in the view of the Austrian Alps and Wolfgangsee",
+		"location": "Schafberg, St. Wolfgang, Austria"
+	},
+	{
+		"slug": "schafbergbahn-train",
+		"src": "./austria/20.jpg",
+		"title": "The Schafbergbahn",
+		"description": "The Schafbergbahn is the steepest cog railway in Austria and takes you up to the top of the Schafsberg Mountain.",
+		"location": "Schafberg, St. Wolfgang, Austria"
+	},
+	{
+		"slug": "hallstatt-austria",
+		"src": "./austria/21.jpg",
+		"title": "Hallstatt Austria",
+		"description": "Looking out over a lake towards the small town of Hallstat.",
+		"location": "Hallstatt, Austria"
+	},
+	{
+		"slug": "blueangels-in-formation",
+		"src": "./blueangels/1.jpg",
+		"title": "Blue Angels",
+		"description": "The Blue Angels flying in formation.",
+		"location": "Severn River, Maryland, USA"
+	},
+	{
+		"slug": "california-hall-wines-vines",
+		"src": "./california/1.jpg",
+		"title": "HALL Wines - Vineyard",
+		"description": "Looking out over the grapevines at HALL Wines.",
+		"location": "St. Helena, California, USA"
+	},
+	{
+		"slug": "california-hall-wines-rabbit",
+		"src": "./california/2.jpg",
+		"title": "HALL Wines - Rabbit",
+		"description": "The Rabbit statue at HALL Wines dancing through the vines.",
+		"location": "St. Helena, California, USA"
+	},
+	{
+		"slug": "napa-valley-hot-air-balloon",
+		"src": "./california/3.jpg",
+		"title": "Hot Air Balloon in Napa Valley",
+		"description": "A hot air balloon landing in Napa Valley.",
+		"location": "Napa Valley, California, USA"
+	},
+	{
+		"slug": "pacific-coast-highway",
+		"src": "./california/4.jpg",
+		"title": "Pacific Coast Highway",
+		"description": "Looking out over the Pacific Coast Highway.",
+		"location": "Big Sur, California, USA"
+	},
+	{
+		"slug": "pacific-coast-highway-sunset",
+		"src": "./california/5.jpg",
+		"title": "Sunset over the Pacific Coast Highway",
+		"description": "Sunset over the Pacific Coast Highway.",
+		"location": "Big Sur, California, USA"
+	},
+	{
+		"slug": "california-seals-fighting",
+		"src": "./california/6.jpg",
+		"title": "Seals Arguing",
+		"description": "Seals arguing on the beach.",
+		"location": "San Simeon, California, USA"
+	},
+	{
+		"slug": "paso-robles-field-of-lights",
+		"src": "./california/7.jpg",
+		"title": "Field of Lights",
+		"description": "The field of lights exhibit in Paso Robles.",
+		"location": "Paso Robles, California, USA"
+	},
+	{
+		"slug": "mount-tamalpais-fog",
+		"src": "./california/8.jpg",
+		"title": "Above the Clouds",
+		"description": "Walking above the Clouds on Mount Tamalpais.",
+		"location": "Mount Tamalpais, California, USA"
+	},
+	{
+		"slug": "montreal-botanical-gardens",
+		"src": "./canada/1.jpg",
+		"title": "Bridge over Water Lillies",
+		"description": "Walking over a bridge in the Montreal Botanical Gardens.",
+		"location": "Montreal, Canada"
+	},
+	{
+		"slug": "morning-galapagos-bartolome-island",
+		"src": "./galapagos/1.jpg",
+		"title": "Sunrise at Bartolome Island",
+		"description": "The sun rising behind a dramatic rock fixture off of Bartolome Island.",
+		"location": "Bartolome Island, Galapagos, Ecuador"
+	},
+	{
+		"slug": "heron-on-volcanic-rocks",
+		"src": "./galapagos/2.jpg",
+		"title": "Heron Hunting Crabs",
+		"description": "A heron perched atop volcanic rocks hunting for crabs.",
+		"location": "Galapagos, Ecuador"
+	},
+	{
+		"slug": "flamingo-in-a-pond",
+		"src": "./galapagos/3.jpg",
+		"title": "Flamingo Walking in a Pond",
+		"description": "A flamingo walking through a pond.",
+		"location": "Galapagos, Ecuador"
+	},
+	{
+		"slug": "seal-getting-splashed",
+		"src": "./galapagos/4.jpg",
+		"title": "Waves Crashing Against a Seal",
+		"description": "A seal perched atop a rugged coastline getting splashed by the oncoming waves.",
+		"location": "Galapagos, Ecuador"
+	},
+	{
+		"slug": "blue-footed-boobys-in-the-mist",
+		"src": "./galapagos/5.jpg",
+		"title": "Blue Footed Boobys in the Mist",
+		"description": "Blue Footed Boobys standing on volcanic rocks surrounded by mist caused by rough surf.",
+		"location": "Galapagos, Ecuador"
+	},
+	{
+		"slug": "seceda-ridgeline-drone-shot",
+		"src": "./italy/1.jpg",
+		"title": "The  Seceda Ridgeline",
+		"description": "My wife and I at the top of the Seceda ridgeline in the Italian Dolomites.",
+		"location": "Seceda, Ortisei, Italy"
+	},
+	{
+		"slug": "dolomites-cloud-cover",
+		"src": "./italy/2.jpg",
+		"title": "Dolomites Cloud Cover",
+		"description": "A dramatic Dolomite peak poking through the clouds.",
+		"location": "Ortisei, Italy"
+	},
+	{
+		"slug": "seceda-cows-dolomite-back",
+		"src": "./italy/4.jpg",
+		"title": "Cows Looking Down Seceda",
+		"description": "Looking down Seceda at a herd of highland cattle with a Dolomite mountain (Langkofel) in the background.",
+		"location": "Seceda, Ortisei, Italy"
+	},
+	{
+		"slug": "nikki-hiking-dolomites",
+		"src": "./italy/5.jpg",
+		"title": "Hiking Towards Langkofel",
+		"description": "My wife hiking down Seceda towards Langkofel in the Italian Dolomites.",
+		"location": "Seceda, Ortisei, Italy"
+	},
+	{
+		"slug": "nikki-hiking-seceda",
+		"src": "./italy/6.jpg",
+		"title": "Hiking Along the Seceda Ridgeline",
+		"description": "My wife hiking along the Seceda ridgeline.",
+		"location": "Seceda, Ortisei, Italy"
+	},
+	{
+		"slug": "nikki-porch-como-tremezzo",
+		"src": "./italy/7.jpg",
+		"title": "Lake Como Porch",
+		"description": "My wife out on a porch in Tremezzo.",
+		"location": "Tremezzo, Como, Italy"
+	},
+	{
+		"slug": "lake-como-wooden-boatride",
+		"src": "./italy/8.jpg",
+		"title": "Wooden Boatride on Lake Como",
+		"description": "Driving a classic wooden boat around Lake Como.",
+		"location": "Lake Como, Italy"
+	},
+	{
+		"slug": "jamaica-swing",
+		"src": "./jamaica/1.jpg",
+		"title": "Caribbean Swing Set",
+		"description": "My wife swinging on an overwater swing set in the Caribbean.",
+		"location": "Caribbean Sea, Jamaica"
+	},
+	{
+		"slug": "tulum-beachfront-porch",
+		"src": "./mexico/1.jpg",
+		"title": "Breakfast in Tulum",
+		"description": "My wife enjoying breakfast on a beachfront porch in Tulum.",
+		"location": "Tulum, Mexico"
+	},
+	{
+		"slug": "tulum-poolside",
+		"src": "./mexico/2.jpg",
+		"title": "Poolside in Tulum",
+		"description": "My wife sitting poolside in Tulum.",
+		"location": "Tulum, Mexico"
+	},
+	{
+		"slug": "tulum-overlooking-caribbean",
+		"src": "./mexico/3.jpg",
+		"title": "Tulum Balcony",
+		"description": "Overlooking the Caribbean from our balcony in Tulum.",
+		"location": "Tulum, Mexico"
+	},
+	{
+		"slug": "new-york-independence-day-fireworks",
+		"src": "./newyork/1.jpg",
+		"title": "July 4th New York",
+		"description": "My wife in our apartment, taking in the fireworks being launched from barges in the East River.",
+		"location": "New York City, New York, USA"
+	},
+	{
+		"slug": "north-carolina-dry-falls",
+		"src": "./northcarolina/1.jpg",
+		"title": "Dry Falls",
+		"description": "Dry Falls in the Nantahala National Forest.",
+		"location": "Nantahala National Forest, North Carolina, USA"
+	},
+	{
+		"slug": "north-carolina-high-falls",
+		"src": "./northcarolina/2.jpg",
+		"title": "High Falls",
+		"description": "The largest waterfall in DuPont Forest near Asheville, North Carolina.",
+		"location": "DuPont Forest, North Carolina, USA"
+	},
+	{
+		"slug": "nevis-oualie-beach",
+		"src": "./stkitts/1.jpg",
+		"title": "Oualie Beach",
+		"description": "Walking on Oualie Beach in Nevis - the hills of St. Kitts in the background.",
+		"location": "Oualie Beach, Nevis, St. Kitts and Nevis"
+	},
+	{
+		"slug": "st-kitts-shipwreck",
+		"src": "./stkitts/2.jpg",
+		"title": "Shipwreck",
+		"description": "Shipwreck off of St. Kitts in Shitten Bay.",
+		"location": "Shitten Bay, St. Kitts and Nevis"
+	},
+	{
+		"slug": "nevis-bungalows",
+		"src": "./stkitts/3.jpg",
+		"title": "Nevis Bungalows",
+		"description": "Bungalows on the beaches of Nevis. These bungalows are part of Paradise Beach resort.",
+		"location": "Paradise Beach, Nevis, St. Kitts and Nevis"
+	},
+	{
+		"slug": "st-kitts-trees-nevis",
+		"src": "./stkitts/4.jpg",
+		"title": "Palm Trees & Nevis Peak",
+		"description": "Palm trees on the beaches of St. Kitts aligning with the Nevis Peak across the bay.",
+		"location": "St. Kitts and Nevis"
+	},
+	{
+		"slug": "st-kitts-timothy-hill",
+		"src": "./stkitts/5.jpg",
+		"title": "Timothy Hill",
+		"description": "A great viewpoint for the southern half of St. Kitts.",
+		"location": "Timothy Hill, St. Kitts and Nevis"
+	},
+	{
+		"slug": "switzerland-lake-brienz",
+		"src": "./switzerland/1.jpg",
+		"title": "Lake Brienz",
+		"description": "The beautiful blue waters of Lake Brienz.",
+		"location": "Lake Brienz, Interlaken, Switzerland"
+	},
+	{
+		"slug": "switzerland-interlaken-windowsill",
+		"src": "./switzerland/2.jpg",
+		"title": "Switzerland Windowsill",
+		"description": "Looking out at the Swiss Alps from a window near Interlaken.",
+		"location": "Interlaken, Switzerland"
+	},
+	{
+		"slug": "switzerland-lauterbrunnen-valley-animals",
+		"src": "./switzerland/4.jpg",
+		"title": "Farm Animals in Lauterbrunnen",
+		"description": "Farm animals relaxing outside of Wengen in the Lauterbrunnen Valley.",
+		"location": "Wengen, Lauterbrunnen Valley, Switzerland"
+	},
+	{
+		"slug": "switzerland-hiking-mannlichen",
+		"src": "./switzerland/5.jpg",
+		"title": "Hiking Männlichen",
+		"description": "Hiking along the top of Männlichen.",
+		"location": "Mannlichen, Lauterbrunnen Valley, Switzerland"
+	},
+	{
+		"slug": "switzerland-mittelhorn-storm",
+		"src": "./switzerland/6.jpg",
+		"title": "The Mittelhorn Storm",
+		"description": "A storm heading towards the Mittelhorn in Switzerland.",
+		"location": "Mannlichen, Lauterbrunnen Valley, Switzerland"
+	},
+	{
+		"slug": "switzerland-appenzell-sunset",
+		"src": "./switzerland/7.jpg",
+		"title": "Second Sunrise",
+		"description": "A break in the clouds causing a second sunrise as the sun sets below the upper layer.",
+		"location": "Schäfler Ridge, Appenzell, Switzerland"
+	},
+	{
+		"slug": "switzerland-schafler-ridge-sunset",
+		"src": "./switzerland/8.jpg",
+		"title": "Sunset on the Schäfler Ridge",
+		"description": "My wife watching the sunset from the top of the Schäfler Ridge.",
+		"location": "Schäfler Ridge, Appenzell, Switzerland"
+	},
+	{
+		"slug": "switzerland-schafler-ridge",
+		"src": "./switzerland/9.jpg",
+		"title": "Schäfler Ridge",
+		"description": "The Schäfler Ridgeline in Appenzell, Switzerland.",
+		"location": "Schäfler Ridge, Appenzell, Switzerland"
+	},
+	{
+		"slug": "switzerland-schafler-ridge-watching-sunset",
+		"src": "./switzerland/10.jpg",
+		"title": "Sunset on the Schäfler Ridge #2",
+		"description": "Onlookers taking in the sunset on the Schäfler Ridge.",
+		"location": "Schäfler Ridge, Appenzell, Switzerland"
+	},
+	{
+		"slug": "switzerland-mountaintop-farmhouse-from-above",
+		"src": "./switzerland/12.jpg",
+		"title": "Mountaintop Farmhouse From Above the Clouds",
+		"description": "Looking down upon a mountaintop farmhouse from above the clouds.",
+		"location": "Schäfler Ridge, Appenzell, Switzerland"
+	},
+	{
+		"slug": "switzerland-hidden-church-stein-am-rhein",
+		"src": "./switzerland/13.jpg",
+		"title": "Hidden Island Church",
+		"description": "Walking to a hidden church on an island in Stein am Rhein.",
+		"location": "Stein am Rhein, Switzerland"
+	},
+	{
+		"slug": "switzerland-stein-am-rhein-sunset",
+		"src": "./switzerland/14.jpg",
+		"title": "Stein am Rhein Sunset",
+		"description": "The sun setting along the river next to Stein am Rhein.",
+		"location": "Stein am Rhein, Switzerland"
+	}
+]

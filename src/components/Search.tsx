@@ -55,7 +55,10 @@ export const Search = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
 	const [searchTerm, setSearchTerm] = useState<string>();
-	const [results, setResults] = useState<SearchResultData[]>([]);
+	const [results, setResults] = useState<{
+		photos?: SearchResultData[];
+		posts?: SearchResultData[];
+	}>({});
 	const [pagefind, setPagefind] = useState<Pagefind>();
 
 	const openSearchBar = async (open: SetStateAction<boolean>) => {
@@ -88,7 +91,12 @@ export const Search = () => {
 					data.push(await search.results[a].data());
 				}
 				setIsSearching(false);
-				setResults(data);
+				setResults({
+					photos: data.filter((d) =>
+						d.raw_url.includes("/photography/"),
+					),
+					posts: data.filter((d) => d.raw_url.includes("/blog/")),
+				});
 			}
 		}
 	};
@@ -133,41 +141,21 @@ export const Search = () => {
 					</CommandGroup>
 
 					<CommandSeparator alwaysRender />
-					{!results.length && searchTerm ? (
+					{!results.photos?.length &&
+					!results.posts?.length &&
+					searchTerm ? (
 						<div className="flex justify-center py-4 text-sm">
 							No results found
 						</div>
 					) : null}
-					{results.length ? (
-						<CommandGroup heading="Search Results">
-							{results.map((result) => (
-								<CommandItem
-									key={result.raw_url}
-									onSelect={() => navigate(result.raw_url)}
-									className="flex flex-nowrap items-center justify-center gap-2"
-								>
-									<div className="min-w-[150px]">
-										<img
-											src={result.meta.image}
-											width={150}
-											className="outline-secondary rounded-2xl outline"
-										/>
-									</div>
-									<div className="border-primary flex shrink flex-col gap-4 border-l-2 pl-4">
-										<div className="w-full overflow-hidden text-sm font-bold sm:text-base">
-											{result.meta.title}
-										</div>
-										<div
-											className="text-xs sm:text-sm"
-											dangerouslySetInnerHTML={{
-												__html: result.excerpt,
-											}}
-										/>
-									</div>
-								</CommandItem>
-							))}
-						</CommandGroup>
-					) : null}
+					<SearchResult
+						results={results.posts}
+						title="Blog Results"
+					/>
+					<SearchResult
+						results={results.photos}
+						title="Photography Results"
+					/>
 				</CommandList>
 				{import.meta.env.DEV ? <CommandSeparator alwaysRender /> : null}
 				{import.meta.env.DEV ? (
@@ -186,3 +174,43 @@ export const Search = () => {
 		</div>
 	);
 };
+
+const SearchResult = ({
+	results,
+	title,
+}: {
+	title: string;
+	results?: SearchResultData[];
+}) =>
+	results?.length ? (
+		<CommandGroup heading={title}>
+			{results?.map((result) => (
+				<CommandItem
+					key={result.raw_url}
+					onSelect={() => navigate(result.raw_url)}
+					className="flex flex-nowrap items-center justify-center gap-2"
+				>
+					<div className="outline-secondary max-h-[100px] min-w-[150px] overflow-hidden rounded-2xl outline">
+						{import.meta.env.DEV ? (
+							<div className="outline-secondary bg-secondary flex h-32 items-center justify-center rounded-2xl p-3 text-xs outline">
+								Thumbnails unavailable in development
+							</div>
+						) : (
+							<img src={result.meta.image} width={150} />
+						)}
+					</div>
+					<div className="border-primary flex shrink flex-col gap-4 border-l-2 pl-4">
+						<div className="w-full overflow-hidden text-sm font-bold sm:text-base">
+							{result.meta.title}
+						</div>
+						<div
+							className="text-xs sm:text-sm"
+							dangerouslySetInnerHTML={{
+								__html: result.excerpt,
+							}}
+						/>
+					</div>
+				</CommandItem>
+			))}
+		</CommandGroup>
+	) : null;

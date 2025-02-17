@@ -3,9 +3,10 @@ import { cn } from "../../lib/utils";
 
 export const TypographyH1: React.FC<
 	PropsWithChildren<{ className?: string }>
-> = ({ children, className }) => {
+> = ({ children, className, ...props }) => {
 	return (
 		<h1
+			{...props}
 			className={cn(
 				"scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl",
 				className,
@@ -18,9 +19,10 @@ export const TypographyH1: React.FC<
 
 export const TypographyH2: React.FC<
 	PropsWithChildren<{ className?: string }>
-> = ({ children, className }) => {
+> = ({ children, className, ...props }) => {
 	return (
 		<h2
+			{...props}
 			className={cn(
 				"mt-4 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0",
 				className,

@@ -20,6 +20,7 @@
     "@tailwindcss/vite": "^4.0.3",
     "@vercel/analytics": "^1.4.1",
     "astro": "^5.2.5",
+    "astro-masonry": "^1.2.0",
     "astro-pdf": "^1.7.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

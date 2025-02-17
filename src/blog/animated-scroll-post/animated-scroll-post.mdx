@@ -3,7 +3,7 @@ title: "Enhancing My Portfolio With Tailwind CSS: The Infinite Scrolling Showcas
 description: "In this post, I'll walk through how I built the infinite scrolling tech stack showcase featured on my portfolio's homepage. This effect was achieved using Tailwind CSS, relying almost entirely on its utility classes."
 tags: [React, tailwindcss]
 slug: enhancing-portfolio-animated-scroll
-thumbnailUrl: /blog/animated-scroll-post/thumbnail.png
+thumbnailUrl: "./thumbnail.png"
 isPublished: true
 datePublished: "Feb 11 2025"
 ---
@@ -28,8 +28,10 @@ I wanted this section to serve as a quick glance into my expertise.
 Rather than a static grid of logos, the scrolling effect would add
 some unique motion and hopefully grab my visitor's attention.
 
+import Vision from "./vision.png"
+
 <BlogImage
-	src="/blog/animated-scroll-post/vision.png"
+	src={Vision}
 	width={400}
 	alt="The vision I had for my infinite scrolling showcase."
 	caption="The vision...simple right?"

@@ -2,6 +2,7 @@
 import { TypographyH2 } from "./Typography";
 import TagList from "./TagList.astro";
 import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
 
 type BlogPost = CollectionEntry<"blog">;
 
@@ -21,19 +22,31 @@ const { posts } = Astro.props;
 {
 	posts.map((post) => (
 		<div class="flex flex-col items-center gap-16 p-4 lg:flex-row">
-			<div class="cursor-pointer opacity-80 transition-opacity hover:opacity-100">
+			<div class="cursor-pointer overflow-hidden rounded-3xl hover:brightness-110">
 				<a href={`/blog/${post.data.slug}`}>
-					<img src={post.data.thumbnailUrl} class="rounded-3xl" />
+					<Image
+						transition:name={`thumbnail-${post.data.slug}`}
+						alt={post.data.title}
+						src={post.data.thumbnailUrl}
+						class="bg-secondary rounded-3xl text-xs transition-transform hover:scale-105"
+					/>
+					<div transition:name={`image-back-${post.data.slug}`} />
 				</a>
 			</div>
 			<div class="flex min-w-[50%] grow flex-col gap-4">
 				<a
 					href={`/blog/${post.data.slug}`}
-					class="opacity-80 transition-opacity hover:opacity-100"
+					class="z-10 hover:brightness-90"
 				>
-					<TypographyH2>{post.data.title}</TypographyH2>
+					<TypographyH2>
+						<span transition:name={`title-${post.data.slug}`}>
+							{post.data.title}
+						</span>
+					</TypographyH2>
 				</a>
-				<TagList tags={post.data.tags} />
+				<div transition:name={`subheader-${post.data.slug}`}>
+					<TagList tags={post.data.tags} />
+				</div>
 			</div>
 		</div>
 	))

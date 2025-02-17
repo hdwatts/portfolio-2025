@@ -18,7 +18,8 @@ import { Link } from "../../components/Link";
 import { ArrowLeft, Calendar } from "lucide-react";
 import ReturnToBlog from "../../components/blog/ReturnToBlog.astro";
 import TagList from "../../components/blog/TagList.astro";
-import { BlogImage } from "../../components/blog/BlogImage";
+import BlogImage from "../../components/blog/BlogImage.astro";
+import { Image } from "astro:assets";
 
 export async function getStaticPaths() {
 	const posts = (await getCollection("blog"))
@@ -48,21 +49,31 @@ const { Content } = await render(post);
 		<div class="mb-4 flex flex-col gap-4 border-b py-4">
 			<ReturnToBlog />
 			<div class="relative flex h-[400px] overflow-hidden rounded-2xl">
-				<img
+				<Image
+					transition:name={`thumbnail-${post.data.slug}`}
 					data-pagefind-meta="image[src], image_alt[alt]"
 					src={post.data.thumbnailUrl}
 					alt={post.data.title}
-					class="absolute z-0"
+					class="bg-secondary absolute z-0 rounded-2xl"
 				/>
+				<TypographyH1
+					className="absolute bottom-4 z-10 mx-12"
+					data-pagefind-body
+				>
+					<span transition:name={`title-${post.data.slug}`}
+						>{post.data.title}</span
+					>
+				</TypographyH1>
 				<div
-					class="to-background pointer-events-none absolute h-full w-full bg-linear-to-b from-transparent from-0% to-80%"
+					transition:name={`image-back-${post.data.slug}`}
+					class="animate-in to-background pointer-events-none absolute z-0 h-full w-full bg-linear-to-b from-transparent from-0% to-80%"
 				>
 				</div>
-				<TypographyH1 className="absolute bottom-4 z-10 mx-12"
-					>{post.data.title}</TypographyH1
-				>
 			</div>
-			<div class="flex flex-wrap justify-between gap-4">
+			<div
+				class="flex flex-wrap justify-between gap-4"
+				transition:name={`subheader-${post.data.slug}`}
+			>
 				<div class="flex gap-2">
 					<TagList tags={post.data.tags} />
 				</div>

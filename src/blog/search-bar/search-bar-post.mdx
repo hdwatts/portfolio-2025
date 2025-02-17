@@ -3,10 +3,12 @@ title: "How I Added Scalable Search to My Blog - Custom Astro & Pagefind Impleme
 description: "There's little documentation on building a custom Pagefind UI for an Astro site — so I figured I'd share my process. In this post, I'll walk you through setting it up, customizing the UI with React, and deploying it to Vercel - plus the challenges I ran into and how I solved them."
 tags: [react, pagefind, tailwindcss, astro, vercel, shadcn/ui]
 slug: pagefind-static-search-astro-vercel-react
-thumbnailUrl: /blog/search-bar-post/thumbnail.png
+thumbnailUrl: "./thumbnail.png"
 isPublished: true
 datePublished: "Feb 13 2025"
 ---
+
+import LowBandwidth from "./low-bandwidth.png";
 
 [Pagefind](https://pagefind.app/) is a library that enables static search indexing, allowing users to query a website's content without requiring additional infrastructure. Its key differentiator is that it is entirely static — meaning my portfolio site doesn't need extra backend services to support search functionality. Pagefind is also packed with features, many of which I've only begun to explore. However, the most important aspects for me are its speed and minimal bandwidth footprint.
 
@@ -19,7 +21,7 @@ Per the Pagefind maintainers:
 Running a quick test on my small blog confirmed that their predictions were spot on.
 
 <BlogImage
-	src="/blog/search-bar-post/low-bandwidth.png"
+	src={LowBandwidth}
 	height={400}
 	alt="Only 92.7 kB transferred"
 	caption="Only 92.7 kB transferred"
@@ -246,8 +248,10 @@ const onChange = async (value: string) => {
 
 ## The Final Component
 
+import SearchUI from "./search-ui.png";
+
 <BlogImage
-	src="/blog/search-bar-post/search-ui.png"
+	src={SearchUI}
 	height={400}
 	alt="The final component"
 	caption="The end result"

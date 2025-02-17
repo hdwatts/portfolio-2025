@@ -5,7 +5,7 @@ import "../styles/global.css";
 export interface Props {
 	title: string;
 	description?: string;
-	ogImage?: string | undefined;
+	ogImage?: ImageMetadata | undefined;
 	articleDate?: string | undefined;
 }
 
@@ -15,8 +15,10 @@ const {
 	ogImage,
 	articleDate,
 } = Astro.props;
-const socialImageURL = new URL(ogImage ? ogImage : "/og-image.png", Astro.url)
-	.href;
+const socialImageURL = new URL(
+	ogImage ? ogImage.src : "/og-image.png",
+	Astro.url,
+).href;
 
 const titleSeparator = "|";
 
@@ -78,4 +80,4 @@ const siteTitle = `${title} ${titleSeparator} Howard Dean Watts`;
 	title="Howard Dean Watts"
 	href="/rss.xml"
 />
-<ClientRouter />
+<ClientRouter fallback="swap" />

@@ -1,0 +1,78 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Theme from "../../layouts/Theme.astro";
+import { Image } from "astro:assets";
+import { KeyboardEventRedirect } from "../../components/KeyboardEventRedirect";
+import { Link } from "../../components/Link";
+import { ArrowLeft, MapPin } from "lucide-react";
+import { TypographyH1 } from "../../components/blog/Typography";
+import { Badge } from "../../components/Badge";
+
+export async function getStaticPaths() {
+	const photos = await getCollection("photographs");
+
+	return photos.map((photo) => ({
+		params: { slug: photo.data.slug },
+		props: { photo },
+	}));
+}
+const { photo } = Astro.props;
+// const anim = {
+// 	old: {
+// 		name: "bump",
+// 		duration: "0.5s",
+// 		easing: "ease-in",
+// 		direction: "reverse",
+// 	},
+// 	new: {
+// 		name: "bump",
+// 		duration: "0.5s",
+// 		easing: "ease-in-out",
+// 	},
+// };
+
+// const customTransition = {
+// 	forwards: anim,
+// 	backwards: anim,
+// };
+---
+
+<Theme />
+<Layout
+	title={photo.data.title}
+	description={photo.data.description}
+	image={photo.data.src}
+>
+	<KeyboardEventRedirect client:load targetKey="Escape" url="/photography" />
+	<div class="flex w-full max-w-[900px] flex-col gap-4 px-4">
+		<Link href="/photography" className="flex items-center gap-1 text-sm"
+			><ArrowLeft width={14} />All Photos</Link
+		>
+		<div class="flex items-center justify-between gap-8" data-pagefind-body>
+			<TypographyH1>{photo.data.title}</TypographyH1>
+			<Badge
+				className="flex h-fit w-fit justify-center gap-1 text-nowrap"
+				variant="secondary"
+			>
+				<MapPin className="w-4" />
+				<span>{photo.data.location}</span>
+			</Badge>
+		</div>
+		<div class="relative w-full">
+			<Image
+				class="bg-secondary z-10"
+				src={photo.data.src}
+				alt={photo.data.title}
+				loading="eager"
+				quality="max"
+				width={900}
+				densities={[1.5, 2]}
+				transition:name={photo.data.slug}
+			/>
+		</div>
+		<div class="flex justify-center italic" data-pagefind-body>
+			{photo.data.description}
+		</div>
+	</div></Layout
+>
