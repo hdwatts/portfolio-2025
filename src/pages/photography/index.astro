@@ -48,10 +48,12 @@ const photos = await getPhotos();
 		</p>
 	</div>
 
-	<div class="flex w-full max-w-[900px] flex-col justify-between gap-4 px-12">
+	<div
+		class="flex w-full max-w-[1200px] flex-col justify-between gap-4 px-12"
+	>
 		<Masonry
-			class="flex gap-4"
-			columnClass=""
+			class="flex flex-wrap"
+			columnClass="px-2 first:pl-0 last:pr-0"
 			breakpointCols={{
 				default: 3,
 				1100: 3,
