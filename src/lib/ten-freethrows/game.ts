@@ -270,7 +270,7 @@ export class Game {
 				label: "rim",
 				render: {
 					sprite: {
-						texture: "src/assets/ten-freethrows/net.png",
+						texture: "/ten-freethrows/net.png",
 						xScale: 1,
 						yScale: 1,
 					},

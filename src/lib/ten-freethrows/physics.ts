@@ -140,7 +140,7 @@ export class Physics {
 			label: "ball",
 			render: {
 				sprite: {
-					texture: "src/assets/ten-freethrows/basketball.png",
+					texture: "/ten-freethrows/basketball.png",
 					xScale: 0.275 * (radius / 18),
 					yScale: 0.275 * (radius / 18),
 				},
