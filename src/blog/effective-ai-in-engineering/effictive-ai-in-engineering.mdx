@@ -1,0 +1,44 @@
+---
+title: "Effective AI In Software Development"
+description: "A perspective of AI utilization in software development through the lens of existing, parallel, patterns."
+tags: [ai, llms, workflow]
+slug: effective-ai-in-software-development
+thumbnailUrl: "./thumbnail.png"
+isPublished: false
+datePublished: "Jul 04 2025"
+---
+
+At my current position, I work with a team of data analysts to extract unstructured data into structured formats. This work can be, at worst, without any engineering, an incredibly frustrating and manual process for the analysts. There is no template and no common universal pattern that we can safely assume to always be followed. Given the sensitive nature of the data, and the pedigree of our clients, this data has to be captured with **100% accuracy** and meet our zero defect standard. In short, the input is a **black box** where we want to use human level reasoning to extract the relevant data points that our clients care about.
+
+This has an interesting parallel to the current LLM craze in software development. I see hyped up tools such as Bolt advertising a one shot approach to software engineering. These tools can take the **black box** of product and engineering requirements, and reason about to a solution that the developer can then review.
+
+> In my experience one shot "magic" is the wrong goal post to shoot for. While the frontier of LLM generated code is incredible, at a certain point there are diminishing returns that need to be taken into account. There is a better workflow out there for engineers, and it is not using these one shot tools.
+
+## Auto Tag
+
+Back in 2018, in my work with the data analysts, I engineered an "auto tag" feature for a specific subset of the data they needed to extract. This subset was _mostly_ standardized - we measured about 75-80% of the time it followed a tabular format, though the actual columns that were relevant to our work never followed the same format. Therefore, the "auto tag" feature we built asked analysts to capture one row from the table, and then we would agentically apply that same capture throughout the table. In theory, this will take manually capturing hundreds of data points down to just manually capturing 3 core data points and letting the auto tagger agent do the rest. This was pretty close to our initial dream - a nearly one click operation where data can quickly be captured and verified.
+
+We continued to refine and engineer this one shot approach through the years, however we eventually started to hit diminshing returns on the work being captured. This is because, while it worked great 75-80% of the time, in times where it didn't work analysts spent more time fixing the issues than if they were to just capture it manually from the start. Also, in extreme cases, the methodology would be so different that newer analysts, who were only trained up on the auto tagger, would greatly struggle to capture these more complex cases, leading to more slowdowns.
+
+As I looked for another big leap improvement in our capture technology, I dug into the auto tagger to find what the issues were.
+
+## Taking a step back
+
+We discovered a few core problems while monitoring and polling our higher and lower performing analysts:
+
+1. After auto tagging, you see all the captured data in the platform at once but not alongside where in the document it came from.
+2. Due to the above, when it is wrong it is a very slow process to audit the changes it made and correct them.
+3. There are complex edge cases which auto tagger just could not support, like captured data that is calculated across multiple pages in the document, or capturing the total sum value of multiple lines. These were the most time consuming aspects of capture for our analysts.
+4. [others]
+
+None of these problems are easy to solve under our philosophy around auto tag.
+
+For number 3, if we accept that there are complex edge cases that auto tag cannot handle, then we need to measure if it is worth building a new tool to better handle these specific cases in a less one shot way.
+
+For number 1 and number 2, if analysts are double checking their numbers in the document, they might as well just be capturing it from the document while they're there. There is no point in incorporating auto tag into their process if it comes with a decrease in confidence/accuracy and leads to analysts effectively manually capturing anyway.
+
+With that being the conclusion, we .
+
+### But prompt engineering!
+
+I mean, isn't that what I'm arguing for? Improved prompt engineering effectively is the same as getting the engineers more insight and input into what is going to be executed.

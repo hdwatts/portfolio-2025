@@ -1,0 +1,195 @@
+<style>
+	:root {
+		--bg: #0b1220;
+		--panel: #111a2e;
+		--accent: #ff7a00;
+		--text: #e8eefc;
+		--muted: #99a4bf;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	html,
+	body {
+		height: 100vh;
+		margin: 0;
+		overflow: hidden; /* Prevent scrolling */
+	}
+
+	body {
+		display: flex;
+		flex-direction: column;
+		background: radial-gradient(
+			1200px 800px at 70% 10%,
+			#f5f3ee 0%,
+			#d6c1a1 40%,
+			#b08c5a 100%
+		);
+		color: var(--text);
+		font:
+			16px/1.4 system-ui,
+			-apple-system,
+			Segoe UI,
+			Roboto,
+			Helvetica,
+			Arial;
+	}
+
+	header {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 14px;
+		background: linear-gradient(180deg, #0f1830, #0b1220);
+	}
+
+	header h1 {
+		font-size: 18px;
+		margin: 0;
+		letter-spacing: 0.3px;
+	}
+
+	#hud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.pill {
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		padding: 6px 10px;
+		border-radius: 999px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.pill b {
+		font-weight: 700;
+	}
+
+	.btn {
+		cursor: pointer;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		background: linear-gradient(180deg, #16223f, #0f1a34);
+		color: var(--text);
+		padding: 8px 12px;
+		border-radius: 999px;
+		transition:
+			0.2s transform,
+			0.2s opacity;
+		box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+	}
+
+	.btn:hover {
+		transform: translateY(-1px);
+	}
+
+	#canvasWrap {
+		position: relative;
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden; /* Prevent any overflow */
+	}
+
+	canvas {
+		position: absolute;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height of available space */
+		display: block;
+		bottom: 0;
+		/* border: 1px solid rgba(255, 255, 255, 0.1); */
+		/* border-radius: 8px; */
+	}
+
+	#overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%; /* Match full canvas height */
+		pointer-events: none;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		padding: 14px;
+	}
+
+	#tips {
+		max-width: 300px; /* Reduced for fixed canvas width */
+		opacity: 0.9;
+		font-size: 14px; /* Smaller font for mobile */
+	}
+
+	#tips p {
+		margin: 0.25rem 0;
+	}
+
+	#toast {
+		position: absolute;
+		left: 50%;
+		top: 12%;
+		transform: translateX(-50%);
+		background: rgba(0, 0, 0, 0.55);
+		backdrop-filter: blur(6px);
+		padding: 10px 14px;
+		border-radius: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		opacity: 0;
+		transition: 0.3s opacity;
+	}
+
+	#toast.show {
+		opacity: 1;
+	}
+
+	footer {
+		padding: 8px 14px;
+		color: var(--muted);
+		text-align: center;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+		background: linear-gradient(180deg, #0f1830, #0b1220);
+	}
+
+	a {
+		color: var(--accent);
+	}
+</style>
+<head>
+	<meta charset="utf-8" />
+	<title>10 Freethrows</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<header>
+	<h1>🏀</h1>
+	<div id="hud">
+		<div class="pill">Score: <b id="score">0</b></div>
+		<div class="pill">Shots Left: <b id="shots">10</b></div>
+		<button class="btn" id="resetBtn" title="Restart a 10-shot round">
+			Restart
+		</button>
+	</div>
+</header>
+
+<div id="canvasWrap">
+	<canvas id="game"></canvas>
+	<div id="overlay">
+		<div id="tips">
+			<p><b>Drag</b> to aim. Release to shoot.</p>
+		</div>
+		<div id="toast"></div>
+	</div>
+</div>
+
+<footer>
+	Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U
+</footer>
+
+<script src="./src/main.ts"></script>

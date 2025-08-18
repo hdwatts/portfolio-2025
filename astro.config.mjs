@@ -12,7 +12,7 @@ export default defineConfig({
   site: 'https://hdwatts.com',
   integrations: [react(), mdx(), sitemap(
   {
-    filter: (page) => !page.includes('hidden__'),
+    filter: (page) => !page.includes('hidden__') && !page.includes('ten-freethrows'),
   }
 )],
   output: 'static',
