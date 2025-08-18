@@ -91,6 +91,13 @@
 			transform: translateY(-1px);
 		}
 
+		#wrapper {
+			height: 100vh;
+			width: 100vw;
+			display: flex;
+			flex-direction: column;
+		}
+
 		#canvasWrap {
 			position: relative;
 			flex: 1;
@@ -168,30 +175,37 @@
 	<title>10 Freethrows</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-	<header>
-		<h1>🏀</h1>
-		<div id="hud">
-			<div class="pill">Score: <b id="score">0</b></div>
-			<div class="pill">Shots Left: <b id="shots">10</b></div>
-			<button class="btn" id="resetBtn" title="Restart a 10-shot round">
-				Restart
-			</button>
-		</div>
-	</header>
-
-	<div id="canvasWrap">
-		<canvas id="game"></canvas>
-		<div id="overlay">
-			<div id="tips">
-				<p><b>Drag</b> to aim. Release to shoot.</p>
+	<div id="wrapper">
+		<header>
+			<h1>🏀</h1>
+			<div id="hud">
+				<div class="pill">Score: <b id="score">0</b></div>
+				<div class="pill">Shots Left: <b id="shots">10</b></div>
+				<button
+					class="btn"
+					id="resetBtn"
+					title="Restart a 10-shot round"
+				>
+					Restart
+				</button>
 			</div>
-			<div id="toast"></div>
+		</header>
+
+		<div id="canvasWrap">
+			<canvas id="game"></canvas>
+			<div id="overlay">
+				<div id="tips">
+					<p><b>Drag</b> to aim. Release to shoot.</p>
+				</div>
+				<div id="toast"></div>
+			</div>
 		</div>
+
+		<footer>
+			Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U
+		</footer>
+
+		<script src="../../lib/ten-freethrows/main.ts"></script>
 	</div>
 
-	<footer>
-		Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U
-	</footer>
-
-	<script src="../../lib/ten-freethrows/main.ts"></script>
 </html>
