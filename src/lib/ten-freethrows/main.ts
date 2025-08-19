@@ -59,5 +59,21 @@ class BasketballApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-	new BasketballApp();
+	let loaded = false;
+	const obj = document.getElementById("backgroundVideo");
+	console.log("Dom loaded");
+	obj?.addEventListener("loadeddata", () => {
+		console.log("Loaded", obj?.readyState);
+		if (obj?.readyState >= 1 && !loaded) {
+			loaded = true;
+			new BasketballApp();
+			const loading = document.getElementById("loading");
+			if (loading) {
+				loading.style.opacity = "0";
+				setTimeout(() => {
+					document.getElementById("loading")?.remove();
+				}, 1000);
+			}
+		}
+	});
 });

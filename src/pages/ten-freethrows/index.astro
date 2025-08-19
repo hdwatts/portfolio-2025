@@ -1,7 +1,7 @@
 <html>
 	<style>
 		:root {
-			--bg: #0b1220;
+			--bg: #f8f8f8;
 			--panel: #111a2e;
 			--accent: #ff7a00;
 			--text: #e8eefc;
@@ -22,12 +22,7 @@
 		body {
 			display: flex;
 			flex-direction: column;
-			background: radial-gradient(
-				1200px 800px at 70% 10%,
-				#f5f3ee 0%,
-				#d6c1a1 40%,
-				#b08c5a 100%
-			);
+			background: #f8f8f8;
 			color: var(--text);
 			font:
 				16px/1.4 system-ui,
@@ -119,19 +114,8 @@
 			max-width: calc(
 				100vh * 16 / 9
 			); /* Ensures it doesn't exceed container width */
-		}
-
-		/* Inset shadow for canvas when letterboxing - creates seamless edge blending */
-		canvas {
-			transition: box-shadow 0.3s ease;
-		}
-
-		/* Apply inset shadow when letterboxing is active */
-		#canvasWrap.letterboxed canvas {
-			box-shadow:
-				inset 60px 0 80px -40px rgba(11, 18, 32, 0.95),
-				/* Left shadow */ inset -60px 0 80px -40px
-					rgba(11, 18, 32, 0.95); /* Right shadow */
+			border: 2px solid #000;
+			border-radius: 8px;
 		}
 
 		#overlay {
@@ -180,7 +164,7 @@
 			width: 100%;
 			height: 100%;
 			z-index: -1;
-			background-color: #0b1220;
+			background-color: #f8f8f8;
 		}
 
 		#background video {
@@ -191,6 +175,7 @@
 			width: auto;
 			height: 100%;
 			object-fit: contain;
+			border-radius: 8px;
 		}
 		#gameWrap {
 			width: 100%;
@@ -208,6 +193,42 @@
 
 		a {
 			color: var(--accent);
+		}
+		#loading {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 100%;
+			text-align: center;
+			height: 100%;
+			background: #000;
+			font-size: 24px;
+			opacity: 1;
+			transition: opacity 0.3s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.loader {
+			width: 48px;
+			height: 48px;
+			border: 5px solid #fff;
+			border-bottom-color: #ff3d00;
+			border-radius: 50%;
+			display: inline-block;
+			box-sizing: border-box;
+			animation: rotation 1s linear infinite;
+			transition: opacity 0.3s ease;
+		}
+
+		@keyframes rotation {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
 		}
 	</style>
 
@@ -232,7 +253,7 @@
 		</header>
 		<div id="gameWrap">
 			<div id="background">
-				<video autoplay loop muted playsinline>
+				<video id="backgroundVideo" autoplay loop muted playsinline>
 					<source src="/ten-freethrows/lander.mp4" type="video/mp4" />
 				</video>
 			</div>
@@ -245,6 +266,7 @@
 					<div id="toast"></div>
 				</div>
 			</div>
+			<div id="loading"><div class="loader"></div></div>
 		</div>
 		<footer>
 			Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U

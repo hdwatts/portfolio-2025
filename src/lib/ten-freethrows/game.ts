@@ -203,9 +203,6 @@ export class Game {
 		this.elements.canvas.width = this.W * this.DPR;
 		this.elements.canvas.height = this.H * this.DPR;
 
-		// Check if letterboxing is occurring and add/remove class accordingly
-		this.updateLetterboxingState();
-
 		// Update physics renderer size
 		this.physics.resize(this.W, this.H);
 
@@ -260,20 +257,6 @@ export class Game {
 		// Only update if ball is at rest to avoid disrupting gameplay
 		if (this.ball.atRest) {
 			this.initializeFixedLayout();
-		}
-	}
-
-	private updateLetterboxingState(): void {
-		const canvasWrap = this.elements.canvas.parentElement!;
-		const containerRect = canvasWrap.getBoundingClientRect();
-
-		// Check if canvas width is less than container width (letterboxing occurring)
-		const isLetterboxed = this.W < containerRect.width - 10; // 10px tolerance
-
-		if (isLetterboxed) {
-			canvasWrap.classList.add("letterboxed");
-		} else {
-			canvasWrap.classList.remove("letterboxed");
 		}
 	}
 

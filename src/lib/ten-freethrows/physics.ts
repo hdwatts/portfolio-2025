@@ -159,7 +159,7 @@ export class Physics {
 			frictionStatic: 0.5,
 			label: "rim",
 			render: {
-				visible: true,
+				visible: false,
 			},
 		});
 	}
