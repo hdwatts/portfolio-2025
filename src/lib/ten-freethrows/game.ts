@@ -270,7 +270,7 @@ export class Game {
 		// Initialize shadow
 		this.ball.shadow = {
 			x: x,
-			y: this.floorY,
+			y: this.floorY - this.ball.r,
 			radius: this.ball.r * 0.8,
 			opacity: 0.6,
 		};
@@ -366,7 +366,7 @@ export class Game {
 			// Ball is too high, hide shadow
 			this.ball.shadow = {
 				x: ballPos.x,
-				y: this.floorY,
+				y: this.floorY - this.ball.r,
 				radius: 0,
 				opacity: 0,
 			};
@@ -388,7 +388,7 @@ export class Game {
 
 		this.ball.shadow = {
 			x: ballPos.x,
-			y: this.floorY,
+			y: this.floorY - this.ball.r,
 			radius: shadowRadius,
 			opacity: shadowOpacity,
 		};

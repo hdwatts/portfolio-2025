@@ -180,8 +180,8 @@ export class Renderer {
 	drawBallShadow(ball: Ball, floorY: number): void {
 		if (!ball.shadow || ball.shadow.opacity <= 0) return;
 
-		const shadowX = ball.shadow.x;
-		const shadowY = floorY - 20; // Shadow is always on the floor
+		const shadowX = ball.shadow.x - 10;
+		const shadowY = floorY - 30; // Shadow is always on the floor
 		const shadowRadius = ball.shadow.radius;
 		const shadowOpacity = ball.shadow.opacity;
 
