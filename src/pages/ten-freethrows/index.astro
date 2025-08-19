@@ -168,15 +168,11 @@
 			background-repeat: repeat-x;
 			z-index: -1;
 		}
-		#landerWrap {
-			position: relative;
-			width: 100vw;
+		#gameWrap {
+			width: 100%;
 			height: 100%;
-		}
-		#lander {
-			position: absolute;
-			bottom: 25%;
-			left: 41%;
+			display: flex;
+			position: relative;
 		}
 		footer {
 			padding: 8px 14px;
@@ -192,7 +188,7 @@
 	</style>
 
 	<meta charset="utf-8" />
-	<title>10 Freethrows</title>
+	<title>Ten Freethrows - I.S.R.U</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 	<div id="wrapper">
@@ -210,17 +206,18 @@
 				</button>
 			</div>
 		</header>
-		<div id="background"></div>
-		<div id="canvasWrap">
-			<canvas id="game"></canvas>
-			<div id="overlay">
-				<div id="tips">
-					<p><b>Drag</b> to aim. Release to shoot.</p>
+		<div id="gameWrap">
+			<div id="background"></div>
+			<div id="canvasWrap">
+				<canvas id="game"></canvas>
+				<div id="overlay">
+					<div id="tips">
+						<p><b>Drag</b> to aim. Release to shoot.</p>
+					</div>
+					<div id="toast"></div>
 				</div>
-				<div id="toast"></div>
 			</div>
 		</div>
-
 		<footer>
 			Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U
 		</footer>
