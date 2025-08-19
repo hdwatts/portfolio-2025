@@ -11,11 +11,10 @@ import { Renderer } from "./renderer";
 import { InputManager } from "./input";
 
 export class Game {
-	private DPR = Math.min(2, window.devicePixelRatio || 1);
-	// Dynamic width and height for full screen
-	private W = 0; // Will be set to actual canvas width
-	private H = 0; // Will be set to actual canvas height
-	private floorY = 0; // Will be calculated based on actual height
+	// Fixed game dimensions - 3:2 aspect ratio
+	private W = 900; // Fixed width for 3:2 ratio
+	private H = 600; // Fixed height
+	private floorY = 600; // Floor at bottom
 
 	private state: GameState = {
 		practice: false,
@@ -65,7 +64,7 @@ export class Game {
 
 		this.setupEventListeners();
 		this.setupCollisionEvents();
-		this.initializeFixedLayout();
+		this.initializeGame();
 		this.updateHud();
 
 		// Start the physics engine
@@ -77,11 +76,7 @@ export class Game {
 	}
 
 	private setupEventListeners(): void {
-		// Add resize listener to handle full-width canvas
-		window.addEventListener("resize", () => this.handleResize());
-		this.elements.resetBtn.addEventListener("click", () =>
-			this.restartRound(),
-		);
+		// No resize handling needed - fixed dimensions
 	}
 
 	private setupCollisionEvents(): void {
@@ -173,91 +168,48 @@ export class Game {
 		});
 	}
 
-	private initializeFixedLayout(): void {
-		// Get the actual video element dimensions to match exactly
-		const videoElement = document.querySelector(
-			"#background video",
-		) as HTMLVideoElement;
-
-		if (videoElement) {
-			// Use the video's actual rendered dimensions
-			const videoRect = videoElement.getBoundingClientRect();
-			this.W = videoRect.width;
-			this.H = videoRect.height;
-		} else {
-			// Fallback: Get container dimensions and calculate 16:9 aspect ratio
-			const containerRect =
-				this.elements.canvas.parentElement!.getBoundingClientRect();
-			const containerHeight = containerRect.height;
-			const aspectRatio = 16 / 9;
-			this.H = containerHeight;
-			this.W = Math.min(
-				containerHeight * aspectRatio,
-				containerRect.width,
-			);
-		}
-
-		this.floorY = this.H; // Floor position based on actual height
-
-		// Set canvas to match video dimensions exactly
-		this.elements.canvas.width = this.W * this.DPR;
-		this.elements.canvas.height = this.H * this.DPR;
-
-		// Update physics renderer size
+	private initializeGame(): void {
+		// Set up physics with fixed dimensions
 		this.physics.resize(this.W, this.H);
 
-		// Center the game elements on screen
-		const centerX = this.W / 2;
-		const gameWidth = 375; // Original game width for positioning reference
-		const gameOffsetX = gameWidth / 2; // Half of original game width
+		// Fixed game element positions - no scaling needed
+		this.hoop.r = 40;
+		this.hoop.x = 675;
+		this.hoop.y = 175;
 
-		const hoopHeight = 450;
-
-		// Fixed hoop position and size (centered both horizontally and vertically)
-		this.hoop.r = 35; // Fixed rim radius
-		this.hoop.x = centerX + gameOffsetX - 20 - 130; // Center + offset - margin - hoop offset
-		this.hoop.y = this.H - hoopHeight; // Center - offset + original position
-
-		// Fixed rim endpoints as small colliders
-		const pegR = 4; // Fixed peg radius
+		// Rim endpoints
+		const pegR = 5;
 		this.hoop.left = {
 			x: this.hoop.x - this.hoop.r,
 			y: this.hoop.y,
 			r: pegR,
 		};
 		this.hoop.right = {
-			x: this.hoop.x + this.hoop.r,
-			y: this.hoop.y,
-			r: pegR,
+			x: this.hoop.x + this.hoop.r - 2,
+			y: this.hoop.y + 2,
+			r: pegR + 4,
 		};
 
-		// Fixed backboard dimensions
-		this.hoop.board.w = 20; // Fixed width
-		this.hoop.board.h = 120; // Fixed height
-		this.hoop.board.x = this.hoop.x + this.hoop.r + 5; // Fixed position behind rim
-		this.hoop.board.y = this.hoop.y - this.hoop.board.h + 10; // Fixed vertical position
+		// Backboard
+		this.hoop.board = {
+			w: 25,
+			h: 140,
+			x: this.hoop.x + this.hoop.r + 8,
+			y: this.hoop.y - 120,
+		};
 
-		// Fixed ball radius
-		this.ball.r = 24; // Fixed ball size
+		// Ball
+		this.ball.r = 28;
 
-		// Fixed free-throw line & ball spawn position (centered both ways)
-		this.ftLine.x = centerX - gameOffsetX + this.ball.r; // Center - offset + original position
+		// Free-throw line
+		this.ftLine.x = 200;
 		this.ftLine.y = this.floorY;
 
-		// Create physics boundaries with full dimensions
+		// Create physics boundaries
 		this.physics.createBoundaries(this.W, this.H, this.floorY);
 
 		this.spawnBall();
-
-		// Remove existing hoop bodies and create new ones
 		this.createHoopBodies();
-	}
-
-	private handleResize(): void {
-		// Only update if ball is at rest to avoid disrupting gameplay
-		if (this.ball.atRest) {
-			this.initializeFixedLayout();
-		}
 	}
 
 	private createHoopBodies(): void {
@@ -301,11 +253,11 @@ export class Game {
 			Matter.World.remove(this.physics.world, this.ball.body);
 		}
 
-		// Create new ball body
+		// Create new ball body - spawn above the floor
 		const x = this.ftLine.x;
-		const y = this.ftLine.y - this.ball.r * 2 - 1;
+		const y = this.floorY - this.ball.r * 2 + 3; // Fixed spawn height
 		this.ball.body = this.physics.createBall(x, y, this.ball.r);
-
+		this.ball.body.isStatic = true;
 		// Reset ball state
 		this.ball.atRest = true;
 		this.ball.shotTaken = false;
@@ -329,7 +281,7 @@ export class Game {
 
 	private shoot(vx: number, vy: number): void {
 		if (!this.ball.atRest) return;
-
+		this.ball.body.isStatic = false;
 		// Apply velocity to the Matter.js body
 		Matter.Body.setVelocity(this.ball.body, { x: vx, y: vy });
 
@@ -349,8 +301,8 @@ export class Game {
 	private endShot(made: boolean): void {
 		if (!this.ball._counted) {
 			this.state.shotsLeft = Math.max(0, this.state.shotsLeft - 1);
-			this.elements.shotsEl.textContent = this.state.shotsLeft.toString();
 			this.ball._counted = true;
+
 			setTimeout(
 				() => {
 					this.spawnBall();
@@ -379,7 +331,6 @@ export class Game {
 		this.state.streak = 0;
 		this.state.bestStreak = 0;
 		this.state.shotsLeft = 10;
-		this.updateHud();
 		this.spawnBall();
 		this.createHoopBodies();
 		this.setToast("New Round");
@@ -392,12 +343,10 @@ export class Game {
 		} else {
 			this.setToast("Practice Mode Off");
 		}
-		this.updateHud();
 	}
 
 	private updateHud(): void {
-		this.elements.scoreEl.textContent = this.state.score.toString();
-		this.elements.shotsEl.textContent = this.state.shotsLeft.toString();
+		// No HUD elements to update - header was removed
 	}
 
 	private handleFloorCollision(): void {
@@ -488,7 +437,7 @@ export class Game {
 				// Check if it was a swish (no rim collision detected)
 				this.ball.swish = !this.ball._hitRim;
 
-				this.elements.scoreEl.textContent = this.state.score.toString();
+				// Score updated internally - no UI element to update
 
 				if (this.ball.swish) this.setToast("Swish! ✨");
 				else this.setToast("Bucket! ✅");
@@ -504,34 +453,15 @@ export class Game {
 	}
 
 	drawOverlay(): void {
-		// Use existing overlay canvas or create one
-		let overlayCanvas = document.querySelector(
-			"#game-overlay",
-		) as HTMLCanvasElement;
-
-		if (!overlayCanvas) {
-			overlayCanvas = document.createElement("canvas");
-			overlayCanvas.id = "game-overlay";
-			overlayCanvas.style.pointerEvents = "none";
-			overlayCanvas.style.zIndex = "-1";
-			this.elements.canvas.parentElement!.appendChild(overlayCanvas);
-		}
-
-		const overlayCtx = overlayCanvas.getContext("2d")!;
-
-		// Use actual canvas size
-		overlayCanvas.width = this.W * this.DPR;
-		overlayCanvas.height = this.H * this.DPR;
-		overlayCanvas.style.width = this.W + "px";
-		overlayCanvas.style.height = this.H + "px";
-
-		overlayCtx.setTransform(this.DPR, 0, 0, this.DPR, 0, 0);
-		overlayCtx.clearRect(0, 0, this.W, this.H);
-
-		// Create a temporary renderer for the overlay
-
-		// Draw UI elements that Matter.js doesn't handle
-		this.renderer.drawCourt(this.ball, this.hoop, this.ftLine, this.floorY);
+		// Draw UI elements on top of Matter.js rendered physics bodies
+		this.renderer.drawCourt(
+			this.ball,
+			this.hoop,
+			this.ftLine,
+			this.floorY,
+			this.state.score,
+			this.state.shotsLeft,
+		);
 		this.renderer.drawBallShadow(this.ball, this.floorY);
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 		this.renderer.drawBallTrail(this.ball);

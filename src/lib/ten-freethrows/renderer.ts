@@ -4,107 +4,94 @@ export class Renderer {
 	private ctx: CanvasRenderingContext2D;
 	private canvas: HTMLCanvasElement;
 	private backgroundImage: HTMLImageElement;
+	private scoreboardImage: HTMLImageElement;
+	private today: Date;
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
 		this.canvas = canvas;
 		this.backgroundImage = new Image();
 		this.backgroundImage.src = "/ten-freethrows/backboard.png";
+		this.scoreboardImage = new Image();
+		this.scoreboardImage.src = "/ten-freethrows/scoreboard.png";
+		this.today = new Date();
 	}
 
 	clear(): void {
-		// Use actual canvas dimensions
-		const cw =
-			this.canvas.width / Math.min(2, window.devicePixelRatio || 1);
-		const ch =
-			this.canvas.height / Math.min(2, window.devicePixelRatio || 1);
-		this.ctx.clearRect(0, 0, cw, ch);
+		// Clear the entire canvas for a fresh frame
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	drawCourt(ball: Ball, hoop: Hoop, ftLine: Position, floorY: number): void {
-		// Fixed dimensions - no need for responsive canvas width/height
-
+	drawCourt(
+		ball: Ball,
+		hoop: Hoop,
+		ftLine: Position,
+		floorY: number,
+		score: number,
+		shotsLeft: number,
+	): void {
 		if (ball.atRest) {
-			// Free throw semicircle (visual) - fixed size
+			// Free throw semicircle - fixed size
 			this.ctx.strokeStyle = "rgba(255,255,255,.15)";
-			this.ctx.lineWidth = 2;
+			this.ctx.lineWidth = 3;
 			this.ctx.beginPath();
-			this.ctx.arc(ftLine.x, ftLine.y - 48, 100, 0, Math.PI * 2, true); // Fixed radius
+			this.ctx.arc(ftLine.x, ftLine.y - 60, 120, 0, Math.PI * 2, true);
 			this.ctx.stroke();
 		}
 
 		this.drawHoopShadow(hoop, floorY);
-
+		// Draw backboard image - fixed size
 		this.ctx.drawImage(
 			this.backgroundImage,
-			hoop.board.x - 80,
+			hoop.board.x - 90,
 			hoop.board.y + 30,
-			132,
-			540 - 20,
+			160,
+			600,
 		);
 
-		// Backboard
-		// this.ctx.fillStyle = "#000";
-		// this.ctx.fillRect(hoop.board.x, hoop.board.y, hoop.board.w, hoop.board.h);
-		// this.ctx.strokeStyle = "#000";
-		// this.ctx.lineWidth = hoop.board.w;
-		// console.log("Drawing image");
-		// this.ctx.drawImage(
-		// 	this.pipeImage,
-		// 	100,
-		// 	100,
-		// 	500,
-		// 	400,
-		// 	hoop.board.x,
-		// 	hoop.board.y,
-		// 	500,
-		// 	this.ctx.canvas.height - hoop.board.y,
-		// );
-		// this.ctx.beginPath();
-		// const radius = 75;
-		// this.ctx.arc(
-		// 	hoop.board.x + hoop.board.w,
-		// 	hoop.board.y + hoop.board.h + radius / 1.5,
-		// 	radius,
-		// 	Math.PI * 1.5,
-		// 	Math.PI * 2,
-		// );
-		// this.ctx.lineTo(
-		// 	hoop.board.x + hoop.board.w + radius,
-		// 	this.ctx.canvas.height,
-		// );
-		// this.ctx.stroke();
+		this.drawScoreboard(
+			30,
+			65,
+			"Month",
+			"Day",
+			this.today.getMonth() + 1,
+			this.today.getDate(),
+		);
+		this.drawScoreboard(
+			30,
+			175,
+			"Score",
+			"# Left",
+			score ?? 0,
+			shotsLeft ?? 0,
+		);
+	}
 
-		// Net (simple) - fixed dimensions based on hoop.r = 35
-		// this.ctx.strokeStyle = "rgba(255,255,255,.7)";
-		// this.ctx.lineWidth = 1;
-		// for (let i = 0; i < 8; i++) {
-		//   const t = (i / 4 - 0.5) * 63; // Fixed: 35 * 1.8 = 63
-		//   this.ctx.beginPath();
-		//   this.ctx.moveTo(hoop.x + t * 0.6 - 6, hoop.y - 7);
-		//   this.ctx.quadraticCurveTo(
-		//     hoop.x + t * 0.4 - 6,
-		//     hoop.y + 28, // Fixed: 35 * 0.8 = 28
-		//     hoop.x + t * 0.2 - 3,
-		//     hoop.y + 56 // Fixed: 35 * 1.6 = 56
-		//   );
-		//   this.ctx.stroke();
-		// }
-
-		// Rim - fixed dimensions based on hoop.r = 35
-		// this.ctx.lineWidth = 6;
-		// this.ctx.strokeStyle = "#ff5a00";
-		// this.ctx.beginPath();
-		// this.ctx.ellipse(
-		//   hoop.x,
-		//   hoop.y,
-		//   14, // Fixed: 35 / 2.5 = 14
-		//   35, // Fixed: hoop.r = 35
-		//   Math.PI / 2,
-		//   0,
-		//   2 * Math.PI
-		// );
-		// this.ctx.stroke();
+	drawScoreboard(
+		x: number,
+		y: number,
+		label1: string,
+		label2: string,
+		value1: number,
+		value2: number,
+	): void {
+		this.ctx.save();
+		this.ctx.drawImage(this.scoreboardImage, x, y);
+		this.ctx.fillStyle = "#D6C1A1";
+		this.ctx.font = "14px Visitor";
+		const label1Width = this.ctx.measureText(label1).width;
+		const label2Width = this.ctx.measureText(label2).width;
+		this.ctx.fillText(label1, x + 64 - label1Width / 2, y + 88);
+		this.ctx.fillText(label2, x + 137 - label2Width / 2, y + 88);
+		this.ctx.fillStyle = "#D6C1A1";
+		this.ctx.font = "44px Visitor";
+		const stringValue1 = value1 < 10 ? `0${value1}` : `${value1}`;
+		const stringValue2 = value2 < 10 ? `0${value2}` : `${value2}`;
+		const value1Width = this.ctx.measureText(stringValue1).width;
+		const value2Width = this.ctx.measureText(stringValue2).width;
+		this.ctx.fillText(stringValue1, x + 65 - value1Width / 2, y + 60);
+		this.ctx.fillText(stringValue2, x + 139 - value2Width / 2, y + 60);
+		this.ctx.restore();
 	}
 
 	drawBallTrail(ball: Ball): void {
@@ -143,8 +130,6 @@ export class Renderer {
 	}
 
 	drawBall(ball: Ball): void {
-		// This method is kept for compatibility but Matter.js now renders the ball
-		// Only draw trail and effects
 		this.drawBallTrail(ball);
 	}
 
@@ -274,7 +259,7 @@ export class Renderer {
 
 	drawGameOverOverlay(state: GameState): void {
 		if (!state.practice && state.shotsLeft === 0) {
-			// Use actual canvas dimensions
+			this.ctx.save();
 			const cw = this.canvas.width;
 			const ch = this.canvas.height;
 
@@ -296,6 +281,7 @@ export class Renderer {
 				cw / 2,
 				ch * 0.46,
 			);
+			this.ctx.restore();
 		}
 	}
 }

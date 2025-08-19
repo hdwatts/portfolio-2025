@@ -19,21 +19,18 @@ class BasketballApp {
 			throw new Error("Could not get 2D context from canvas");
 		}
 
-		const scoreEl = document.getElementById("score");
-		const shotsEl = document.getElementById("shots");
-		const resetBtn = document.getElementById("resetBtn");
+		// const scoreEl = document.getElementById("score");
+		// const shotsEl = document.getElementById("shots");
+		// const resetBtn = document.getElementById("resetBtn");
 		const toast = document.getElementById("toast");
 
-		if (!scoreEl || !shotsEl || !resetBtn || !toast) {
+		if (!toast) {
 			throw new Error("Could not find required DOM elements");
 		}
 
 		return {
 			canvas,
 			ctx,
-			scoreEl,
-			shotsEl,
-			resetBtn,
 			toast,
 		};
 	}

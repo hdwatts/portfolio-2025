@@ -56,10 +56,10 @@ export class Physics {
 			Matter.World.remove(this.world, this.rightWallBody);
 		if (this.ceilingBody) Matter.World.remove(this.world, this.ceilingBody);
 
-		// Create floor
+		// Create floor - position it so the top surface is at floorY
 		this.floorBody = Matter.Bodies.rectangle(
 			canvasWidth / 2,
-			floorY,
+			floorY, // Offset by half the thickness so top surface is at floorY
 			canvasWidth,
 			50,
 			{
@@ -141,12 +141,12 @@ export class Physics {
 			render: {
 				sprite: {
 					texture: "/ten-freethrows/basketball.png",
-					xScale: 0.62,
-					yScale: 0.62,
+					xScale: 0.75,
+					yScale: 0.75,
 				},
 				fillStyle: "#ff8a00",
-				strokeStyle: "#c85f00",
-				lineWidth: 2.5,
+				strokeStyle: "transparent",
+				visible: true,
 			},
 		});
 	}
@@ -240,13 +240,7 @@ export class Physics {
 	}
 
 	resize(width: number, height: number): void {
-		// Update render canvas size
-		this.render.canvas.width = width * this.render.options.pixelRatio!;
-		this.render.canvas.height = height * this.render.options.pixelRatio!;
-		this.render.canvas.style.width = width + "px";
-		this.render.canvas.style.height = height + "px";
-
-		// Update render options
+		// Update render options for fixed dimensions
 		this.render.options.width = width;
 		this.render.options.height = height;
 	}

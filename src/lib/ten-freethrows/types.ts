@@ -65,8 +65,5 @@ export interface Input {
 export interface GameElements {
 	canvas: HTMLCanvasElement;
 	ctx: CanvasRenderingContext2D;
-	scoreEl: HTMLElement;
-	shotsEl: HTMLElement;
-	resetBtn: HTMLElement;
 	toast: HTMLElement;
 }
