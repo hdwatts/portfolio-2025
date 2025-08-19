@@ -62,8 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let loaded = false;
 	const obj = document.getElementById("backgroundVideo");
 	console.log("Dom loaded");
-	obj?.addEventListener("loadeddata", () => {
-		console.log("Loaded", obj?.readyState);
+	const load = () => {
 		if (obj?.readyState >= 1 && !loaded) {
 			loaded = true;
 			new BasketballApp();
@@ -75,5 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				}, 1000);
 			}
 		}
+	};
+	obj?.addEventListener("loadeddata", () => {
+		load();
 	});
+	load();
 });
