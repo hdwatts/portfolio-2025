@@ -59,7 +59,7 @@ export class Physics {
 		// Create floor
 		this.floorBody = Matter.Bodies.rectangle(
 			canvasWidth / 2,
-			floorY + 25,
+			floorY + 45,
 			canvasWidth,
 			50,
 			{
@@ -69,6 +69,7 @@ export class Physics {
 				frictionStatic: 0.95, // High static friction
 				label: "floor",
 				render: {
+					visible: false,
 					fillStyle: "#0a101e",
 					strokeStyle: "transparent",
 				},

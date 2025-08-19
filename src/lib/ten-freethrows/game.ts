@@ -497,12 +497,11 @@ export class Game {
 		overlayCtx.clearRect(0, 0, this.W, this.H);
 
 		// Create a temporary renderer for the overlay
-		const overlayRenderer = new Renderer(overlayCtx, overlayCanvas);
 
 		// Draw UI elements that Matter.js doesn't handle
-		overlayRenderer.drawCourt(this.hoop, this.ftLine, this.floorY);
-		overlayRenderer.drawAim(this.ball, this.inputManager.getInput());
-		overlayRenderer.drawBallTrail(this.ball);
+		this.renderer.drawCourt(this.hoop, this.ftLine, this.floorY);
+		this.renderer.drawAim(this.ball, this.inputManager.getInput());
+		this.renderer.drawBallTrail(this.ball);
 
 		// Game over overlay
 		if (
@@ -510,7 +509,7 @@ export class Game {
 			this.state.shotsLeft === 0 &&
 			this.ball.atRest
 		) {
-			overlayRenderer.drawGameOverOverlay(this.state);
+			this.renderer.drawGameOverOverlay(this.state);
 		}
 	}
 }

@@ -3,10 +3,16 @@ import { type Ball, type Hoop, type Position, type GameState } from "./types";
 export class Renderer {
 	private ctx: CanvasRenderingContext2D;
 	private canvas: HTMLCanvasElement;
+	private pipeImage: HTMLImageElement;
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
 		this.canvas = canvas;
+		this.pipeImage = new Image();
+		this.pipeImage.src = "/ten-freethrows/pipe.png";
+		this.pipeImage.onload = () => {
+			console.log("Pipe image loaded");
+		};
 	}
 
 	clear(): void {
@@ -38,22 +44,34 @@ export class Renderer {
 		// Backboard
 		// this.ctx.fillStyle = "#000";
 		// this.ctx.fillRect(hoop.board.x, hoop.board.y, hoop.board.w, hoop.board.h);
-		this.ctx.strokeStyle = "#000";
-		this.ctx.lineWidth = hoop.board.w;
-		this.ctx.beginPath();
-		const radius = 75;
-		this.ctx.arc(
-			hoop.board.x + hoop.board.w,
-			hoop.board.y + hoop.board.h + radius / 1.5,
-			radius,
-			Math.PI * 1.5,
-			Math.PI * 2,
+		// this.ctx.strokeStyle = "#000";
+		// this.ctx.lineWidth = hoop.board.w;
+		console.log("Drawing image");
+		this.ctx.drawImage(
+			this.pipeImage,
+			100,
+			100,
+			500,
+			400,
+			hoop.board.x,
+			hoop.board.y,
+			500,
+			this.ctx.canvas.height - hoop.board.y,
 		);
-		this.ctx.lineTo(
-			hoop.board.x + hoop.board.w + radius,
-			this.ctx.canvas.height,
-		);
-		this.ctx.stroke();
+		// this.ctx.beginPath();
+		// const radius = 75;
+		// this.ctx.arc(
+		// 	hoop.board.x + hoop.board.w,
+		// 	hoop.board.y + hoop.board.h + radius / 1.5,
+		// 	radius,
+		// 	Math.PI * 1.5,
+		// 	Math.PI * 2,
+		// );
+		// this.ctx.lineTo(
+		// 	hoop.board.x + hoop.board.w + radius,
+		// 	this.ctx.canvas.height,
+		// );
+		// this.ctx.stroke();
 
 		// Net (simple) - fixed dimensions based on hoop.r = 35
 		// this.ctx.strokeStyle = "rgba(255,255,255,.7)";
