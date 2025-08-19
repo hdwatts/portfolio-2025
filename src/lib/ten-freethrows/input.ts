@@ -98,6 +98,7 @@ export class InputManager {
 	}
 
 	private pointerUp(): void {
+		console.log("Dragging", this.input.dragging);
 		if (this.input.dragging) {
 			const dx = this.input.sx - this.input.cx;
 			const dy = this.input.sy - this.input.cy;

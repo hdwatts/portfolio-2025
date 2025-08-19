@@ -174,15 +174,37 @@ export class Game {
 	}
 
 	private initializeFixedLayout(): void {
-		// Get actual canvas dimensions
-		const rect = this.elements.canvas.getBoundingClientRect();
-		this.W = rect.width;
-		this.H = rect.height;
+		// Get the actual video element dimensions to match exactly
+		const videoElement = document.querySelector(
+			"#background video",
+		) as HTMLVideoElement;
+
+		if (videoElement) {
+			// Use the video's actual rendered dimensions
+			const videoRect = videoElement.getBoundingClientRect();
+			this.W = videoRect.width;
+			this.H = videoRect.height;
+		} else {
+			// Fallback: Get container dimensions and calculate 16:9 aspect ratio
+			const containerRect =
+				this.elements.canvas.parentElement!.getBoundingClientRect();
+			const containerHeight = containerRect.height;
+			const aspectRatio = 16 / 9;
+			this.H = containerHeight;
+			this.W = Math.min(
+				containerHeight * aspectRatio,
+				containerRect.width,
+			);
+		}
+
 		this.floorY = this.H; // Floor position based on actual height
 
-		// Set canvas to actual dimensions
+		// Set canvas to match video dimensions exactly
 		this.elements.canvas.width = this.W * this.DPR;
 		this.elements.canvas.height = this.H * this.DPR;
+
+		// Check if letterboxing is occurring and add/remove class accordingly
+		this.updateLetterboxingState();
 
 		// Update physics renderer size
 		this.physics.resize(this.W, this.H);
@@ -238,6 +260,20 @@ export class Game {
 		// Only update if ball is at rest to avoid disrupting gameplay
 		if (this.ball.atRest) {
 			this.initializeFixedLayout();
+		}
+	}
+
+	private updateLetterboxingState(): void {
+		const canvasWrap = this.elements.canvas.parentElement!;
+		const containerRect = canvasWrap.getBoundingClientRect();
+
+		// Check if canvas width is less than container width (letterboxing occurring)
+		const isLetterboxed = this.W < containerRect.width - 10; // 10px tolerance
+
+		if (isLetterboxed) {
+			canvasWrap.classList.add("letterboxed");
+		} else {
+			canvasWrap.classList.remove("letterboxed");
 		}
 	}
 
@@ -328,29 +364,22 @@ export class Game {
 	}
 
 	private endShot(made: boolean): void {
-		if (!this.state.practice) {
-			if (!this.ball._counted) {
-				this.state.shotsLeft = Math.max(0, this.state.shotsLeft - 1);
-				this.elements.shotsEl.textContent =
-					this.state.shotsLeft.toString();
-				this.ball._counted = true;
-			}
-			if (this.state.shotsLeft === 0) {
-				setTimeout(() => {
-					this.setToast(
-						`Round Over — Score ${this.state.score}/10 · Best Streak ${this.state.bestStreak}`,
-					);
-				}, 80);
-			}
+		if (!this.ball._counted) {
+			this.state.shotsLeft = Math.max(0, this.state.shotsLeft - 1);
+			this.elements.shotsEl.textContent = this.state.shotsLeft.toString();
+			this.ball._counted = true;
+			setTimeout(
+				() => {
+					this.spawnBall();
+					this.createHoopBodies();
+				},
+				made ? 1000 : 350,
+			);
 		}
+
 		if (!made) {
 			this.state.streak = 0;
 		}
-		// Respawn after short delay
-		setTimeout(() => {
-			this.spawnBall();
-			this.createHoopBodies();
-		}, 1000);
 	}
 
 	private setToast(msg: string): void {

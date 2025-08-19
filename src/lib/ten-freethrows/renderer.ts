@@ -275,10 +275,8 @@ export class Renderer {
 	drawGameOverOverlay(state: GameState): void {
 		if (!state.practice && state.shotsLeft === 0) {
 			// Use actual canvas dimensions
-			const cw =
-				this.canvas.width / Math.min(2, window.devicePixelRatio || 1);
-			const ch =
-				this.canvas.height / Math.min(2, window.devicePixelRatio || 1);
+			const cw = this.canvas.width;
+			const ch = this.canvas.height;
 
 			this.ctx.fillStyle = "rgba(0,0,0,.45)";
 			this.ctx.fillRect(0, 0, cw, ch);

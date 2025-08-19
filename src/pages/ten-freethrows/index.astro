@@ -104,17 +104,34 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden; /* Prevent any overflow */
+			overflow: hidden;
 		}
 
 		canvas {
 			position: absolute;
-			width: 100%; /* Full width */
-			height: 100%; /* Full height of available space */
-			display: block;
 			bottom: 0;
-			/* border: 1px solid rgba(255, 255, 255, 0.1); */
-			/* border-radius: 8px; */
+			left: 50%;
+			transform: translateX(-50%);
+			width: auto;
+			height: 100%;
+			display: block;
+			aspect-ratio: 16/9; /* Adjust this to match your video's aspect ratio */
+			max-width: calc(
+				100vh * 16 / 9
+			); /* Ensures it doesn't exceed container width */
+		}
+
+		/* Inset shadow for canvas when letterboxing - creates seamless edge blending */
+		canvas {
+			transition: box-shadow 0.3s ease;
+		}
+
+		/* Apply inset shadow when letterboxing is active */
+		#canvasWrap.letterboxed canvas {
+			box-shadow:
+				inset 60px 0 80px -40px rgba(11, 18, 32, 0.95),
+				/* Left shadow */ inset -60px 0 80px -40px
+					rgba(11, 18, 32, 0.95); /* Right shadow */
 		}
 
 		#overlay {
@@ -173,7 +190,7 @@
 			transform: translateX(-50%);
 			width: auto;
 			height: 100%;
-			object-fit: cover;
+			object-fit: contain;
 		}
 		#gameWrap {
 			width: 100%;
