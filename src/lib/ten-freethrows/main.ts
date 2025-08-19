@@ -63,7 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	const obj = document.getElementById("backgroundVideo");
 	console.log("Dom loaded");
 	const load = () => {
-		if (obj?.readyState >= 1 && !loaded) {
+		if (
+			obj &&
+			"readyState" in obj &&
+			(obj as HTMLVideoElement)?.readyState >= 1 &&
+			!loaded
+		) {
 			loaded = true;
 			new BasketballApp();
 			const loading = document.getElementById("loading");
