@@ -141,8 +141,8 @@ export class Physics {
 			render: {
 				sprite: {
 					texture: "/ten-freethrows/basketball.png",
-					xScale: 0.275 * (radius / 18),
-					yScale: 0.275 * (radius / 18),
+					xScale: 0.12,
+					yScale: 0.12,
 				},
 				fillStyle: "#ff8a00",
 				strokeStyle: "#c85f00",

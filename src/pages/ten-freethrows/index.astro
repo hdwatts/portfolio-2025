@@ -158,6 +158,26 @@
 			opacity: 1;
 		}
 
+		#background {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-image: url("/ten-freethrows/background.gif");
+			background-size: cover;
+			background-position: bottom center;
+			background-repeat: no-repeat;
+			z-index: -1;
+		}
+		#landerWrap {
+			position: relative;
+			width: 100vw;
+			height: 100%;
+		}
+		#lander {
+			position: absolute;
+			bottom: 25%;
+			left: 41%;
+		}
 		footer {
 			padding: 8px 14px;
 			color: var(--muted);
@@ -190,7 +210,7 @@
 				</button>
 			</div>
 		</header>
-
+		<div id="background"></div>
 		<div id="canvasWrap">
 			<canvas id="game"></canvas>
 			<div id="overlay">
@@ -207,5 +227,6 @@
 
 		<script src="../../lib/ten-freethrows/main.ts"></script>
 	</div>
+
 
 </html>
