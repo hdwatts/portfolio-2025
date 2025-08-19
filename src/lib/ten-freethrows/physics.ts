@@ -59,7 +59,7 @@ export class Physics {
 		// Create floor
 		this.floorBody = Matter.Bodies.rectangle(
 			canvasWidth / 2,
-			floorY + 45,
+			floorY,
 			canvasWidth,
 			50,
 			{
@@ -160,7 +160,7 @@ export class Physics {
 			frictionStatic: 0.5,
 			label: "rim",
 			render: {
-				visible: false,
+				visible: true,
 			},
 		});
 	}
@@ -173,9 +173,9 @@ export class Physics {
 	): Matter.Body {
 		return Matter.Bodies.rectangle(
 			x + width / 2,
-			y + height / 2,
-			width,
-			height,
+			y + height / 2 + 20,
+			width - 15,
+			height - 20,
 			{
 				isStatic: true,
 				restitution: 0.7, // Higher for realistic glass backboard bounce
@@ -183,9 +183,7 @@ export class Physics {
 				frictionStatic: 0.3,
 				label: "backboard",
 				render: {
-					fillStyle: "#e6eefc",
-					strokeStyle: "#d0d8e8",
-					lineWidth: 1,
+					visible: false,
 				},
 			},
 		);
@@ -266,8 +264,7 @@ export class Physics {
 	checkFloorCollision(ball: Ball, floorY: number): boolean {
 		const pos = ball.body.position;
 		const velocity = ball.body.velocity;
-
-		if (pos.y + ball.r >= floorY) {
+		if (pos.y + ball.r * 2 >= floorY - 2) {
 			// Check if ball should come to rest with more realistic thresholds
 			const totalSpeed = Math.abs(velocity.x) + Math.abs(velocity.y);
 			const rotationSpeed = Math.abs(ball.body.angularVelocity);

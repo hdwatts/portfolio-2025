@@ -178,7 +178,7 @@ export class Game {
 		const rect = this.elements.canvas.getBoundingClientRect();
 		this.W = rect.width;
 		this.H = rect.height;
-		this.floorY = this.H - 40; // Floor position based on actual height
+		this.floorY = this.H; // Floor position based on actual height
 
 		// Set canvas to actual dimensions
 		this.elements.canvas.width = this.W * this.DPR;
@@ -250,36 +250,7 @@ export class Game {
 		if (this.hoop.boardBody)
 			Matter.World.remove(this.physics.world, this.hoop.boardBody);
 
-		if (this.hoop.rimBody)
-			Matter.World.remove(this.physics.world, this.hoop.rimBody);
-
 		// Create new hoop bodies
-
-		this.hoop.rimBody = Matter.Bodies.rectangle(
-			this.hoop.left.x + 35,
-			this.hoop.left.y + 30,
-			80,
-			80,
-			{
-				isStatic: true,
-				collisionFilter: {
-					group: 0,
-					category: 0,
-					mask: 0,
-				},
-				label: "rim",
-				render: {
-					sprite: {
-						texture: "/ten-freethrows/net.png",
-						xScale: 1,
-						yScale: 1,
-					},
-					fillStyle: "#e6eefc",
-					strokeStyle: "#d0d8e8",
-					lineWidth: 1,
-				},
-			},
-		);
 
 		this.hoop.leftBody = this.physics.createRimPeg(
 			this.hoop.left.x,
@@ -302,7 +273,6 @@ export class Game {
 			this.hoop.leftBody,
 			this.hoop.rightBody,
 			this.hoop.boardBody,
-			this.hoop.rimBody,
 		]);
 	}
 
@@ -325,6 +295,14 @@ export class Game {
 		this.ball.isAboveHoop = false;
 		this.ball.trail.length = 0;
 		this.ball._hitRim = false;
+
+		// Initialize shadow
+		this.ball.shadow = {
+			x: x,
+			y: this.floorY,
+			radius: this.ball.r * 0.8,
+			opacity: 0.6,
+		};
 
 		// Add ball to world
 		Matter.World.add(this.physics.world, this.ball.body);
@@ -416,9 +394,51 @@ export class Game {
 		}
 	}
 
+	private updateBallShadow(): void {
+		const ballPos = this.ball.body.position;
+		const ballHeight = this.floorY - ballPos.y - this.ball.r; // Distance from ball bottom to floor
+
+		// Maximum height where shadow is visible (adjust as needed)
+		const maxShadowHeight = 300;
+
+		if (ballHeight > maxShadowHeight) {
+			// Ball is too high, hide shadow
+			this.ball.shadow = {
+				x: ballPos.x,
+				y: this.floorY,
+				radius: 0,
+				opacity: 0,
+			};
+			return;
+		}
+
+		// Calculate shadow properties based on height
+		const heightRatio = Math.max(0, ballHeight / maxShadowHeight);
+		const baseRadius = this.ball.r * 0.8; // Base shadow size when ball is on ground
+		const maxRadius = this.ball.r * 1.5; // Maximum shadow size when ball is high
+
+		// Shadow gets larger and fainter as ball gets higher
+		const shadowRadius =
+			baseRadius + (maxRadius - baseRadius) * heightRatio;
+		const maxOpacity = 0.6;
+		const minOpacity = 0.1;
+		const shadowOpacity =
+			maxOpacity - (maxOpacity - minOpacity) * heightRatio;
+
+		this.ball.shadow = {
+			x: ballPos.x,
+			y: this.floorY,
+			radius: shadowRadius,
+			opacity: shadowOpacity,
+		};
+	}
+
 	update(dt: number): void {
 		// Update input dragging state
 		this.inputManager.updateDragging(this.ball, this.state);
+
+		// Update ball shadow based on position and height
+		this.updateBallShadow();
 
 		if (!this.ball.atRest) {
 			// Update ball trail (physics updates are handled by Matter.js)
@@ -500,6 +520,7 @@ export class Game {
 
 		// Draw UI elements that Matter.js doesn't handle
 		this.renderer.drawCourt(this.hoop, this.ftLine, this.floorY);
+		this.renderer.drawBallShadow(this.ball, this.floorY);
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 		this.renderer.drawBallTrail(this.ball);
 

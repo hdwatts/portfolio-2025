@@ -3,16 +3,13 @@ import { type Ball, type Hoop, type Position, type GameState } from "./types";
 export class Renderer {
 	private ctx: CanvasRenderingContext2D;
 	private canvas: HTMLCanvasElement;
-	private pipeImage: HTMLImageElement;
+	private backgroundImage: HTMLImageElement;
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
 		this.canvas = canvas;
-		this.pipeImage = new Image();
-		this.pipeImage.src = "/ten-freethrows/pipe.png";
-		this.pipeImage.onload = () => {
-			console.log("Pipe image loaded");
-		};
+		this.backgroundImage = new Image();
+		this.backgroundImage.src = "/ten-freethrows/backboard.png";
 	}
 
 	clear(): void {
@@ -41,23 +38,31 @@ export class Renderer {
 		); // Fixed radius
 		this.ctx.stroke();
 
+		this.ctx.drawImage(
+			this.backgroundImage,
+			hoop.board.x - 80,
+			hoop.board.y + 30,
+			132,
+			540 - 20,
+		);
+
 		// Backboard
 		// this.ctx.fillStyle = "#000";
 		// this.ctx.fillRect(hoop.board.x, hoop.board.y, hoop.board.w, hoop.board.h);
 		// this.ctx.strokeStyle = "#000";
 		// this.ctx.lineWidth = hoop.board.w;
-		console.log("Drawing image");
-		this.ctx.drawImage(
-			this.pipeImage,
-			100,
-			100,
-			500,
-			400,
-			hoop.board.x,
-			hoop.board.y,
-			500,
-			this.ctx.canvas.height - hoop.board.y,
-		);
+		// console.log("Drawing image");
+		// this.ctx.drawImage(
+		// 	this.pipeImage,
+		// 	100,
+		// 	100,
+		// 	500,
+		// 	400,
+		// 	hoop.board.x,
+		// 	hoop.board.y,
+		// 	500,
+		// 	this.ctx.canvas.height - hoop.board.y,
+		// );
 		// this.ctx.beginPath();
 		// const radius = 75;
 		// this.ctx.arc(
@@ -146,6 +151,49 @@ export class Renderer {
 		this.drawBallTrail(ball);
 	}
 
+	drawBallShadow(ball: Ball, floorY: number): void {
+		if (!ball.shadow || ball.shadow.opacity <= 0) return;
+
+		const shadowX = ball.shadow.x;
+		const shadowY = floorY - 24; // Shadow is always on the floor
+		const shadowRadius = ball.shadow.radius;
+		const shadowOpacity = ball.shadow.opacity;
+
+		// Create elliptical shadow (flattened circle)
+		this.ctx.save();
+		this.ctx.globalAlpha = shadowOpacity;
+
+		// Create radial gradient for realistic shadow
+		const gradient = this.ctx.createRadialGradient(
+			shadowX,
+			shadowY,
+			0,
+			shadowX,
+			shadowY,
+			shadowRadius,
+		);
+		gradient.addColorStop(0, "rgba(0, 0, 0, 0.4)");
+		gradient.addColorStop(0.7, "rgba(0, 0, 0, 0.2)");
+		gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+		this.ctx.fillStyle = gradient;
+
+		// Draw flattened ellipse for shadow
+		this.ctx.beginPath();
+		this.ctx.ellipse(
+			shadowX,
+			shadowY,
+			shadowRadius,
+			shadowRadius * 0.3, // Flatten the shadow vertically
+			0,
+			0,
+			Math.PI * 2,
+		);
+		this.ctx.fill();
+
+		this.ctx.restore();
+	}
+
 	drawAim(
 		ball: Ball,
 		input: {
@@ -213,25 +261,5 @@ export class Renderer {
 				ch * 0.46,
 			);
 		}
-	}
-
-	private roundRect(
-		x: number,
-		y: number,
-		w: number,
-		h: number,
-		r: number,
-		fill: boolean,
-		stroke: boolean,
-	): void {
-		const rr = Math.min(r, w / 2, h / 2);
-		this.ctx.beginPath();
-		this.ctx.moveTo(x + rr, y);
-		this.ctx.arcTo(x + w, y, x + w, y + h, rr);
-		this.ctx.arcTo(x + w, y + h, x, y + h, rr);
-		this.ctx.arcTo(x, y + h, x, y, rr);
-		this.ctx.arcTo(x, y, x + w, y, rr);
-		if (fill) this.ctx.fill();
-		if (stroke) this.ctx.stroke();
 	}
 }
