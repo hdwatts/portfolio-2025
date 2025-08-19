@@ -3,15 +3,15 @@ import { type Ball, type Hoop, type Position, type GameState } from "./types";
 export class Renderer {
 	private ctx: CanvasRenderingContext2D;
 	private canvas: HTMLCanvasElement;
-	private backgroundImage: HTMLImageElement;
+	private backboardImage: HTMLImageElement;
 	private scoreboardImage: HTMLImageElement;
 	private today: Date;
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
 		this.canvas = canvas;
-		this.backgroundImage = new Image();
-		this.backgroundImage.src = "/ten-freethrows/backboard.png";
+		this.backboardImage = new Image();
+		this.backboardImage.src = "/ten-freethrows/backboard.png";
 		this.scoreboardImage = new Image();
 		this.scoreboardImage.src = "/ten-freethrows/scoreboard.png";
 		this.today = new Date();
@@ -40,14 +40,6 @@ export class Renderer {
 		}
 
 		this.drawHoopShadow(hoop, floorY);
-		// Draw backboard image - fixed size
-		this.ctx.drawImage(
-			this.backgroundImage,
-			hoop.board.x - 90,
-			hoop.board.y + 30,
-			160,
-			600,
-		);
 
 		this.drawScoreboard(
 			30,
@@ -64,6 +56,17 @@ export class Renderer {
 			"# Left",
 			score ?? 0,
 			shotsLeft ?? 0,
+		);
+	}
+
+	drawHoop(hoop: Hoop): void {
+		// Draw backboard image - fixed size
+		this.ctx.drawImage(
+			this.backboardImage,
+			hoop.board.x - 90,
+			hoop.board.y + 30,
+			160,
+			600,
 		);
 	}
 

@@ -10,6 +10,7 @@ export class Physics {
 	private leftWallBody: Matter.Body | null = null;
 	private rightWallBody: Matter.Body | null = null;
 	private ceilingBody: Matter.Body | null = null;
+	private basketballImage: HTMLImageElement;
 
 	constructor(canvas: HTMLCanvasElement) {
 		// Create engine
@@ -34,6 +35,12 @@ export class Physics {
 				showDebug: false,
 			},
 		});
+
+		// We'll use custom rendering instead of Matter.js renderer to avoid canvas clearing
+
+		// Load basketball sprite
+		this.basketballImage = new Image();
+		this.basketballImage.src = "/ten-freethrows/basketball.png";
 
 		// Realistic basketball gravity - stronger for less floaty feel
 		this.engine.world.gravity.y = 1.8; // Increased gravity for realistic basketball physics
@@ -131,6 +138,7 @@ export class Physics {
 	}
 
 	createBall(x: number, y: number, radius: number): Matter.Body {
+		console.log(radius);
 		return Matter.Bodies.circle(x, y, radius, {
 			restitution: 0.75, // Higher bounce for realistic basketball
 			density: 0.6, // Realistic basketball density (lighter than default)
@@ -141,8 +149,8 @@ export class Physics {
 			render: {
 				sprite: {
 					texture: "/ten-freethrows/basketball.png",
-					xScale: 0.75,
-					yScale: 0.75,
+					xScale: 1,
+					yScale: 1,
 				},
 				fillStyle: "#ff8a00",
 				strokeStyle: "transparent",
@@ -224,11 +232,122 @@ export class Physics {
 	}
 
 	start(): void {
-		// Start the renderer
-		Matter.Render.run(this.render);
+		// Don't start the automatic renderer - we'll handle rendering manually
+		// Matter.Render.run(this.render);
 
 		// Start the runner
 		Matter.Runner.run(this.runner, this.engine);
+	}
+
+	renderBodies(): void {
+		// Custom render bodies without clearing canvas
+		const ctx = this.render.canvas.getContext("2d");
+		if (!ctx) return;
+
+		const bodies = Matter.Composite.allBodies(this.engine.world);
+
+		ctx.save();
+
+		for (const body of bodies) {
+			// Skip rendering invisible bodies or bodies we don't want to render
+			if (!body.render.visible) continue;
+
+			const position = body.position;
+			const angle = body.angle;
+
+			ctx.save();
+			ctx.translate(position.x, position.y);
+			ctx.rotate(angle);
+
+			// Render based on body type/label
+			if (body.label === "ball") {
+				this.renderBall(ctx, body);
+			}
+			// Skip rendering floor, walls, ceiling as they're invisible boundaries
+
+			ctx.restore();
+		}
+
+		ctx.restore();
+	}
+
+	private renderBall(ctx: CanvasRenderingContext2D, body: Matter.Body): void {
+		const radius = body.circleRadius || 28;
+		const diameter = radius * 2;
+
+		// Draw basketball sprite if loaded, otherwise fallback to custom drawing
+		if (
+			this.basketballImage.complete &&
+			this.basketballImage.naturalWidth > 0
+		) {
+			// Draw the basketball sprite centered and rotated
+			ctx.drawImage(
+				this.basketballImage,
+				-radius, // x offset to center
+				-radius, // y offset to center
+				diameter, // width
+				diameter, // height
+			);
+		} else {
+			// Fallback: Basketball appearance
+			ctx.fillStyle = "#D2691E"; // Basketball orange
+			ctx.beginPath();
+			ctx.arc(0, 0, radius, 0, Math.PI * 2);
+			ctx.fill();
+
+			// Basketball lines
+			ctx.strokeStyle = "#8B4513"; // Dark brown
+			ctx.lineWidth = 2;
+
+			// Vertical line
+			ctx.beginPath();
+			ctx.moveTo(0, -radius);
+			ctx.lineTo(0, radius);
+			ctx.stroke();
+
+			// Horizontal line
+			ctx.beginPath();
+			ctx.moveTo(-radius, 0);
+			ctx.lineTo(radius, 0);
+			ctx.stroke();
+
+			// Curved lines
+			ctx.beginPath();
+			ctx.arc(0, 0, radius * 0.7, 0, Math.PI * 2);
+			ctx.stroke();
+		}
+	}
+
+	private renderRim(ctx: CanvasRenderingContext2D, body: Matter.Body): void {
+		const radius = body.circleRadius || 5;
+
+		// Rim appearance - metallic orange/red
+		ctx.fillStyle = "#FF4500";
+		ctx.strokeStyle = "#CC3300";
+		ctx.lineWidth = 1;
+
+		ctx.beginPath();
+		ctx.arc(0, 0, radius, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	private renderBackboard(
+		ctx: CanvasRenderingContext2D,
+		body: Matter.Body,
+	): void {
+		// Get the body's bounds for rectangle dimensions
+		const bounds = body.bounds;
+		const width = bounds.max.x - bounds.min.x;
+		const height = bounds.max.y - bounds.min.y;
+
+		// Backboard appearance - transparent since we have a background image
+		ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+		ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+		ctx.lineWidth = 2;
+
+		ctx.fillRect(-width / 2, -height / 2, width, height);
+		ctx.strokeRect(-width / 2, -height / 2, width, height);
 	}
 
 	stop(): void {

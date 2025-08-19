@@ -43,7 +43,16 @@ class BasketballApp {
 			// Update game logic (scoring, input, etc) but physics runs independently
 			this.game.update(dt);
 
-			// Draw UI overlay (trail, aiming, court decorations)
+			// Clear canvas for fresh frame
+			this.game.clearCanvas();
+
+			// Draw elements that should appear UNDER the Matter.js physics bodies
+			this.game.drawUnderlay();
+
+			// Manually render the Matter.js physics bodies
+			this.game.drawPhysicsBodies();
+
+			// Draw elements that should appear OVER the Matter.js physics bodies
 			this.game.drawOverlay();
 
 			requestAnimationFrame(loop);

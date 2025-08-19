@@ -452,8 +452,13 @@ export class Game {
 		}
 	}
 
-	drawOverlay(): void {
-		// Draw UI elements on top of Matter.js rendered physics bodies
+	clearCanvas(): void {
+		// Clear the canvas for a fresh frame
+		this.renderer.clear();
+	}
+
+	drawUnderlay(): void {
+		// Draw elements that should appear UNDER the Matter.js physics bodies
 		this.renderer.drawCourt(
 			this.ball,
 			this.hoop,
@@ -462,9 +467,19 @@ export class Game {
 			this.state.score,
 			this.state.shotsLeft,
 		);
-		this.renderer.drawBallShadow(this.ball, this.floorY);
-		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 		this.renderer.drawBallTrail(this.ball);
+		this.renderer.drawBallShadow(this.ball, this.floorY);
+	}
+
+	drawPhysicsBodies(): void {
+		// Render the Matter.js physics bodies
+		this.physics.renderBodies();
+	}
+
+	drawOverlay(): void {
+		// Draw elements that should appear OVER the Matter.js physics bodies
+		this.renderer.drawHoop(this.hoop);
+		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 
 		// Game over overlay
 		if (
