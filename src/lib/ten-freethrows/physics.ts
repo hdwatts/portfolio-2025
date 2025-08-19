@@ -131,7 +131,6 @@ export class Physics {
 	}
 
 	createBall(x: number, y: number, radius: number): Matter.Body {
-		console.log(radius);
 		return Matter.Bodies.circle(x, y, radius, {
 			restitution: 0.75, // Higher bounce for realistic basketball
 			density: 0.6, // Realistic basketball density (lighter than default)
@@ -142,8 +141,8 @@ export class Physics {
 			render: {
 				sprite: {
 					texture: "/ten-freethrows/basketball.png",
-					xScale: 0.12,
-					yScale: 0.12,
+					xScale: 0.62,
+					yScale: 0.62,
 				},
 				fillStyle: "#ff8a00",
 				strokeStyle: "#c85f00",

@@ -21,22 +21,19 @@ export class Renderer {
 		this.ctx.clearRect(0, 0, cw, ch);
 	}
 
-	drawCourt(hoop: Hoop, ftLine: Position, floorY: number): void {
+	drawCourt(ball: Ball, hoop: Hoop, ftLine: Position, floorY: number): void {
 		// Fixed dimensions - no need for responsive canvas width/height
 
-		// Free throw semicircle (visual) - fixed size
-		this.ctx.strokeStyle = "rgba(255,255,255,.15)";
-		this.ctx.lineWidth = 2;
-		this.ctx.beginPath();
-		this.ctx.arc(
-			ftLine.x,
-			ftLine.y,
-			100,
-			Math.PI * 0.05,
-			Math.PI * 0.95,
-			true,
-		); // Fixed radius
-		this.ctx.stroke();
+		if (ball.atRest) {
+			// Free throw semicircle (visual) - fixed size
+			this.ctx.strokeStyle = "rgba(255,255,255,.15)";
+			this.ctx.lineWidth = 2;
+			this.ctx.beginPath();
+			this.ctx.arc(ftLine.x, ftLine.y - 48, 100, 0, Math.PI * 2, true); // Fixed radius
+			this.ctx.stroke();
+		}
+
+		this.drawHoopShadow(hoop, floorY);
 
 		this.ctx.drawImage(
 			this.backgroundImage,
@@ -151,11 +148,52 @@ export class Renderer {
 		this.drawBallTrail(ball);
 	}
 
+	drawHoopShadow(hoop: Hoop, floorY: number): void {
+		const shadowX = hoop.right.x;
+		const shadowY = floorY - 10; // Shadow is always on the floor
+		const shadowRadius = 90;
+		const shadowOpacity = 0.6;
+
+		// Create elliptical shadow (flattened circle)
+		this.ctx.save();
+		this.ctx.globalAlpha = shadowOpacity;
+
+		// Create radial gradient for realistic shadow
+		const gradient = this.ctx.createRadialGradient(
+			shadowX,
+			shadowY,
+			0,
+			shadowX,
+			shadowY,
+			shadowRadius,
+		);
+		gradient.addColorStop(0, "rgba(0, 0, 0, 0.4)");
+		gradient.addColorStop(0.7, "rgba(0, 0, 0, 0.2)");
+		gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+		this.ctx.fillStyle = gradient;
+
+		// Draw flattened ellipse for shadow
+		this.ctx.beginPath();
+		this.ctx.ellipse(
+			shadowX,
+			shadowY,
+			shadowRadius,
+			shadowRadius * 0.3, // Flatten the shadow vertically
+			0,
+			0,
+			Math.PI * 2,
+		);
+		this.ctx.fill();
+
+		this.ctx.restore();
+	}
+
 	drawBallShadow(ball: Ball, floorY: number): void {
 		if (!ball.shadow || ball.shadow.opacity <= 0) return;
 
 		const shadowX = ball.shadow.x;
-		const shadowY = floorY - 24; // Shadow is always on the floor
+		const shadowY = floorY - 20; // Shadow is always on the floor
 		const shadowRadius = ball.shadow.radius;
 		const shadowOpacity = ball.shadow.opacity;
 

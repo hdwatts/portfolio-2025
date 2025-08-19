@@ -223,7 +223,7 @@ export class Game {
 
 		// Fixed free-throw line & ball spawn position (centered both ways)
 		this.ftLine.x = centerX - gameOffsetX + this.ball.r; // Center - offset + original position
-		this.ftLine.y = this.H - this.ball.r * 2; // Center + offset - margin - adjustment
+		this.ftLine.y = this.floorY;
 
 		// Create physics boundaries with full dimensions
 		this.physics.createBoundaries(this.W, this.H, this.floorY);
@@ -284,7 +284,7 @@ export class Game {
 
 		// Create new ball body
 		const x = this.ftLine.x;
-		const y = this.ftLine.y - this.ball.r - 1;
+		const y = this.ftLine.y - this.ball.r * 2 - 1;
 		this.ball.body = this.physics.createBall(x, y, this.ball.r);
 
 		// Reset ball state
@@ -350,7 +350,7 @@ export class Game {
 		setTimeout(() => {
 			this.spawnBall();
 			this.createHoopBodies();
-		}, 350);
+		}, 1000);
 	}
 
 	private setToast(msg: string): void {
@@ -519,7 +519,7 @@ export class Game {
 		// Create a temporary renderer for the overlay
 
 		// Draw UI elements that Matter.js doesn't handle
-		this.renderer.drawCourt(this.hoop, this.ftLine, this.floorY);
+		this.renderer.drawCourt(this.ball, this.hoop, this.ftLine, this.floorY);
 		this.renderer.drawBallShadow(this.ball, this.floorY);
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 		this.renderer.drawBallTrail(this.ball);

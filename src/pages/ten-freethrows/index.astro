@@ -162,11 +162,18 @@
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			background-image: url("/ten-freethrows/background.gif");
-			background-size: auto 100%;
-			background-position: bottom center;
-			background-repeat: repeat-x;
 			z-index: -1;
+			background-color: #0b1220;
+		}
+
+		#background video {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: auto;
+			height: 100%;
+			object-fit: cover;
 		}
 		#gameWrap {
 			width: 100%;
@@ -188,7 +195,7 @@
 	</style>
 
 	<meta charset="utf-8" />
-	<title>Ten Freethrows - I.S.R.U</title>
+	<title>Ten Free Throws - I.S.R.U</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 	<div id="wrapper">
@@ -207,7 +214,11 @@
 			</div>
 		</header>
 		<div id="gameWrap">
-			<div id="background"></div>
+			<div id="background">
+				<video autoplay loop muted playsinline>
+					<source src="/ten-freethrows/lander.mp4" type="video/mp4" />
+				</video>
+			</div>
 			<div id="canvasWrap">
 				<canvas id="game"></canvas>
 				<div id="overlay">
