@@ -102,12 +102,20 @@ import { WelcomeDialog } from "./WelcomeDialog";
 			justify-content: center;
 			align-items: center;
 			overflow: hidden;
+			/* Maintain 3:2 aspect ratio */
+			aspect-ratio: 3 / 2;
+			/* Center the canvas container */
+			margin: auto;
+			/* Responsive sizing */
+			width: min(100vw, 150vh);
+			height: min(100vh, 66.67vw);
 		}
 
 		canvas {
-			height: 100dvh;
-			width: calc(100dvh * 3 / 2); /* 3:2 aspect ratio based on height */
+			width: 100%;
+			height: 100%;
 			max-width: 100vw;
+			max-height: 100vh;
 		}
 
 		#overlay {
@@ -148,23 +156,6 @@ import { WelcomeDialog } from "./WelcomeDialog";
 			opacity: 1;
 		}
 
-		#background {
-			position: absolute;
-			inset: 0;
-			z-index: -1;
-			background-color: #d6c1a1;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		#background img {
-			height: 100dvh;
-			width: calc(100dvh * 3 / 2); /* Match canvas dimensions */
-			max-width: 100dvw;
-			object-fit: contain;
-			border-radius: 8px;
-		}
 		#gameWrap {
 			width: 100%;
 			height: 100%;
@@ -220,7 +211,7 @@ import { WelcomeDialog } from "./WelcomeDialog";
 		}
 
 		/* Landscape orientation styles */
-		@media screen and (orientation: portrait) {
+		/* @media screen and (orientation: portrait) {
 			#wrapper {
 				display: none;
 			}
@@ -240,7 +231,7 @@ import { WelcomeDialog } from "./WelcomeDialog";
 				padding: 20px;
 				z-index: 9999;
 			}
-		}
+		} */
 	</style>
 
 	<meta charset="utf-8" />
@@ -301,12 +292,6 @@ import { WelcomeDialog } from "./WelcomeDialog";
 		</header> -->
 
 		<div id="gameWrap">
-			<div id="background">
-				<img src="/ten-freethrows/lander.png" alt="Background" />
-				<!-- <video id="backgroundVideo" autoplay loop muted playsinline>
-					<source src="/ten-freethrows/lander.mp4" type="video/mp4" />
-				</video> -->
-			</div>
 			<div id="canvasWrap">
 				<canvas id="game"></canvas>
 				<div id="overlay">

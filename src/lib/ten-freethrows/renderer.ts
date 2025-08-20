@@ -5,6 +5,7 @@ export class Renderer {
 	private canvas: HTMLCanvasElement;
 	private backboardImage: HTMLImageElement;
 	private scoreboardImage: HTMLImageElement;
+	private backgroundImage: HTMLImageElement;
 	private today: Date;
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -14,12 +15,55 @@ export class Renderer {
 		this.backboardImage.src = "/ten-freethrows/backboard.png";
 		this.scoreboardImage = new Image();
 		this.scoreboardImage.src = "/ten-freethrows/scoreboard.png";
+		this.backgroundImage = new Image();
+		this.backgroundImage.src = "/ten-freethrows/lander.png";
 		this.today = new Date();
 	}
 
 	clear(): void {
 		// Clear the entire canvas for a fresh frame
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	drawBackground(): void {
+		// Draw background image centered horizontally and from bottom of canvas
+		if (this.backgroundImage.complete) {
+			// Use display dimensions (CSS pixels), not buffer dimensions
+			const dpr = window.devicePixelRatio || 1;
+			const canvasWidth = this.canvas.width / dpr;
+			const canvasHeight = this.canvas.height / dpr;
+
+			// Calculate scale to maintain aspect ratio while fitting the canvas
+			const imageAspectRatio =
+				this.backgroundImage.width / this.backgroundImage.height;
+			const canvasAspectRatio = canvasWidth / canvasHeight;
+
+			let drawWidth: number;
+			let drawHeight: number;
+
+			// Scale image to fill the canvas while maintaining aspect ratio
+			if (imageAspectRatio > canvasAspectRatio) {
+				// Image is wider than canvas - fit to height
+				drawHeight = canvasHeight;
+				drawWidth = drawHeight * imageAspectRatio;
+			} else {
+				// Image is taller than canvas - fit to width
+				drawWidth = canvasWidth;
+				drawHeight = drawWidth / imageAspectRatio;
+			}
+
+			// Center horizontally, align to bottom of canvas
+			const x = (canvasWidth - drawWidth) / 2;
+			const y = canvasHeight - drawHeight;
+
+			this.ctx.drawImage(
+				this.backgroundImage,
+				x,
+				y,
+				drawWidth,
+				drawHeight,
+			);
+		}
 	}
 
 	drawCourt(
@@ -29,44 +73,54 @@ export class Renderer {
 		floorY: number,
 		score: number,
 		shotsLeft: number,
+		scale: number = 1,
 	): void {
 		if (ball.atRest) {
-			// Free throw semicircle - fixed size
+			// Free throw semicircle - scaled size
 			this.ctx.strokeStyle = "rgba(255,255,255,.15)";
-			this.ctx.lineWidth = 3;
+			this.ctx.lineWidth = 3 * scale;
 			this.ctx.beginPath();
-			this.ctx.arc(ftLine.x, ftLine.y - 60, 120, 0, Math.PI * 2, true);
+			this.ctx.arc(
+				ftLine.x,
+				ftLine.y - 60 * scale,
+				120 * scale,
+				0,
+				Math.PI * 2,
+				true,
+			);
 			this.ctx.stroke();
 		}
 
 		this.drawHoopShadow(hoop, floorY);
 
 		this.drawScoreboard(
-			30,
-			65,
+			30 * scale,
+			65 * scale,
 			"Month",
 			"Day",
 			this.today.getMonth() + 1,
 			this.today.getDate(),
+			scale,
 		);
 		this.drawScoreboard(
-			30,
-			175,
+			30 * scale,
+			175 * scale,
 			"Score",
 			"# Left",
 			score ?? 0,
 			shotsLeft ?? 0,
+			scale,
 		);
 	}
 
-	drawHoop(hoop: Hoop): void {
-		// Draw backboard image - fixed size
+	drawHoop(hoop: Hoop, scale: number = 1): void {
+		// Draw backboard image - scaled size
 		this.ctx.drawImage(
 			this.backboardImage,
-			hoop.board.x - 90,
-			hoop.board.y + 30,
-			160,
-			600,
+			hoop.board.x - 90 * scale,
+			hoop.board.y + 30 * scale,
+			160 * scale,
+			600 * scale,
 		);
 	}
 
@@ -77,26 +131,48 @@ export class Renderer {
 		label2: string,
 		value1: number,
 		value2: number,
+		scale: number = 1,
 	): void {
 		this.ctx.save();
-		this.ctx.drawImage(this.scoreboardImage, x, y);
+
+		// Scale the scoreboard image
+		const boardWidth = this.scoreboardImage.width * scale;
+		const boardHeight = this.scoreboardImage.height * scale;
+		this.ctx.drawImage(this.scoreboardImage, x, y, boardWidth, boardHeight);
+
 		this.ctx.fillStyle = "#D6C1A1";
-		this.ctx.font = "14px Visitor";
+		this.ctx.font = `${14 * scale}px Visitor`;
 		const label1Width = this.ctx.measureText(label1).width;
 		const label2Width = this.ctx.measureText(label2).width;
-		this.ctx.fillText(label1, x + 64 - label1Width / 2, y + 88);
-		this.ctx.fillText(label2, x + 137 - label2Width / 2, y + 88);
+		this.ctx.fillText(
+			label1,
+			x + 64 * scale - label1Width / 2,
+			y + 88 * scale,
+		);
+		this.ctx.fillText(
+			label2,
+			x + 137 * scale - label2Width / 2,
+			y + 88 * scale,
+		);
 		this.ctx.fillStyle = "#D6C1A1";
-		this.ctx.font = "44px Visitor";
+		this.ctx.font = `${44 * scale}px Visitor`;
 		const stringValue1 = value1 < 10 ? `0${value1}` : `${value1}`;
 		const stringValue2 = value2 < 10 ? `0${value2}` : `${value2}`;
 		const value1Width = this.ctx.measureText(stringValue1).width;
 		const value2Width = this.ctx.measureText(stringValue2).width;
-		this.ctx.fillText(stringValue1, x + 65 - value1Width / 2, y + 60);
+		this.ctx.fillText(
+			stringValue1,
+			x + 65 * scale - value1Width / 2,
+			y + 60 * scale,
+		);
 		if (value2 === 0) {
 			this.ctx.fillStyle = "#C72C48";
 		}
-		this.ctx.fillText(stringValue2, x + 139 - value2Width / 2, y + 60);
+		this.ctx.fillText(
+			stringValue2,
+			x + 139 * scale - value2Width / 2,
+			y + 60 * scale,
+		);
 		this.ctx.restore();
 	}
 
