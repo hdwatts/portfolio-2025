@@ -18,7 +18,7 @@ export const WelcomeDialog = () => {
 						<DialogTitle>Ten Free Throws</DialogTitle>
 						<DialogDescription>
 							Drag your finger across the screen to launch the
-							ball. You have <b>ten</b> shots. No more, no less.
+							ball. You have <b>ten</b> shots. No more, no less.{" "}
 							<b>One</b> point for a basket. <b>Two</b> points for
 							a clean swish. Precision and discipline are
 							rewarded. When it's over, <b>screenshot</b> your

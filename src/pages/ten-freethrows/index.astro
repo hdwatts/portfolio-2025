@@ -158,7 +158,7 @@ import { WelcomeDialog } from "./WelcomeDialog";
 			align-items: center;
 		}
 
-		#background video {
+		#background img {
 			height: 100dvh;
 			width: calc(100dvh * 3 / 2); /* Match canvas dimensions */
 			max-width: 100dvw;
@@ -302,9 +302,10 @@ import { WelcomeDialog } from "./WelcomeDialog";
 
 		<div id="gameWrap">
 			<div id="background">
-				<video id="backgroundVideo" autoplay loop muted playsinline>
+				<img src="/ten-freethrows/lander.png" alt="Background" />
+				<!-- <video id="backgroundVideo" autoplay loop muted playsinline>
 					<source src="/ten-freethrows/lander.mp4" type="video/mp4" />
-				</video>
+				</video> -->
 			</div>
 			<div id="canvasWrap">
 				<canvas id="game"></canvas>
