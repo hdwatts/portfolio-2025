@@ -21,10 +21,11 @@ const INITIAL_STATE: GameState = {
 };
 
 export class Game {
-	// Fixed game dimensions - 3:2 aspect ratio
-	private W = 900; // Fixed width for 3:2 ratio
-	private H = 600; // Fixed height
+	// Game dimensions - dynamically calculated based on canvas size
+	private W = 900; // Base width for 3:2 ratio
+	private H = 600; // Base height
 	private floorY = 600; // Floor at bottom
+	private scale = 1; // Scaling factor for responsive sizing
 
 	private state: GameState = INITIAL_STATE;
 
@@ -69,9 +70,9 @@ export class Game {
 			this.togglePractice.bind(this),
 		);
 
+		this.updateDimensions(); // Initialize dimensions based on current canvas size
 		this.setupEventListeners();
 		this.setupCollisionEvents();
-		this.initializeGame();
 		this.updateHud();
 		const persistedStateString = localStorage.getItem("persistedState");
 
@@ -115,8 +116,30 @@ export class Game {
 		return this.physics;
 	}
 
+	public handleResize(): void {
+		this.updateDimensions();
+	}
+
 	private setupEventListeners(): void {
-		// No resize handling needed - fixed dimensions
+		// Resize handling is now done via the main app
+	}
+
+	private updateDimensions(): void {
+		// Calculate new dimensions based on canvas size
+		const canvasWidth =
+			this.elements.canvas.width / (window.devicePixelRatio || 1);
+		const canvasHeight =
+			this.elements.canvas.height / (window.devicePixelRatio || 1);
+
+		// Use the smaller scale to ensure game fits within canvas
+		this.scale = Math.min(canvasWidth / 900, canvasHeight / 600);
+
+		this.W = canvasWidth;
+		this.H = canvasHeight;
+		this.floorY = canvasHeight;
+
+		// Re-initialize game with new dimensions
+		this.initializeGame();
 	}
 
 	private setupCollisionEvents(): void {
@@ -236,40 +259,40 @@ export class Game {
 	}
 
 	private initializeGame(): void {
-		// Set up physics with fixed dimensions
+		// Set up physics with current dimensions
 		this.physics.resize(this.W, this.H);
 
-		// Fixed game element positions - no scaling needed
-		this.hoop.r = 40;
-		this.hoop.x = 675;
-		this.hoop.y = 175;
+		// Scale game element positions based on canvas size
+		this.hoop.r = 40 * this.scale;
+		this.hoop.x = 675 * this.scale;
+		this.hoop.y = 175 * this.scale;
 
 		// Rim endpoints
-		const pegR = 5;
+		const pegR = 5 * this.scale;
 		this.hoop.left = {
 			x: this.hoop.x - this.hoop.r,
 			y: this.hoop.y,
 			r: pegR,
 		};
 		this.hoop.right = {
-			x: this.hoop.x + this.hoop.r - 2,
-			y: this.hoop.y + 2,
-			r: pegR + 4,
+			x: this.hoop.x + this.hoop.r - 2 * this.scale,
+			y: this.hoop.y + 2 * this.scale,
+			r: pegR + 4 * this.scale,
 		};
 
 		// Backboard
 		this.hoop.board = {
-			w: 25,
-			h: 140,
-			x: this.hoop.x + this.hoop.r + 8,
-			y: this.hoop.y - 120,
+			w: 25 * this.scale,
+			h: 140 * this.scale,
+			x: this.hoop.x + this.hoop.r + 8 * this.scale,
+			y: this.hoop.y - 120 * this.scale,
 		};
 
 		// Ball
-		this.ball.r = 28;
+		this.ball.r = 28 * this.scale;
 
 		// Free-throw line
-		this.ftLine.x = 200;
+		this.ftLine.x = 200 * this.scale;
 		this.ftLine.y = this.floorY;
 
 		// Create physics boundaries
@@ -540,6 +563,9 @@ export class Game {
 	}
 
 	drawUnderlay(): void {
+		// Draw background image first
+		this.renderer.drawBackground();
+
 		// Draw elements that should appear UNDER the Matter.js physics bodies
 		this.renderer.drawCourt(
 			this.ball,
@@ -548,6 +574,7 @@ export class Game {
 			this.floorY,
 			this.state.score,
 			this.state.shotsLeft,
+			this.scale,
 		);
 		this.renderer.drawBallTrail(this.ball);
 		if (this.state.shotsLeft !== 0) {
@@ -562,7 +589,7 @@ export class Game {
 
 	drawOverlay(): void {
 		// Draw elements that should appear OVER the Matter.js physics bodies
-		this.renderer.drawHoop(this.hoop);
+		this.renderer.drawHoop(this.hoop, this.scale);
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 
 		// Game over overlay
