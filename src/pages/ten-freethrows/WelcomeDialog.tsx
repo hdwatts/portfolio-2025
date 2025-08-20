@@ -17,21 +17,19 @@ export const WelcomeDialog = () => {
 					<DialogHeader>
 						<DialogTitle>Ten Free Throws</DialogTitle>
 						<DialogDescription>
-							Ten Free Throws is a simple game made for the
-							I.S.R.U. Summer Camp. Drag anywhere on the screen to
-							launch the ball at the hoop.
+							Drag your finger across the screen to launch the
+							ball. You have ten shots. No more, no less. One
+							point for a basket. Two points for a clean swish.
+							Precision and discipline are rewarded. When it's
+							over, creenshot your scoreboard and share with your
+							fellow I.S.R.U. campers. If it isn't documented, it
+							didn't happen.
 							<br />
 							<br />
-							You have <b>ten</b> free throw shots to get as many
-							points as possible. Swishes are worth <b>two</b>{" "}
-							points!
+							This is not a game. It is your ritual.
 							<br />
 							<br />
-							At the end, <b>screenshot</b> the scoreboards and
-							share them with your fellow I.S.R.U campers.
-							<br />
-							<br />
-							It was made with ❤️ by{" "}
+							Crafted by{" "}
 							<a
 								className="text-red-500 underline"
 								href="https://www.hdwatts.com/"
