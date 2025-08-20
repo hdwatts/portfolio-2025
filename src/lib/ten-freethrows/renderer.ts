@@ -75,7 +75,7 @@ export class Renderer {
 		shotsLeft: number,
 		scale: number = 1,
 	): void {
-		if (ball.atRest) {
+		if (ball.atRest && shotsLeft > 0) {
 			// Free throw semicircle - scaled size
 			this.ctx.strokeStyle = "rgba(255,255,255,.15)";
 			this.ctx.lineWidth = 3 * scale;
