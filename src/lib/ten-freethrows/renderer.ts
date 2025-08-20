@@ -259,8 +259,8 @@ export class Renderer {
 	drawBallShadow(ball: Ball, floorY: number, scale: number = 1): void {
 		if (!ball.shadow || ball.shadow.opacity <= 0) return;
 
-		const shadowX = (ball.shadow.x - 10) * scale;
-		const shadowY = floorY - 30; // Shadow position on display floor
+		const shadowX = ball.shadow.x * scale - 10 * scale;
+		const shadowY = ball.shadow.y * scale; // - 30 * scale; // Shadow position scaled consistently
 		const shadowRadius = ball.shadow.radius * scale;
 		const shadowOpacity = ball.shadow.opacity;
 
