@@ -239,7 +239,7 @@ export class Physics {
 		Matter.Runner.run(this.runner, this.engine);
 	}
 
-	renderBodies(): void {
+	renderBodies(scale: number = 1): void {
 		// Custom render bodies without clearing canvas
 		const ctx = this.render.canvas.getContext("2d");
 		if (!ctx) return;
@@ -256,14 +256,14 @@ export class Physics {
 			const angle = body.angle;
 
 			ctx.save();
-			ctx.translate(position.x, position.y);
+			ctx.translate(position.x * scale, position.y * scale);
 			ctx.rotate(angle);
 
 			// Render based on body type/label
 			if (body.label === "ball") {
-				this.renderBall(ctx, body);
+				this.renderBall(ctx, body, scale);
 			} else if (body.label === "rim") {
-				this.renderRim(ctx, body);
+				this.renderRim(ctx, body, scale);
 			}
 			// Skip rendering floor, walls, ceiling as they're invisible boundaries
 
@@ -273,8 +273,12 @@ export class Physics {
 		ctx.restore();
 	}
 
-	private renderBall(ctx: CanvasRenderingContext2D, body: Matter.Body): void {
-		const radius = body.circleRadius || 28;
+	private renderBall(
+		ctx: CanvasRenderingContext2D,
+		body: Matter.Body,
+		scale: number = 1,
+	): void {
+		const radius = (body.circleRadius || 28) * scale;
 		const diameter = radius * 2;
 
 		// Draw basketball sprite if loaded, otherwise fallback to custom drawing
@@ -320,7 +324,11 @@ export class Physics {
 		}
 	}
 
-	private renderRim(ctx: CanvasRenderingContext2D, body: Matter.Body): void {
+	private renderRim(
+		ctx: CanvasRenderingContext2D,
+		body: Matter.Body,
+		scale: number = 1,
+	): void {
 		const radius = body.circleRadius || 5;
 
 		// Rim appearance - metallic orange/red

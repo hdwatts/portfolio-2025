@@ -21,11 +21,16 @@ const INITIAL_STATE: GameState = {
 };
 
 export class Game {
-	// Game dimensions - dynamically calculated based on canvas size
-	private W = 900; // Base width for 3:2 ratio
-	private H = 600; // Base height
-	private floorY = 600; // Floor at bottom
-	private scale = 1; // Scaling factor for responsive sizing
+	// Fixed physics world dimensions - keep at original scale for consistency
+	private PHYSICS_WIDTH = 900; // Fixed physics world width
+	private PHYSICS_HEIGHT = 600; // Fixed physics world height
+	private PHYSICS_FLOOR_Y = 600; // Fixed physics floor position
+
+	// Display dimensions - change based on canvas size
+	private W = 900; // Display width
+	private H = 600; // Display height
+	private floorY = 600; // Display floor position
+	private scale = 1; // Scaling factor for visual rendering only
 
 	private state: GameState = INITIAL_STATE;
 
@@ -120,6 +125,22 @@ export class Game {
 		this.updateDimensions();
 	}
 
+	// Convert display coordinates to physics coordinates
+	private displayToPhysics(x: number, y: number): { x: number; y: number } {
+		return {
+			x: x / this.scale,
+			y: y / this.scale,
+		};
+	}
+
+	// Convert physics coordinates to display coordinates
+	private physicsToDisplay(x: number, y: number): { x: number; y: number } {
+		return {
+			x: x * this.scale,
+			y: y * this.scale,
+		};
+	}
+
 	private setupEventListeners(): void {
 		// Resize handling is now done via the main app
 	}
@@ -131,15 +152,25 @@ export class Game {
 		const canvasHeight =
 			this.elements.canvas.height / (window.devicePixelRatio || 1);
 
-		// Use the smaller scale to ensure game fits within canvas
-		this.scale = Math.min(canvasWidth / 900, canvasHeight / 600);
+		// Calculate scale factor to scale UP from physics world to display
+		this.scale = Math.min(
+			canvasWidth / this.PHYSICS_WIDTH,
+			canvasHeight / this.PHYSICS_HEIGHT,
+		);
 
+		// Update display dimensions
 		this.W = canvasWidth;
 		this.H = canvasHeight;
 		this.floorY = canvasHeight;
 
-		// Re-initialize game with new dimensions
-		this.initializeGame();
+		// Update input manager with new scale
+		this.inputManager.setScale(this.scale);
+
+		// Physics world stays at fixed dimensions - only resize the physics engine canvas
+		this.physics.resize(this.PHYSICS_WIDTH, this.PHYSICS_HEIGHT);
+
+		// Re-initialize game elements at fixed physics scale
+		this.initializeGameElements();
 	}
 
 	private setupCollisionEvents(): void {
@@ -258,45 +289,46 @@ export class Game {
 		});
 	}
 
-	private initializeGame(): void {
-		// Set up physics with current dimensions
-		this.physics.resize(this.W, this.H);
-
-		// Scale game element positions based on canvas size
-		this.hoop.r = 40 * this.scale;
-		this.hoop.x = 675 * this.scale;
-		this.hoop.y = 175 * this.scale;
+	private initializeGameElements(): void {
+		// Game element positions at original physics scale
+		this.hoop.r = 40;
+		this.hoop.x = 675;
+		this.hoop.y = 175;
 
 		// Rim endpoints
-		const pegR = 5 * this.scale;
+		const pegR = 5;
 		this.hoop.left = {
 			x: this.hoop.x - this.hoop.r,
 			y: this.hoop.y,
 			r: pegR,
 		};
 		this.hoop.right = {
-			x: this.hoop.x + this.hoop.r - 2 * this.scale,
-			y: this.hoop.y + 2 * this.scale,
-			r: pegR + 4 * this.scale,
+			x: this.hoop.x + this.hoop.r - 2,
+			y: this.hoop.y + 2,
+			r: pegR + 4,
 		};
 
 		// Backboard
 		this.hoop.board = {
-			w: 25 * this.scale,
-			h: 140 * this.scale,
-			x: this.hoop.x + this.hoop.r + 8 * this.scale,
-			y: this.hoop.y - 120 * this.scale,
+			w: 25,
+			h: 140,
+			x: this.hoop.x + this.hoop.r + 8,
+			y: this.hoop.y - 120,
 		};
 
 		// Ball
-		this.ball.r = 28 * this.scale;
+		this.ball.r = 28;
 
 		// Free-throw line
-		this.ftLine.x = 200 * this.scale;
-		this.ftLine.y = this.floorY;
+		this.ftLine.x = 200;
+		this.ftLine.y = this.PHYSICS_FLOOR_Y;
 
-		// Create physics boundaries
-		this.physics.createBoundaries(this.W, this.H, this.floorY);
+		// Create physics boundaries at fixed physics dimensions
+		this.physics.createBoundaries(
+			this.PHYSICS_WIDTH,
+			this.PHYSICS_HEIGHT,
+			this.PHYSICS_FLOOR_Y,
+		);
 
 		this.spawnBall();
 		this.createHoopBodies();
@@ -346,9 +378,9 @@ export class Game {
 			return;
 		}
 
-		// Create new ball body - spawn above the floor
+		// Create new ball body - spawn above the floor at physics coordinates
 		const x = this.ftLine.x;
-		const y = this.floorY - this.ball.r * 2 + 3; // Fixed spawn height
+		const y = this.PHYSICS_FLOOR_Y - this.ball.r * 2 + 3; // Fixed spawn height
 		this.ball.body = this.physics.createBall(x, y, this.ball.r);
 		this.ball.body.isStatic = true;
 		// Reset ball state
@@ -363,7 +395,7 @@ export class Game {
 		// Initialize shadow
 		this.ball.shadow = {
 			x: x,
-			y: this.floorY - this.ball.r,
+			y: this.PHYSICS_FLOOR_Y - this.ball.r,
 			radius: this.ball.r * 0.8,
 			opacity: 0.6,
 		};
@@ -448,14 +480,14 @@ export class Game {
 	}
 
 	private handleFloorCollision(): void {
-		if (this.physics.checkFloorCollision(this.ball, this.floorY)) {
+		if (this.physics.checkFloorCollision(this.ball, this.PHYSICS_FLOOR_Y)) {
 			this.endShot(false);
 		}
 	}
 
 	private updateBallShadow(): void {
 		const ballPos = this.ball.body.position;
-		const ballHeight = this.floorY - ballPos.y - this.ball.r; // Distance from ball bottom to floor
+		const ballHeight = this.PHYSICS_FLOOR_Y - ballPos.y - this.ball.r; // Distance from ball bottom to floor
 
 		// Maximum height where shadow is visible (adjust as needed)
 		const maxShadowHeight = 300;
@@ -464,7 +496,7 @@ export class Game {
 			// Ball is too high, hide shadow
 			this.ball.shadow = {
 				x: ballPos.x,
-				y: this.floorY - this.ball.r,
+				y: this.PHYSICS_FLOOR_Y - this.ball.r,
 				radius: 0,
 				opacity: 0,
 			};
@@ -486,7 +518,7 @@ export class Game {
 
 		this.ball.shadow = {
 			x: ballPos.x,
-			y: this.floorY - this.ball.r,
+			y: this.PHYSICS_FLOOR_Y - this.ball.r,
 			radius: shadowRadius,
 			opacity: shadowOpacity,
 		};
@@ -503,8 +535,8 @@ export class Game {
 			// Update ball trail (physics updates are handled by Matter.js)
 			this.physics.updateBall(this.ball, dt);
 
-			// Out of bounds check with fixed width
-			if (this.physics.isOutOfBounds(this.ball, this.W)) {
+			// Out of bounds check with fixed physics width
+			if (this.physics.isOutOfBounds(this.ball, this.PHYSICS_WIDTH)) {
 				this.endShot(false);
 				return;
 			}
@@ -571,26 +603,34 @@ export class Game {
 			this.ball,
 			this.hoop,
 			this.ftLine,
-			this.floorY,
+			this.PHYSICS_FLOOR_Y,
 			this.state.score,
 			this.state.shotsLeft,
 			this.scale,
 		);
-		this.renderer.drawBallTrail(this.ball);
+		this.renderer.drawBallTrail(this.ball, this.scale);
 		if (this.state.shotsLeft !== 0) {
-			this.renderer.drawBallShadow(this.ball, this.floorY);
+			this.renderer.drawBallShadow(
+				this.ball,
+				this.floorY, // Use display floor position
+				this.scale,
+			);
 		}
 	}
 
 	drawPhysicsBodies(): void {
 		// Render the Matter.js physics bodies
-		this.physics.renderBodies();
+		this.physics.renderBodies(this.scale);
 	}
 
 	drawOverlay(): void {
 		// Draw elements that should appear OVER the Matter.js physics bodies
 		this.renderer.drawHoop(this.hoop, this.scale);
-		this.renderer.drawAim(this.ball, this.inputManager.getInput());
+		this.renderer.drawAim(
+			this.ball,
+			this.inputManager.getInput(),
+			this.scale,
+		);
 
 		// Game over overlay
 		if (!this.state.practice && this.state.shotsLeft === 0) {

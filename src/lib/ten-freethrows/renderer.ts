@@ -81,8 +81,8 @@ export class Renderer {
 			this.ctx.lineWidth = 3 * scale;
 			this.ctx.beginPath();
 			this.ctx.arc(
-				ftLine.x,
-				ftLine.y - 60 * scale,
+				ftLine.x * scale,
+				(ftLine.y - 60) * scale,
 				120 * scale,
 				0,
 				Math.PI * 2,
@@ -91,7 +91,7 @@ export class Renderer {
 			this.ctx.stroke();
 		}
 
-		this.drawHoopShadow(hoop, floorY);
+		this.drawHoopShadow(hoop, floorY * scale, scale);
 
 		this.drawScoreboard(
 			30 * scale,
@@ -117,8 +117,8 @@ export class Renderer {
 		// Draw backboard image - scaled size
 		this.ctx.drawImage(
 			this.backboardImage,
-			hoop.board.x - 90 * scale,
-			hoop.board.y + 30 * scale,
+			(hoop.board.x - 90) * scale,
+			(hoop.board.y + 30) * scale,
 			160 * scale,
 			600 * scale,
 		);
@@ -176,37 +176,37 @@ export class Renderer {
 		this.ctx.restore();
 	}
 
-	drawBallTrail(ball: Ball): void {
+	drawBallTrail(ball: Ball, scale: number = 1): void {
 		// Trail only (ball itself is rendered by Matter.js)
 		if (ball.trail.length > 1) {
-			this.ctx.lineWidth = 2;
+			this.ctx.lineWidth = 2 * scale;
 			this.ctx.strokeStyle = "rgba(255,255,255,.2)";
 			this.ctx.beginPath();
 			for (let i = 0; i < ball.trail.length; i++) {
 				const p = ball.trail[i];
-				if (i === 0) this.ctx.moveTo(p.x, p.y);
-				else this.ctx.lineTo(p.x, p.y);
+				if (i === 0) this.ctx.moveTo(p.x * scale, p.y * scale);
+				else this.ctx.lineTo(p.x * scale, p.y * scale);
 			}
 			this.ctx.stroke();
 		}
 
 		// Ball glow on swish
 		if (ball.swish) {
-			const ballX = ball.body.position.x;
-			const ballY = ball.body.position.y;
+			const ballX = ball.body.position.x * scale;
+			const ballY = ball.body.position.y * scale;
 			const grd = this.ctx.createRadialGradient(
 				ballX,
 				ballY,
-				ball.r * 0.3,
+				ball.r * 0.3 * scale,
 				ballX,
 				ballY,
-				ball.r * 2.8,
+				ball.r * 2.8 * scale,
 			);
 			grd.addColorStop(0, "rgba(255,200,80,.35)");
 			grd.addColorStop(1, "rgba(255,200,80,0)");
 			this.ctx.fillStyle = grd;
 			this.ctx.beginPath();
-			this.ctx.arc(ballX, ballY, ball.r * 2.8, 0, Math.PI * 2);
+			this.ctx.arc(ballX, ballY, ball.r * 2.8 * scale, 0, Math.PI * 2);
 			this.ctx.fill();
 		}
 	}
@@ -215,10 +215,10 @@ export class Renderer {
 		this.drawBallTrail(ball);
 	}
 
-	drawHoopShadow(hoop: Hoop, floorY: number): void {
-		const shadowX = hoop.right.x;
-		const shadowY = floorY - 10; // Shadow is always on the floor
-		const shadowRadius = 90;
+	drawHoopShadow(hoop: Hoop, floorY: number, scale: number = 1): void {
+		const shadowX = hoop.right.x * scale;
+		const shadowY = floorY - 10; // Shadow is always on the display floor
+		const shadowRadius = 90 * scale;
 		const shadowOpacity = 0.6;
 
 		// Create elliptical shadow (flattened circle)
@@ -256,12 +256,12 @@ export class Renderer {
 		this.ctx.restore();
 	}
 
-	drawBallShadow(ball: Ball, floorY: number): void {
+	drawBallShadow(ball: Ball, floorY: number, scale: number = 1): void {
 		if (!ball.shadow || ball.shadow.opacity <= 0) return;
 
-		const shadowX = ball.shadow.x - 10;
-		const shadowY = floorY - 30; // Shadow is always on the floor
-		const shadowRadius = ball.shadow.radius;
+		const shadowX = (ball.shadow.x - 10) * scale;
+		const shadowY = floorY - 30; // Shadow position on display floor
+		const shadowRadius = ball.shadow.radius * scale;
 		const shadowOpacity = ball.shadow.opacity;
 
 		// Create elliptical shadow (flattened circle)
@@ -308,32 +308,36 @@ export class Renderer {
 			cx: number;
 			cy: number;
 		},
+		scale: number = 1,
 	): void {
 		if (input.dragging && ball.atRest) {
 			const dx = input.sx - input.cx;
 			const dy = input.sy - input.cy;
 			const len = Math.min(180, Math.hypot(dx, dy));
 			const ang = Math.atan2(dy, dx);
-			const ax = ball.body.position.x;
-			const ay = ball.body.position.y;
+			const ax = ball.body.position.x * scale;
+			const ay = ball.body.position.y * scale;
 
 			this.ctx.strokeStyle = "rgba(255,255,255,.7)";
-			this.ctx.lineWidth = 2;
-			this.ctx.setLineDash([6, 6]);
+			this.ctx.lineWidth = 2 * scale;
+			this.ctx.setLineDash([6 * scale, 6 * scale]);
 			this.ctx.beginPath();
 			this.ctx.moveTo(ax, ay);
-			this.ctx.lineTo(ax + Math.cos(ang) * len, ay + Math.sin(ang) * len);
+			this.ctx.lineTo(
+				ax + Math.cos(ang) * len * scale,
+				ay + Math.sin(ang) * len * scale,
+			);
 			this.ctx.stroke();
 			this.ctx.setLineDash([]);
 
 			// Power dots
 			for (let i = 0; i < 5; i++) {
 				const t = (i + 1) / 6;
-				const px = ax + Math.cos(ang) * len * t;
-				const py = ay + Math.sin(ang) * len * t;
+				const px = ax + Math.cos(ang) * len * scale * t;
+				const py = ay + Math.sin(ang) * len * scale * t;
 				this.ctx.fillStyle = `rgba(255,255,255,${0.25 + 0.12 * i})`;
 				this.ctx.beginPath();
-				this.ctx.arc(px, py, 3 + i * 0.4, 0, Math.PI * 2);
+				this.ctx.arc(px, py, (3 + i * 0.4) * scale, 0, Math.PI * 2);
 				this.ctx.fill();
 			}
 		}

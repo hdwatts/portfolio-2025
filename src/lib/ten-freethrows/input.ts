@@ -14,6 +14,7 @@ export class InputManager {
 	private onShoot: (vx: number, vy: number) => void;
 	private onRestart: () => void;
 	private onTogglePractice: () => void;
+	private scale: number = 1;
 
 	constructor(
 		canvas: HTMLCanvasElement,
@@ -30,6 +31,10 @@ export class InputManager {
 
 	getInput(): Input {
 		return this.input;
+	}
+
+	setScale(scale: number): void {
+		this.scale = scale;
 	}
 
 	private setupEventListeners(): void {
@@ -86,15 +91,17 @@ export class InputManager {
 
 	private pointerDown(x: number, y: number): void {
 		this.input.down = true;
-		this.input.sx = x;
-		this.input.sy = y;
-		this.input.cx = x;
-		this.input.cy = y;
+		// Convert display coordinates to physics coordinates
+		this.input.sx = x / this.scale;
+		this.input.sy = y / this.scale;
+		this.input.cx = x / this.scale;
+		this.input.cy = y / this.scale;
 	}
 
 	private pointerMove(x: number, y: number): void {
-		this.input.cx = x;
-		this.input.cy = y;
+		// Convert display coordinates to physics coordinates
+		this.input.cx = x / this.scale;
+		this.input.cy = y / this.scale;
 	}
 
 	private pointerUp(): void {
