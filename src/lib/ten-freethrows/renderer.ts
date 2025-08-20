@@ -343,25 +343,27 @@ export class Renderer {
 		}
 	}
 
-	drawGameOverOverlay(state: GameState): void {
+	drawGameOverOverlay(state: GameState, scale: number = 1): void {
 		if (!state.practice && state.shotsLeft === 0) {
 			this.ctx.save();
-			const cw = this.canvas.width;
-			const ch = this.canvas.height;
+			// Use display dimensions instead of buffer dimensions
+			const dpr = window.devicePixelRatio || 1;
+			const cw = this.canvas.width / dpr;
+			const ch = this.canvas.height / dpr;
 
 			this.ctx.fillStyle = "rgba(0,0,0,.25)";
 			this.ctx.fillRect(0, 0, cw, ch);
 			this.ctx.fillStyle = "#fff";
 			this.ctx.textAlign = "center";
-			this.ctx.font = "50px Visitor";
+			this.ctx.font = `${50 * scale}px Visitor`;
 			this.ctx.fillText(`Day Over`, cw / 2, ch * 0.52);
-			this.ctx.font = "24px Visitor";
+			this.ctx.font = `${24 * scale}px Visitor`;
 			this.ctx.fillText(
 				`You have played ${state.daysInARow} day${state.daysInARow !== 1 ? "s" : ""} in a row.`,
 				cw / 2,
 				ch * 0.56,
 			);
-			this.ctx.font = "16px Visitor";
+			this.ctx.font = `${16 * scale}px Visitor`;
 			this.ctx.fillText(`Crafted by @hdwatts`, cw / 2, ch * 0.99);
 			this.ctx.restore();
 		}

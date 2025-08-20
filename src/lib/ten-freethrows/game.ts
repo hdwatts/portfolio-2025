@@ -634,7 +634,7 @@ export class Game {
 
 		// Game over overlay
 		if (!this.state.practice && this.state.shotsLeft === 0) {
-			this.renderer.drawGameOverOverlay(this.state);
+			this.renderer.drawGameOverOverlay(this.state, this.scale);
 		}
 	}
 	persistState(): void {
