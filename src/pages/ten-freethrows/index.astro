@@ -1,13 +1,10 @@
+---
+import "../../styles/global.css";
+import { WelcomeDialog } from "./WelcomeDialog";
+---
+
 <html>
 	<style>
-		:root {
-			--bg: #f8f8f8;
-			--panel: #111a2e;
-			--accent: #ff7a00;
-			--text: #e8eefc;
-			--muted: #99a4bf;
-		}
-
 		@font-face {
 			font-family: "Visitor";
 			src: url("/ten-freethrows/visitor1.ttf");
@@ -302,6 +299,7 @@
 				</button>
 			</div>
 		</header> -->
+
 		<div id="gameWrap">
 			<div id="background">
 				<video id="backgroundVideo" autoplay loop muted playsinline>
@@ -319,7 +317,7 @@
 		<!-- <footer>
 			Made by <a href="https://www.hdwatts.com">@hdwatts</a> for I.S.R.U
 		</footer> -->
-
+		<WelcomeDialog client:load />
 		<script src="../../lib/ten-freethrows/main.ts"></script>
 
 		<script>

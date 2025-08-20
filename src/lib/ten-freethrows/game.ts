@@ -287,6 +287,9 @@ export class Game {
 		if (this.ball.body && this.ball.body.id) {
 			Matter.World.remove(this.physics.world, this.ball.body);
 		}
+		if (this.state.shotsLeft === 0) {
+			return;
+		}
 
 		// Create new ball body - spawn above the floor
 		const x = this.ftLine.x;
@@ -524,12 +527,12 @@ export class Game {
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 
 		// Game over overlay
-		if (
-			!this.state.practice &&
-			this.state.shotsLeft === 0 &&
-			this.ball.atRest
-		) {
-			this.renderer.drawGameOverOverlay(this.state);
-		}
+		// if (
+		// 	!this.state.practice &&
+		// 	this.state.shotsLeft === 0 &&
+		// 	this.ball.atRest
+		// ) {
+		// 	this.renderer.drawGameOverOverlay(this.state);
+		// }
 	}
 }

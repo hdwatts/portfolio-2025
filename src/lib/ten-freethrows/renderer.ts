@@ -93,6 +93,9 @@ export class Renderer {
 		const value1Width = this.ctx.measureText(stringValue1).width;
 		const value2Width = this.ctx.measureText(stringValue2).width;
 		this.ctx.fillText(stringValue1, x + 65 - value1Width / 2, y + 60);
+		if (value2 === 0) {
+			this.ctx.fillStyle = "#C72C48";
+		}
 		this.ctx.fillText(stringValue2, x + 139 - value2Width / 2, y + 60);
 		this.ctx.restore();
 	}
