@@ -68,3 +68,10 @@ export interface GameElements {
 	ctx: CanvasRenderingContext2D;
 	toast: HTMLElement;
 }
+
+export interface PersistedState {
+	schemaVersion: number;
+	date: string;
+	score: number;
+	daysInARow: number;
+}

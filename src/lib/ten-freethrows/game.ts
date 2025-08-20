@@ -5,6 +5,7 @@ import {
 	type Hoop,
 	type Position,
 	type GameElements,
+	type PersistedState,
 } from "./types";
 import { Physics } from "./physics";
 import { Renderer } from "./renderer";
@@ -76,14 +77,18 @@ export class Game {
 
 		if (persistedStateString) {
 			try {
-				const persistedState = JSON.parse(persistedStateString);
+				const persistedState: PersistedState =
+					JSON.parse(persistedStateString);
+				if (!persistedState.schemaVersion) {
+					this.clearPersistedState();
+				}
 				if (persistedState.date >= this.getStringDate()) {
 					this.state.shotsLeft = 0;
 					this.state.score = persistedState.score;
 					this.state.daysInARow = persistedState.daysInARow;
 				}
 			} catch (e) {
-				localStorage.removeItem("persistedState");
+				this.clearPersistedState();
 				this.state = INITIAL_STATE;
 			}
 		}
@@ -98,7 +103,12 @@ export class Game {
 	}
 
 	public getStringDate(): string {
-		return new Date().toISOString().split("T")[0];
+		const date = new Date();
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+		return `${date.getFullYear()}-${month < 10 ? "0" + month : month}-${
+			day < 10 ? "0" + day : day
+		}`;
 	}
 
 	public getPhysics(): Physics {
@@ -365,14 +375,7 @@ export class Game {
 
 			if (this.state.shotsLeft === 0) {
 				this.state.daysInARow = (this.state.daysInARow ?? 0) + 1;
-				localStorage.setItem(
-					"persistedState",
-					JSON.stringify({
-						date: this.getStringDate(),
-						score: this.state.score,
-						daysInARow: this.state.daysInARow,
-					}),
-				);
+				this.persistState();
 			}
 
 			setTimeout(
@@ -566,5 +569,19 @@ export class Game {
 		if (!this.state.practice && this.state.shotsLeft === 0) {
 			this.renderer.drawGameOverOverlay(this.state);
 		}
+	}
+	persistState(): void {
+		localStorage.setItem(
+			"persistedState",
+			JSON.stringify({
+				schemaVersion: 1,
+				date: this.getStringDate(),
+				score: this.state.score,
+				daysInARow: this.state.daysInARow,
+			} as PersistedState),
+		);
+	}
+	clearPersistedState(): void {
+		localStorage.removeItem("persistedState");
 	}
 }
