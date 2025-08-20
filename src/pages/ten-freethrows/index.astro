@@ -325,7 +325,11 @@
 		<script>
 			// Force landscape orientation on mobile devices
 			function requestLandscape() {
-				if (screen.orientation && screen.orientation.lock) {
+				if (
+					screen.orientation &&
+					"lock" in screen.orientation &&
+					screen.orientation.lock
+				) {
 					screen.orientation.lock("landscape").catch(() => {
 						// Orientation lock failed, but that's okay
 						console.log("Could not lock orientation to landscape");

@@ -50,6 +50,9 @@ export class Game {
 	private physics: Physics;
 	private renderer: Renderer;
 	private inputManager: InputManager;
+	private swishSound: HTMLAudioElement;
+	private dribbleSound: HTMLAudioElement;
+	private rimSound: HTMLAudioElement;
 
 	constructor(elements: GameElements) {
 		this.elements = elements;
@@ -66,6 +69,11 @@ export class Game {
 		this.setupCollisionEvents();
 		this.initializeGame();
 		this.updateHud();
+
+		this.swishSound = new Audio("/ten-freethrows/swish.mp3");
+		this.dribbleSound = new Audio("/ten-freethrows/dribble.mp3");
+		this.rimSound = new Audio("/ten-freethrows/rim-hit.mp3");
+		this.rimSound.volume = 0.5;
 
 		// Start the physics engine
 		this.physics.start();
@@ -97,6 +105,7 @@ export class Game {
 
 				if (otherBody.label === "floor") {
 					// Handle floor collision
+
 					this.handleFloorCollision();
 				}
 			}
@@ -126,14 +135,21 @@ export class Game {
 						velocity.x * velocity.x + velocity.y * velocity.y,
 					);
 
-					// Add some randomness to rim collisions for realistic bounces
-					const randomSpin = (Math.random() - 0.5) * 0.1;
-					const impactSpin = speed * 0.02; // Spin based on impact speed
+					if (speed > 6) {
+						if (this.rimSound.currentTime > 0.5) {
+							this.rimSound.currentTime = 0;
+						}
+						this.rimSound.play();
+					}
 
-					Matter.Body.setAngularVelocity(
-						ballBody,
-						ballBody.angularVelocity + randomSpin + impactSpin,
-					);
+					// Add some randomness to rim collisions for realistic bounces
+					// const randomSpin = (Math.random() - 0.5) * 0.1;
+					// const impactSpin = speed * 0.02; // Spin based on impact speed
+
+					// Matter.Body.setAngularVelocity(
+					// 	ballBody,
+					// 	ballBody.angularVelocity + randomSpin + impactSpin,
+					// );
 
 					// Slight velocity damping on rim hit for realism
 					Matter.Body.setVelocity(ballBody, {
@@ -144,6 +160,14 @@ export class Game {
 					// Track backboard hit
 					this.ball._hitRim = true;
 					const velocity = ballBody.velocity;
+
+					const speed = Math.sqrt(
+						velocity.x * velocity.x + velocity.y * velocity.y,
+					);
+
+					if (speed > 6) {
+						this.dribbleSound.play();
+					}
 
 					// More realistic backboard interaction
 					Matter.Body.setVelocity(ballBody, {
@@ -156,6 +180,17 @@ export class Game {
 						ballBody,
 						ballBody.angularVelocity * 0.8,
 					);
+				} else if (otherBody.label === "floor") {
+					const velocity = ballBody.velocity;
+
+					const speed = Math.sqrt(
+						velocity.x * velocity.x + velocity.y * velocity.y,
+					);
+
+					if (speed > 4) {
+						this.dribbleSound.currentTime = 0;
+						this.dribbleSound.play();
+					}
 				} else if (
 					otherBody.label === "leftWall" ||
 					otherBody.label === "rightWall" ||
@@ -439,8 +474,15 @@ export class Game {
 
 				// Score updated internally - no UI element to update
 
-				if (this.ball.swish) this.setToast("Swish! ✨");
-				else this.setToast("Bucket! ✅");
+				this.swishSound.play();
+
+				if (this.ball.swish) {
+					this.setToast("Swish!");
+					this.state.score += 1;
+				}
+
+				// if (this.ball.swish) this.setToast("Swish!");
+				// else this.setToast("Bucket!");
 			} else {
 				this.ball.isAboveHoop = false;
 			}

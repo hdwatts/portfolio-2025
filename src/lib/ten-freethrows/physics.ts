@@ -262,6 +262,8 @@ export class Physics {
 			// Render based on body type/label
 			if (body.label === "ball") {
 				this.renderBall(ctx, body);
+			} else if (body.label === "rim") {
+				this.renderRim(ctx, body);
 			}
 			// Skip rendering floor, walls, ceiling as they're invisible boundaries
 
