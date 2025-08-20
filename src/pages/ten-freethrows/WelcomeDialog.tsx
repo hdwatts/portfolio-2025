@@ -18,12 +18,18 @@ export const WelcomeDialog = () => {
 						<DialogTitle>Ten Free Throws</DialogTitle>
 						<DialogDescription>
 							Drag your finger across the screen to launch the
-							ball. You have ten shots. No more, no less. One
-							point for a basket. Two points for a clean swish.
-							Precision and discipline are rewarded. When it's
-							over, creenshot your scoreboard and share with your
-							fellow I.S.R.U. campers. If it isn't documented, it
-							didn't happen.
+							ball. You have <b>ten</b> shots. No more, no less.
+							<b>One</b> point for a basket. <b>Two</b> points for
+							a clean swish. Precision and discipline are
+							rewarded. When it's over, <b>screenshot</b> your
+							scoreboard and share with your fellow{" "}
+							<a
+								className="text-red-500 underline"
+								href="https://isrucamp.com/"
+							>
+								I.S.R.U
+							</a>{" "}
+							campers. If it isn't documented, it didn't happen.
 							<br />
 							<br />
 							This is not a game. It is your ritual.
