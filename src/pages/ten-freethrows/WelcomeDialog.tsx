@@ -41,8 +41,8 @@ export const WelcomeDialog = () => {
 								href="https://www.hdwatts.com/"
 							>
 								@hdwatts
-							</a>
-							.
+							</a>{" "}
+							- S/N: 2025.063.34001
 						</DialogDescription>
 					</DialogHeader>
 				</DialogContent>

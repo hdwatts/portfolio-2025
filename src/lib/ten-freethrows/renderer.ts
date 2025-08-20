@@ -364,7 +364,11 @@ export class Renderer {
 				ch * 0.56,
 			);
 			this.ctx.font = `${16 * scale}px Visitor`;
-			this.ctx.fillText(`Crafted by hdwatts`, cw / 2, ch * 0.99);
+			this.ctx.fillText(
+				`Crafted by hdwatts - S/N: 2025.063.34001`,
+				cw / 2,
+				ch * 0.99,
+			);
 			this.ctx.restore();
 		}
 	}
