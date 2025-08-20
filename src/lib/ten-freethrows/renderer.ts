@@ -269,24 +269,20 @@ export class Renderer {
 			const cw = this.canvas.width;
 			const ch = this.canvas.height;
 
-			this.ctx.fillStyle = "rgba(0,0,0,.45)";
+			this.ctx.fillStyle = "rgba(0,0,0,.25)";
 			this.ctx.fillRect(0, 0, cw, ch);
 			this.ctx.fillStyle = "#fff";
 			this.ctx.textAlign = "center";
-			this.ctx.font =
-				"700 26px system-ui, -apple-system, Segoe UI, Roboto";
+			this.ctx.font = "50px Visitor";
+			this.ctx.fillText(`Day Over`, cw / 2, ch * 0.52);
+			this.ctx.font = "24px Visitor";
 			this.ctx.fillText(
-				`Round Over — Score ${state.score}/10`,
+				`You have played ${state.daysInARow} day${state.daysInARow !== 1 ? "s" : ""} in a row.`,
 				cw / 2,
-				ch * 0.42,
+				ch * 0.56,
 			);
-			this.ctx.font =
-				"500 16px system-ui, -apple-system, Segoe UI, Roboto";
-			this.ctx.fillText(
-				`Best Streak ${state.bestStreak}  ·  Press R to restart`,
-				cw / 2,
-				ch * 0.46,
-			);
+			this.ctx.font = "16px Visitor";
+			this.ctx.fillText(`Crafted by @hdwatts`, cw / 2, ch * 0.99);
 			this.ctx.restore();
 		}
 	}

@@ -85,7 +85,7 @@ export class Physics {
 
 		// Create invisible walls for out-of-bounds detection
 		this.leftWallBody = Matter.Bodies.rectangle(
-			-100,
+			-50,
 			canvasHeight / 2,
 			50,
 			canvasHeight * 2,
@@ -100,7 +100,7 @@ export class Physics {
 		);
 
 		this.rightWallBody = Matter.Bodies.rectangle(
-			canvasWidth + 100,
+			canvasWidth + 50,
 			canvasHeight / 2,
 			50,
 			canvasHeight * 2,

@@ -6,6 +6,7 @@ export interface GameState {
 	score: number;
 	streak: number;
 	bestStreak: number;
+	daysInARow: number;
 }
 
 export interface Position {

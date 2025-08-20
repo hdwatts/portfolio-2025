@@ -74,14 +74,14 @@ export class InputManager {
 		window.addEventListener("touchend", () => this.pointerUp());
 
 		// Keyboard events
-		window.addEventListener("keydown", (e) => {
-			if (e.key === "r" || e.key === "R") {
-				this.onRestart();
-			}
-			if (e.key === "p" || e.key === "P") {
-				this.onTogglePractice();
-			}
-		});
+		// window.addEventListener("keydown", (e) => {
+		// 	if (e.key === "r" || e.key === "R") {
+		// 		this.onRestart();
+		// 	}
+		// 	if (e.key === "p" || e.key === "P") {
+		// 		this.onTogglePractice();
+		// 	}
+		// });
 	}
 
 	private pointerDown(x: number, y: number): void {

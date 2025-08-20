@@ -10,19 +10,22 @@ import { Physics } from "./physics";
 import { Renderer } from "./renderer";
 import { InputManager } from "./input";
 
+const INITIAL_STATE: GameState = {
+	practice: false,
+	shotsLeft: 10,
+	score: 0,
+	streak: 0,
+	bestStreak: 0,
+	daysInARow: 0,
+};
+
 export class Game {
 	// Fixed game dimensions - 3:2 aspect ratio
 	private W = 900; // Fixed width for 3:2 ratio
 	private H = 600; // Fixed height
 	private floorY = 600; // Floor at bottom
 
-	private state: GameState = {
-		practice: false,
-		shotsLeft: 10,
-		score: 0,
-		streak: 0,
-		bestStreak: 0,
-	};
+	private state: GameState = INITIAL_STATE;
 
 	private hoop: Hoop = {
 		x: 0,
@@ -69,6 +72,21 @@ export class Game {
 		this.setupCollisionEvents();
 		this.initializeGame();
 		this.updateHud();
+		const persistedStateString = localStorage.getItem("persistedState");
+
+		if (persistedStateString) {
+			try {
+				const persistedState = JSON.parse(persistedStateString);
+				if (persistedState.date >= this.getStringDate()) {
+					this.state.shotsLeft = 0;
+					this.state.score = persistedState.score;
+					this.state.daysInARow = persistedState.daysInARow;
+				}
+			} catch (e) {
+				localStorage.removeItem("persistedState");
+				this.state = INITIAL_STATE;
+			}
+		}
 
 		this.swishSound = new Audio("/ten-freethrows/swish.mp3");
 		this.dribbleSound = new Audio("/ten-freethrows/dribble.mp3");
@@ -77,6 +95,10 @@ export class Game {
 
 		// Start the physics engine
 		this.physics.start();
+	}
+
+	public getStringDate(): string {
+		return new Date().toISOString().split("T")[0];
 	}
 
 	public getPhysics(): Physics {
@@ -341,6 +363,18 @@ export class Game {
 			this.state.shotsLeft = Math.max(0, this.state.shotsLeft - 1);
 			this.ball._counted = true;
 
+			if (this.state.shotsLeft === 0) {
+				this.state.daysInARow = (this.state.daysInARow ?? 0) + 1;
+				localStorage.setItem(
+					"persistedState",
+					JSON.stringify({
+						date: this.getStringDate(),
+						score: this.state.score,
+						daysInARow: this.state.daysInARow,
+					}),
+				);
+			}
+
 			setTimeout(
 				() => {
 					this.spawnBall();
@@ -513,7 +547,9 @@ export class Game {
 			this.state.shotsLeft,
 		);
 		this.renderer.drawBallTrail(this.ball);
-		this.renderer.drawBallShadow(this.ball, this.floorY);
+		if (this.state.shotsLeft !== 0) {
+			this.renderer.drawBallShadow(this.ball, this.floorY);
+		}
 	}
 
 	drawPhysicsBodies(): void {
@@ -527,12 +563,8 @@ export class Game {
 		this.renderer.drawAim(this.ball, this.inputManager.getInput());
 
 		// Game over overlay
-		// if (
-		// 	!this.state.practice &&
-		// 	this.state.shotsLeft === 0 &&
-		// 	this.ball.atRest
-		// ) {
-		// 	this.renderer.drawGameOverOverlay(this.state);
-		// }
+		if (!this.state.practice && this.state.shotsLeft === 0) {
+			this.renderer.drawGameOverOverlay(this.state);
+		}
 	}
 }
