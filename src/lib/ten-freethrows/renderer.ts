@@ -471,6 +471,13 @@ export class Renderer {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(tempCanvas, 0, 0);
 
+		// Check if we're on mobile (outside the blob callback for scope)
+		const isMobile =
+			true ||
+			/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+				navigator.userAgent,
+			);
+
 		// Step 5: Convert to blob and save
 		hiddenCanvas.toBlob((blob) => {
 			if (!blob) {
@@ -479,24 +486,70 @@ export class Renderer {
 				return;
 			}
 
-			// Create download link
-			const url = URL.createObjectURL(blob);
-			const link = document.createElement("a");
-			link.href = url;
-			link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
+			if (isMobile) {
+				// Mobile approach: try to open in new window/tab for user to save manually
+				try {
+					const url = URL.createObjectURL(blob);
+					const link = document.createElement("a");
+					link.href = url;
+					link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
+					link.target = "_blank";
 
-			// Trigger download
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
+					// For mobile, we need to trigger the download differently
+					document.body.appendChild(link);
 
-			// Clean up
-			URL.revokeObjectURL(url);
+					// Use both click and programmatic approach
+					link.click();
+
+					document.body.removeChild(link);
+					URL.revokeObjectURL(url);
+				} catch (error) {
+					console.error("Mobile download failed:", error);
+					this.screenshotText = "Long press image to save";
+
+					// Fallback: convert to data URL and open in new window
+					const dataUrl = hiddenCanvas.toDataURL("image/png");
+					const newWindow = window.open();
+					if (newWindow) {
+						newWindow.document.write(`
+							<html>
+								<head><title>Ten Free Throws Screenshot</title></head>
+								<body style="margin:0;padding:20px;text-align:center;background:#f0f0f0;">
+									<h3>Long press the image below and select "Save Image"</h3>
+									<img src="${dataUrl}" style="max-width:100%;height:auto;border:2px solid #333;" alt="Ten Free Throws Screenshot"/>
+								</body>
+							</html>
+						`);
+						newWindow.document.close();
+					}
+				}
+			} else {
+				// Desktop approach: direct download
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = url;
+				link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
+
+				// Trigger download
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+
+				// Clean up
+				URL.revokeObjectURL(url);
+			}
 		}, "image/png");
 
 		// Clear the hidden canvas (though it will be garbage collected anyway)
 		hiddenCtx.clearRect(0, 0, baseWidth, baseHeight);
-		this.screenshotText = "Screenshot Saved!";
+		this.screenshotText = isMobile
+			? "Image opened in new tab"
+			: "Screenshot Saved!";
+
+		// Reset button text after a delay
+		setTimeout(() => {
+			this.screenshotText = "Generate Screenshot";
+		}, 3000);
 	}
 
 	private drawGameOverOverlayInternal(

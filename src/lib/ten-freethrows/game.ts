@@ -165,15 +165,29 @@ export class Game {
 	}
 
 	private setupScreenshotClickHandler(): void {
-		this.elements.canvas.addEventListener("click", (event) => {
+		const handleScreenshotTrigger = (event: Event) => {
 			if (!this.screenshotButtonBounds) return;
 
-			// Get click coordinates relative to canvas
+			// Get coordinates relative to canvas
 			const rect = this.elements.canvas.getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			const y = event.clientY - rect.top;
+			let x: number, y: number;
 
-			// Check if click is within button bounds
+			if (event instanceof TouchEvent) {
+				// Prevent default touch behavior
+				event.preventDefault();
+				event.stopPropagation();
+				const touch = event.touches[0] || event.changedTouches[0];
+				if (!touch) return;
+				x = touch.clientX - rect.left;
+				y = touch.clientY - rect.top;
+			} else if (event instanceof MouseEvent) {
+				x = event.clientX - rect.left;
+				y = event.clientY - rect.top;
+			} else {
+				return;
+			}
+
+			// Check if interaction is within button bounds
 			const bounds = this.screenshotButtonBounds;
 			if (
 				x >= bounds.x &&
@@ -201,7 +215,15 @@ export class Game {
 					redrawCallback,
 				);
 			}
-		});
+		};
+
+		// Add both mouse and touch event listeners for better mobile support
+		this.elements.canvas.addEventListener("click", handleScreenshotTrigger);
+		this.elements.canvas.addEventListener(
+			"touchend",
+			handleScreenshotTrigger,
+			{ passive: false },
+		);
 	}
 
 	private updateDimensions(): void {
