@@ -88,21 +88,15 @@ export class Game {
 				if (!persistedState.schemaVersion) {
 					this.clearPersistedState();
 				}
-				console.log(
-					persistedState.schemaVersion === 1,
-					persistedState.date === "2025-08-21",
-					persistedState.daysInARow === 1,
-				);
+
 				if (
 					persistedState.schemaVersion === 1 &&
 					persistedState.date === "2025-08-21" &&
 					persistedState.daysInARow === 1
 				) {
-					console.log("HERE");
 					this.state.daysInARow = 2;
 					this.state.shotsLeft = 0;
 					this.state.score = persistedState.score;
-					console.log("HERE2");
 					this.persistState();
 				} else {
 					this.state.daysInARow = persistedState.daysInARow;
@@ -448,7 +442,6 @@ export class Game {
 
 			if (this.state.shotsLeft === 0) {
 				this.state.daysInARow = (this.state.daysInARow ?? 0) + 1;
-				console.log("daysInARow", this.state.daysInARow);
 				this.persistState();
 			}
 
