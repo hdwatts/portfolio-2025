@@ -9,7 +9,7 @@ export class Renderer {
 	private isruImage: HTMLImageElement;
 	private ballMedalImage: HTMLImageElement;
 	private today: Date;
-	private screenshotText: string = "Share Screenshot";
+	private screenshotText: string = "Generate Screenshot";
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
@@ -433,7 +433,7 @@ export class Renderer {
 		hiddenCtx.drawImage(
 			this.isruImage,
 			baseWidth / 2 - isruWidth / 2,
-			offsetY - 20 - isruHeight,
+			offsetY - 10 - isruHeight,
 			isruWidth,
 			isruHeight,
 		);
@@ -441,19 +441,19 @@ export class Renderer {
 		hiddenCtx.drawImage(
 			this.ballMedalImage,
 			baseWidth / 2 - this.ballMedalImage.width / 2,
-			offsetY + scaledHeight + 20,
+			offsetY + scaledHeight + 10,
 			this.ballMedalImage.width,
 			this.ballMedalImage.height,
 		);
 
 		// Draw the clean canvas onto the hidden canvas
-		hiddenCtx.fillStyle = "#fff";
-		hiddenCtx.fillRect(
-			offsetX - 5,
-			offsetY - 5,
-			scaledWidth + 10,
-			scaledHeight + 10,
-		);
+		// hiddenCtx.fillStyle = "#fff";
+		// hiddenCtx.fillRect(
+		// 	offsetX - 5,
+		// 	offsetY - 5,
+		// 	scaledWidth + 10,
+		// 	scaledHeight + 10,
+		// );
 
 		hiddenCtx.drawImage(
 			this.canvas,
@@ -510,7 +510,7 @@ export class Renderer {
 									console.log(
 										"Screenshot shared successfully",
 									);
-									this.screenshotText = "Screenshot Shared!";
+									this.screenshotText = "Screenshot Saved!";
 								})
 								.catch((error) => {
 									console.error("Share failed:", error);
@@ -547,13 +547,11 @@ export class Renderer {
 
 		// Clear the hidden canvas (though it will be garbage collected anyway)
 		hiddenCtx.clearRect(0, 0, baseWidth, baseHeight);
-		this.screenshotText = isMobile
-			? "Screenshot Shared!"
-			: "Screenshot Saved!";
+		this.screenshotText = "Screenshot Saved!";
 
 		// Reset button text after a delay
 		setTimeout(() => {
-			this.screenshotText = "Share Screenshot";
+			this.screenshotText = "Generate Screenshot";
 		}, 3000);
 	}
 
