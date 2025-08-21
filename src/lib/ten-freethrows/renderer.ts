@@ -6,7 +6,10 @@ export class Renderer {
 	private backboardImage: HTMLImageElement;
 	private scoreboardImage: HTMLImageElement;
 	private backgroundImage: HTMLImageElement;
+	private isruImage: HTMLImageElement;
+	private ballMedalImage: HTMLImageElement;
 	private today: Date;
+	private screenshotText: string = "Generate Screenshot";
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
@@ -18,6 +21,10 @@ export class Renderer {
 		this.backgroundImage = new Image();
 		this.backgroundImage.src = "/ten-freethrows/lander.png";
 		this.today = new Date();
+		this.isruImage = new Image();
+		this.isruImage.src = "/ten-freethrows/isru.png";
+		this.ballMedalImage = new Image();
+		this.ballMedalImage.src = "/ten-freethrows/ball-medals.png";
 	}
 
 	clear(): void {
@@ -343,7 +350,162 @@ export class Renderer {
 		}
 	}
 
-	drawGameOverOverlay(state: GameState, scale: number = 1): void {
+	drawGameOverOverlay(
+		state: GameState,
+		scale: number = 1,
+	): {
+		buttonBounds?: { x: number; y: number; width: number; height: number };
+	} {
+		return this.drawGameOverOverlayInternal(state, scale, true);
+	}
+
+	saveScreenshot(
+		gameState?: GameState,
+		gameScale?: number,
+		redrawCallback?: () => void,
+	): void {
+		// Step 1: Save current canvas state
+		const tempCanvas = document.createElement("canvas");
+		const tempCtx = tempCanvas.getContext("2d");
+
+		if (!tempCtx) {
+			console.error("Failed to get temp canvas context");
+			this.screenshotText = "Error Saving";
+			return;
+		}
+
+		// Copy current canvas to temporary storage
+		tempCanvas.width = this.canvas.width;
+		tempCanvas.height = this.canvas.height;
+		tempCtx.drawImage(this.canvas, 0, 0);
+
+		// Step 2: Re-render the main canvas WITHOUT the button
+		if (gameState && gameScale && redrawCallback) {
+			// Clear and redraw without button
+			redrawCallback();
+
+			// Draw game over overlay without button
+			this.drawGameOverOverlayInternal(gameState, gameScale, false);
+		}
+
+		// Step 3: Create screenshot from clean canvas
+		const hiddenCanvas = document.createElement("canvas");
+		const hiddenCtx = hiddenCanvas.getContext("2d");
+
+		if (!hiddenCtx) {
+			console.error("Failed to get 2D context for hidden canvas");
+			// Restore original canvas
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.ctx.drawImage(tempCanvas, 0, 0);
+			this.screenshotText = "Error Saving";
+			return;
+		}
+
+		// Set 4:5 aspect ratio dimensions
+		const baseWidth = 800;
+		const baseHeight = 1000; // 4:5 ratio
+		hiddenCanvas.width = baseWidth;
+		hiddenCanvas.height = baseHeight;
+
+		// Calculate scaling to fit the visible canvas into the 4:5 ratio
+		const dpr = window.devicePixelRatio || 1;
+		const sourceWidth = this.canvas.width / dpr;
+		const sourceHeight = this.canvas.height / dpr;
+
+		// Calculate scale to fit source canvas into target canvas while maintaining aspect ratio
+		const scaleX = baseWidth / sourceWidth;
+		const scaleY = baseHeight / sourceHeight;
+		const scale = Math.min(scaleX, scaleY);
+
+		const scaledWidth = sourceWidth * scale;
+		const scaledHeight = sourceHeight * scale;
+
+		// Center the image in the 4:5 canvas
+		const offsetX = (baseWidth - scaledWidth) / 2;
+		const offsetY = (baseHeight - scaledHeight) / 2;
+
+		// Fill background with base color
+		hiddenCtx.fillStyle = "#d6c1a1";
+		hiddenCtx.fillRect(0, 0, baseWidth, baseHeight);
+
+		const isruWidth = this.isruImage.width / 4;
+		const isruHeight = this.isruImage.height / 4;
+		hiddenCtx.drawImage(
+			this.isruImage,
+			baseWidth / 2 - isruWidth / 2,
+			offsetY - 20 - isruHeight,
+			isruWidth,
+			isruHeight,
+		);
+
+		hiddenCtx.drawImage(
+			this.ballMedalImage,
+			baseWidth / 2 - this.ballMedalImage.width / 2,
+			offsetY + scaledHeight + 20,
+			this.ballMedalImage.width,
+			this.ballMedalImage.height,
+		);
+
+		// Draw the clean canvas onto the hidden canvas
+		hiddenCtx.fillStyle = "#fff";
+		hiddenCtx.fillRect(
+			offsetX - 5,
+			offsetY - 5,
+			scaledWidth + 10,
+			scaledHeight + 10,
+		);
+
+		hiddenCtx.drawImage(
+			this.canvas,
+			0,
+			0,
+			this.canvas.width,
+			this.canvas.height,
+			offsetX,
+			offsetY,
+			scaledWidth,
+			scaledHeight,
+		);
+
+		// Step 4: Restore original canvas with button
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.drawImage(tempCanvas, 0, 0);
+
+		// Step 5: Convert to blob and save
+		hiddenCanvas.toBlob((blob) => {
+			if (!blob) {
+				console.error("Failed to create blob from canvas");
+				this.screenshotText = "Error Saving";
+				return;
+			}
+
+			// Create download link
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
+
+			// Trigger download
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+
+			// Clean up
+			URL.revokeObjectURL(url);
+		}, "image/png");
+
+		// Clear the hidden canvas (though it will be garbage collected anyway)
+		hiddenCtx.clearRect(0, 0, baseWidth, baseHeight);
+		this.screenshotText = "Screenshot Saved!";
+	}
+
+	private drawGameOverOverlayInternal(
+		state: GameState,
+		scale: number,
+		showButton: boolean,
+	): {
+		buttonBounds?: { x: number; y: number; width: number; height: number };
+	} {
 		if (!state.practice && state.shotsLeft === 0) {
 			this.ctx.save();
 			// Use display dimensions instead of buffer dimensions
@@ -363,13 +525,65 @@ export class Renderer {
 				cw / 2,
 				ch * 0.56,
 			);
+
+			let buttonBounds:
+				| { x: number; y: number; width: number; height: number }
+				| undefined;
+
+			// Draw screenshot button only if showButton is true
+			if (showButton) {
+				this.ctx.font = `${18 * scale}px Visitor`;
+				this.ctx.textAlign = "center";
+				const screenshotTextWidth = this.ctx.measureText(
+					this.screenshotText,
+				).width;
+				const buttonWidth = screenshotTextWidth + 40 * scale;
+				const buttonHeight = 50 * scale;
+				const buttonX = cw / 2 - buttonWidth / 2;
+				const buttonY = ch * 0.62;
+
+				// Button background
+				this.ctx.fillStyle = "rgba(255,255,255,0.9)";
+				this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+				// Button border
+				this.ctx.strokeStyle = "#333";
+				this.ctx.lineWidth = 2 * scale;
+				this.ctx.strokeRect(
+					buttonX,
+					buttonY,
+					buttonWidth,
+					buttonHeight,
+				);
+
+				// Button text
+				this.ctx.fillStyle = "#333";
+
+				this.ctx.fillText(
+					this.screenshotText,
+					cw / 2,
+					buttonY + buttonHeight / 2 + 6 * scale,
+				);
+
+				buttonBounds = {
+					x: buttonX,
+					y: buttonY,
+					width: buttonWidth,
+					height: buttonHeight,
+				};
+			}
+
 			this.ctx.font = `${16 * scale}px Visitor`;
+			this.ctx.fillStyle = "#fff";
 			this.ctx.fillText(
 				`Crafted by hdwatts - S/N: 2025.063.34001`,
 				cw / 2,
 				ch * 0.99,
 			);
 			this.ctx.restore();
+
+			return { buttonBounds };
 		}
+		return {};
 	}
 }

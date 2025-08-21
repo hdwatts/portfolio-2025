@@ -63,6 +63,12 @@ export class Game {
 	private swishSound: HTMLAudioElement;
 	private dribbleSound: HTMLAudioElement;
 	private rimSound: HTMLAudioElement;
+	private screenshotButtonBounds: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null = null;
 
 	constructor(elements: GameElements) {
 		this.elements = elements;
@@ -78,6 +84,7 @@ export class Game {
 		this.updateDimensions(); // Initialize dimensions based on current canvas size
 		this.setupEventListeners();
 		this.setupCollisionEvents();
+		this.setupScreenshotClickHandler();
 		this.updateHud();
 		const persistedStateString = localStorage.getItem("persistedState");
 
@@ -155,6 +162,46 @@ export class Game {
 
 	private setupEventListeners(): void {
 		// Resize handling is now done via the main app
+	}
+
+	private setupScreenshotClickHandler(): void {
+		this.elements.canvas.addEventListener("click", (event) => {
+			if (!this.screenshotButtonBounds) return;
+
+			// Get click coordinates relative to canvas
+			const rect = this.elements.canvas.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+
+			// Check if click is within button bounds
+			const bounds = this.screenshotButtonBounds;
+			if (
+				x >= bounds.x &&
+				x <= bounds.x + bounds.width &&
+				y >= bounds.y &&
+				y <= bounds.y + bounds.height
+			) {
+				// Create a callback to redraw the entire frame without the button
+				const redrawCallback = () => {
+					this.clearCanvas();
+					this.drawUnderlay();
+					this.drawPhysicsBodies();
+					// Draw overlay elements but skip the game over overlay (we'll draw it without button)
+					this.renderer.drawHoop(this.hoop, this.scale);
+					this.renderer.drawAim(
+						this.ball,
+						this.inputManager.getInput(),
+						this.scale,
+					);
+				};
+
+				this.renderer.saveScreenshot(
+					this.state,
+					this.scale,
+					redrawCallback,
+				);
+			}
+		});
 	}
 
 	private updateDimensions(): void {
@@ -646,7 +693,17 @@ export class Game {
 
 		// Game over overlay
 		if (!this.state.practice && this.state.shotsLeft === 0) {
-			this.renderer.drawGameOverOverlay(this.state, this.scale);
+			const overlayResult = this.renderer.drawGameOverOverlay(
+				this.state,
+				this.scale,
+			);
+
+			// Store button bounds for click handling
+			if (overlayResult.buttonBounds) {
+				this.screenshotButtonBounds = overlayResult.buttonBounds;
+			}
+		} else {
+			this.screenshotButtonBounds = null;
 		}
 	}
 	persistState(): void {

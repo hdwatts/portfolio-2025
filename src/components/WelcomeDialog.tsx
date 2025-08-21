@@ -5,7 +5,7 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "../../components/Dialog";
+} from "./Dialog";
 
 export const WelcomeDialog = () => {
 	const [open, setOpen] = useState(true);
