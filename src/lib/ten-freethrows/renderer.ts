@@ -674,7 +674,7 @@ export class Renderer {
 				};
 			}
 
-			this.ctx.font = `${16 * scale}px Visitor`;
+			this.ctx.font = `${16 * scale}px ISRU Rocket Sharpie Bold`;
 			this.ctx.fillStyle = "#fff";
 			this.ctx.fillText(
 				`Crafted by hdwatts - S/N: 2025.063.34001`,
