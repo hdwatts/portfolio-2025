@@ -88,10 +88,28 @@ export class Game {
 				if (!persistedState.schemaVersion) {
 					this.clearPersistedState();
 				}
-				if (persistedState.date >= this.getStringDate()) {
+				console.log(
+					persistedState.schemaVersion === 1,
+					persistedState.date === "2025-08-21",
+					persistedState.daysInARow === 1,
+				);
+				if (
+					persistedState.schemaVersion === 1 &&
+					persistedState.date === "2025-08-21" &&
+					persistedState.daysInARow === 1
+				) {
+					console.log("HERE");
+					this.state.daysInARow = 2;
 					this.state.shotsLeft = 0;
 					this.state.score = persistedState.score;
+					console.log("HERE2");
+					this.persistState();
+				} else {
 					this.state.daysInARow = persistedState.daysInARow;
+					if (persistedState.date >= this.getStringDate()) {
+						this.state.shotsLeft = 0;
+						this.state.score = persistedState.score;
+					}
 				}
 			} catch (e) {
 				this.clearPersistedState();
@@ -430,6 +448,7 @@ export class Game {
 
 			if (this.state.shotsLeft === 0) {
 				this.state.daysInARow = (this.state.daysInARow ?? 0) + 1;
+				console.log("daysInARow", this.state.daysInARow);
 				this.persistState();
 			}
 
@@ -641,7 +660,7 @@ export class Game {
 		localStorage.setItem(
 			"persistedState",
 			JSON.stringify({
-				schemaVersion: 1,
+				schemaVersion: 2,
 				date: this.getStringDate(),
 				score: this.state.score,
 				daysInARow: this.state.daysInARow,
