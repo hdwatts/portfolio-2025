@@ -9,7 +9,7 @@ export class Renderer {
 	private isruImage: HTMLImageElement;
 	private ballMedalImage: HTMLImageElement;
 	private today: Date;
-	private screenshotText: string = "Generate Screenshot";
+	private screenshotText: string = "Share Screenshot";
 
 	constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
 		this.ctx = ctx;
@@ -473,7 +473,6 @@ export class Renderer {
 
 		// Check if we're on mobile (outside the blob callback for scope)
 		const isMobile =
-			true ||
 			/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 				navigator.userAgent,
 			);
@@ -487,42 +486,48 @@ export class Renderer {
 			}
 
 			if (isMobile) {
-				// Mobile approach: try to open in new window/tab for user to save manually
-				try {
-					const url = URL.createObjectURL(blob);
-					const link = document.createElement("a");
-					link.href = url;
-					link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
-					link.target = "_blank";
+				// Mobile approach: try Web Share API first, then fallback
+				if (navigator.share && navigator.canShare) {
+					try {
+						// Create a File object from the blob
+						const file = new File(
+							[blob],
+							`ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`,
+							{
+								type: "image/png",
+							},
+						);
 
-					// For mobile, we need to trigger the download differently
-					document.body.appendChild(link);
-
-					// Use both click and programmatic approach
-					link.click();
-
-					document.body.removeChild(link);
-					URL.revokeObjectURL(url);
-				} catch (error) {
-					console.error("Mobile download failed:", error);
-					this.screenshotText = "Long press image to save";
-
-					// Fallback: convert to data URL and open in new window
-					const dataUrl = hiddenCanvas.toDataURL("image/png");
-					const newWindow = window.open();
-					if (newWindow) {
-						newWindow.document.write(`
-							<html>
-								<head><title>Ten Free Throws Screenshot</title></head>
-								<body style="margin:0;padding:20px;text-align:center;background:#f0f0f0;">
-									<h3>Long press the image below and select "Save Image"</h3>
-									<img src="${dataUrl}" style="max-width:100%;height:auto;border:2px solid #333;" alt="Ten Free Throws Screenshot"/>
-								</body>
-							</html>
-						`);
-						newWindow.document.close();
+						// Check if we can share files
+						if (navigator.canShare({ files: [file] })) {
+							navigator
+								.share({
+									title: "Ten Free Throws Screenshot",
+									text: "Check out my Ten Free Throws game result!",
+									files: [file],
+								})
+								.then(() => {
+									console.log(
+										"Screenshot shared successfully",
+									);
+									this.screenshotText = "Screenshot Shared!";
+								})
+								.catch((error) => {
+									console.error("Share failed:", error);
+									this.fallbackMobileDownload(
+										blob,
+										hiddenCanvas,
+									);
+								});
+							return; // Exit early if share API worked
+						}
+					} catch (error) {
+						console.error("Web Share API failed:", error);
 					}
 				}
+
+				// Fallback for mobile devices without Web Share API or if sharing failed
+				this.fallbackMobileDownload(blob, hiddenCanvas);
 			} else {
 				// Desktop approach: direct download
 				const url = URL.createObjectURL(blob);
@@ -543,13 +548,58 @@ export class Renderer {
 		// Clear the hidden canvas (though it will be garbage collected anyway)
 		hiddenCtx.clearRect(0, 0, baseWidth, baseHeight);
 		this.screenshotText = isMobile
-			? "Image opened in new tab"
+			? "Screenshot Shared!"
 			: "Screenshot Saved!";
 
 		// Reset button text after a delay
 		setTimeout(() => {
-			this.screenshotText = "Generate Screenshot";
+			this.screenshotText = "Share Screenshot";
 		}, 3000);
+	}
+
+	private fallbackMobileDownload(
+		blob: Blob,
+		canvas: HTMLCanvasElement,
+	): void {
+		try {
+			// Try direct download first
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `ten-freethrows-${new Date().toISOString().slice(0, 10)}.png`;
+			link.target = "_blank";
+
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+
+			this.screenshotText = "Screenshot Downloaded!";
+		} catch (error) {
+			console.error("Direct mobile download failed:", error);
+			this.screenshotText = "Long press image to save";
+
+			// Final fallback: open in new window with instructions
+			const dataUrl = canvas.toDataURL("image/png");
+			const newWindow = window.open();
+			if (newWindow) {
+				newWindow.document.write(`
+					<html>
+						<head>
+							<title>Ten Free Throws Screenshot</title>
+							<meta name="viewport" content="width=device-width, initial-scale=1.0">
+						</head>
+						<body style="margin:0;padding:20px;text-align:center;background:#f0f0f0;font-family:Arial,sans-serif;">
+							<h3 style="color:#333;margin-bottom:20px;">Your Ten Free Throws Screenshot</h3>
+							<p style="color:#666;margin-bottom:20px;">Long press the image below and select "Save Image" or "Download Image"</p>
+							<img src="${dataUrl}" style="max-width:100%;height:auto;border:2px solid #333;border-radius:8px;" alt="Ten Free Throws Screenshot"/>
+							<p style="color:#888;font-size:14px;margin-top:20px;">If you can't save the image, try taking a screenshot of this page instead.</p>
+						</body>
+					</html>
+				`);
+				newWindow.document.close();
+			}
+		}
 	}
 
 	private drawGameOverOverlayInternal(
