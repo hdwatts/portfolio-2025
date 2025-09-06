@@ -133,6 +133,12 @@ export const IsruStats = () => {
 					day to fill in the gap.
 				</li>
 				<li>
+					Turn any point reversals from deleted submissions to just -1
+					point, as streaks and bonuses are now dynamically
+					calculated.
+				</li>
+				<li>Only count a single "Shared their Movie" submission.</li>
+				<li>
 					Tie breaking based on the internal ISRU ID of each user.
 				</li>
 			</ol>
