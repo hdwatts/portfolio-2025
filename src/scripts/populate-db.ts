@@ -70,6 +70,7 @@ const getBandUsers = async ({
 };
 
 type IsruUser = {
+	id: number;
 	username: string;
 };
 
@@ -123,11 +124,9 @@ const fetchPoints = async ({
 
 const getPoints = async ({
 	username,
-	userId,
 }: {
 	username: string;
-	userId: number;
-}): Promise<DbPoints[]> => {
+}): Promise<Points[]> => {
 	let url: string | null =
 		`https://isrucamp.com/api/rewards/points/history/${username}/`;
 	let points: Points[] = [];
@@ -136,16 +135,13 @@ const getPoints = async ({
 		points = [...points, ...pointsData.results];
 		url = pointsData.next;
 	}
-	return points.map((i) => ({
-		date: i.formattedDate,
-		user_id: userId,
-		points: i.points,
-		source_name: i.sourceName,
-		reason: i.reason,
-	}));
+	return points;
 };
 
 const populateDb = async () => {
+	await supabase.from("run_data").update({
+		is_running: true,
+	});
 	const { pointBands } = await getBands();
 	for (const band of pointBands) {
 		let page = 1;
@@ -157,22 +153,35 @@ const populateDb = async () => {
 				page,
 			});
 			page = page + 1;
-			console.log(bandUsers);
 			for (const bandUser of bandUsers.users) {
 				console.log("Populating user", bandUser.username);
 				const { data: existingUser } = await supabase
 					.from("users")
-					.select("id")
+					.select("id, isru_id")
 					.eq("username", bandUser.username)
 					.single();
 				if (existingUser) {
+					console.log(existingUser);
+					if ("isru_id" in existingUser && !existingUser.isru_id) {
+						await supabase
+							.from("users")
+							.update({
+								isru_id: bandUser.id,
+							})
+							.eq("id", existingUser.id);
+					}
 					console.log("Existing user!", existingUser);
 					continue;
 				}
+				console.log("Getting points");
+				const points = await getPoints({
+					username: bandUser.username,
+				});
 				const { error, data } = await supabase
 					.from("users")
 					.insert({
 						username: bandUser.username,
+						isru_id: bandUser.id,
 					})
 					.select();
 				const userId = data?.[0]?.id;
@@ -182,14 +191,17 @@ const populateDb = async () => {
 				if (error) {
 					throw new Error("User error", error);
 				}
-				console.log("Getting points");
-				const points = await getPoints({
-					username: bandUser.username,
-					userId,
-				});
 				const { error: pointsError } = await supabase
 					.from("point_histories")
-					.insert(points);
+					.insert(
+						points.map((i) => ({
+							date: i.formattedDate,
+							user_id: userId,
+							points: i.points,
+							source_name: i.sourceName,
+							reason: i.reason,
+						})),
+					);
 				console.log("Points Error", pointsError);
 				if (pointsError) {
 					throw new Error("Points error", pointsError);
@@ -199,4 +211,13 @@ const populateDb = async () => {
 	}
 };
 
-populateDb();
+try {
+	populateDb();
+} catch (error) {
+	console.error(error);
+} finally {
+	await supabase.from("run_data").update({
+		is_running: false,
+		last_ran_at: new Date().toISOString(),
+	});
+}

@@ -31,6 +31,11 @@ const columns: ColumnDef<IsruRow>[] = [
 		accessorKey: "idx",
 	},
 	{
+		id: "isru_id",
+		header: "ISRU ID",
+		accessorKey: "isru_id",
+	},
+	{
 		id: "username",
 		header: "Username",
 		accessorKey: "username",
@@ -45,7 +50,7 @@ const columns: ColumnDef<IsruRow>[] = [
 
 export const IsruStats = () => {
 	const tableContainerRef = useRef<HTMLDivElement>(null);
-	const [data, setData] = useState(null);
+	const [data, setData] = useState<IsruRow[] | null>(null);
 	const [textInput, setTextInput] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
