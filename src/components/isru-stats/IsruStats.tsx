@@ -114,11 +114,19 @@ export const IsruStats = () => {
 					</b>
 				</li>
 				<li>
+					Keeping all negative adjustments that occur in the post
+					season, as the moderating team is adjusting the points after
+					the deadline.
+				</li>
+				<li>
 					Dynamically calculating the streak bonuses for each user.
 				</li>
 				<li>
 					Dynamically calculating the cumulative point bonuses for
 					each user.
+				</li>
+				<li>
+					Tie breaking based on the internal ISRU ID of each user.
 				</li>
 			</ol>
 			<h3>Disclaimers:</h3>
