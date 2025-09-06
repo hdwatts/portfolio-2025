@@ -140,6 +140,13 @@ export const IsruStats = () => {
 				</b>
 			</p>
 			<p>
+				<b style={{ color: "orange" }}>
+					Additionally, I haven't created any logic around excellence
+					bonuses given out after I started crawling. I will do that
+					once we have a good initial dataset.
+				</b>
+			</p>
+			<p>
 				The request for user data could have failed at various points.
 				If it failed during the gathering of the user's point history,
 				it may lead to inaccurate data. If you believe this happened to
