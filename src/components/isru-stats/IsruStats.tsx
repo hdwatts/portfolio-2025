@@ -126,6 +126,13 @@ export const IsruStats = () => {
 					each user.
 				</li>
 				<li>
+					If a user used make up points and end up earning double
+					cumulative point bonuses, those are currently not being
+					counted. TBD on how I will handle those. See user: "dizzy"
+					who had two Ten Free Throw bonuses and also used a make up
+					day to fill in the gap.
+				</li>
+				<li>
 					Tie breaking based on the internal ISRU ID of each user.
 				</li>
 			</ol>

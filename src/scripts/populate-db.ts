@@ -154,58 +154,70 @@ const populateDb = async () => {
 			});
 			page = page + 1;
 			for (const bandUser of bandUsers.users) {
-				console.log("Populating user", bandUser.username);
-				const { data: existingUser } = await supabase
-					.from("users")
-					.select("id, isru_id")
-					.eq("username", bandUser.username)
-					.single();
-				if (existingUser) {
-					console.log(existingUser);
-					if ("isru_id" in existingUser && !existingUser.isru_id) {
-						await supabase
+				let error = false;
+				do {
+					error = false;
+					try {
+						console.log("Populating user", bandUser.username);
+						const { data: existingUser } = await supabase
 							.from("users")
-							.update({
+							.select("id, isru_id")
+							.eq("username", bandUser.username)
+							.single();
+						if (existingUser) {
+							console.log(existingUser);
+							if (
+								"isru_id" in existingUser &&
+								!existingUser.isru_id
+							) {
+								await supabase
+									.from("users")
+									.update({
+										isru_id: bandUser.id,
+									})
+									.eq("id", existingUser.id);
+							}
+							console.log("Existing user!", existingUser);
+							continue;
+						}
+						console.log("Getting points");
+						const points = await getPoints({
+							username: bandUser.username,
+						});
+						const { error, data } = await supabase
+							.from("users")
+							.insert({
+								username: bandUser.username,
 								isru_id: bandUser.id,
 							})
-							.eq("id", existingUser.id);
+							.select();
+						const userId = data?.[0]?.id;
+						if (!userId) {
+							throw new Error("User not found");
+						}
+						if (error) {
+							throw new Error("User error", error);
+						}
+						const { error: pointsError } = await supabase
+							.from("point_histories")
+							.insert(
+								points.map((i) => ({
+									date: i.formattedDate,
+									user_id: userId,
+									points: i.points,
+									source_name: i.sourceName,
+									reason: i.reason,
+								})),
+							);
+						console.log("Points Error", pointsError);
+						if (pointsError) {
+							throw new Error("Points error", pointsError);
+						}
+					} catch (e) {
+						error = true;
+						console.error(e);
 					}
-					console.log("Existing user!", existingUser);
-					continue;
-				}
-				console.log("Getting points");
-				const points = await getPoints({
-					username: bandUser.username,
-				});
-				const { error, data } = await supabase
-					.from("users")
-					.insert({
-						username: bandUser.username,
-						isru_id: bandUser.id,
-					})
-					.select();
-				const userId = data?.[0]?.id;
-				if (!userId) {
-					throw new Error("User not found");
-				}
-				if (error) {
-					throw new Error("User error", error);
-				}
-				const { error: pointsError } = await supabase
-					.from("point_histories")
-					.insert(
-						points.map((i) => ({
-							date: i.formattedDate,
-							user_id: userId,
-							points: i.points,
-							source_name: i.sourceName,
-							reason: i.reason,
-						})),
-					);
-				console.log("Points Error", pointsError);
-				if (pointsError) {
-					throw new Error("Points error", pointsError);
-				}
+				} while (error);
 			}
 		} while (bandUsers?.hasMore);
 	}
