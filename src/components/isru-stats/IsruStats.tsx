@@ -94,6 +94,7 @@ export const IsruStats = () => {
 			<p>
 				<i>Last updated at 12:05 PM EST on September 6, 2025.</i>
 			</p>
+			<h2>What is this?</h2>
 			<p>
 				The goal of this project is to provide an accurate snapshot of
 				the leaderboard for the end of camp. It aims to accomplish this
@@ -143,7 +144,9 @@ export const IsruStats = () => {
 					Tie breaking based on the internal ISRU ID of each user.
 				</li>
 			</ol>
-			<h3>Disclaimers:</h3>
+			<h2>
+				Additional Disclaimers - Please Read Before Asking Questions:
+			</h2>
 			<p>
 				<b style={{ color: "red" }}>
 					This is currently under very active development and should
