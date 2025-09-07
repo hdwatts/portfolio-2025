@@ -96,7 +96,8 @@ export const IsruStats = () => {
 			</p>
 			<p>
 				The goal of this project is to provide an accurate snapshot of
-				the leaderboard. It aims to accomplish this by:
+				the leaderboard for the end of camp. It aims to accomplish this
+				by:
 			</p>
 			<ol>
 				<li>
@@ -163,7 +164,14 @@ export const IsruStats = () => {
 				The request for user data could have failed at various points.
 				If it failed during the gathering of the user's point history,
 				it may lead to inaccurate data. If you believe this happened to
-				you, please contact <b>@MiNiMAL</b> on the discord.
+				you, please contact <b>@MiNiMAL</b> on the bootleg discord or{" "}
+				<a
+					href="https://isrucamp.com/leaderboard#hdwatts"
+					target="_blank"
+				>
+					@hdwatts on ISRU
+				</a>
+				.
 			</p>
 			<div>
 				<input
