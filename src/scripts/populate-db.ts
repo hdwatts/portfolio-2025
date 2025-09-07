@@ -142,6 +142,13 @@ const populateDb = async () => {
 	await supabase.from("run_data").update({
 		is_running: true,
 	});
+	console.log("Refreshing view");
+	const { error } = await supabase.rpc("refresh_view");
+	if (error) {
+		console.error("View refresh error", error);
+		throw new Error("View refresh error", error);
+	}
+	console.log("View refreshed.");
 	const { pointBands } = await getBands();
 	for (const band of pointBands) {
 		let page = 1;
@@ -228,6 +235,7 @@ try {
 } catch (error) {
 	console.error(error);
 } finally {
+	await supabase.functions.invoke("refresh_view");
 	await supabase.from("run_data").update({
 		is_running: false,
 		last_ran_at: new Date().toISOString(),

@@ -163,7 +163,7 @@ export const IsruStats = () => {
 				The request for user data could have failed at various points.
 				If it failed during the gathering of the user's point history,
 				it may lead to inaccurate data. If you believe this happened to
-				you, please contact <b>@MiNiMAL</b> on the bootleg discord or{" "}
+				you, please contact <b>@MiNiMAL</b> on the bootleg discord aka{" "}
 				<a
 					href="https://isrucamp.com/leaderboard#hdwatts"
 					target="_blank"
