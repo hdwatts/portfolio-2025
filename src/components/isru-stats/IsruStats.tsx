@@ -168,6 +168,7 @@ export const IsruStats = () => {
 			<div>
 				<input
 					type="text"
+					disabled={loading}
 					placeholder="Search for username..."
 					style={{ width: 500 }}
 					value={textInput}
