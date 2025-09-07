@@ -154,9 +154,10 @@ export const IsruStats = () => {
 			</p>
 			<p>
 				<b style={{ color: "orange" }}>
-					I believe I now have logic around excellence bonuses,
-					however it requires me to manually run the script. I will
-					work on automating it tomorrow.
+					I believe I now have logic built around post-seasonally
+					awarded excellence bonuses, however it requires me to
+					manually run the script. I will work on automating it
+					tomorrow.
 				</b>
 			</p>
 			<p>
