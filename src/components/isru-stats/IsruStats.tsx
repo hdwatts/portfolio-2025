@@ -88,10 +88,6 @@ export const IsruStats = () => {
 		<div>
 			<h1>IsruStats</h1>
 			<p>
-				View a snapshot of the ISRU leaderboard. This is a list of all
-				the players who have played the ISRU game.
-			</p>
-			<p>
 				<i>Last updated at 12:05 PM EST on September 6, 2025.</i>
 			</p>
 			<h2>What is this?</h2>
