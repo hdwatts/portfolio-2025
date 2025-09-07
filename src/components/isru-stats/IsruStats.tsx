@@ -88,7 +88,7 @@ export const IsruStats = () => {
 		<div>
 			<h1>IsruStats</h1>
 			<p>
-				<i>Last updated at 12:05 PM EST on September 6, 2025.</i>
+				<i>Last updated at 12:05 AM EST on September 7, 2025.</i>
 			</p>
 			<h2>What is this?</h2>
 			<p>
@@ -154,9 +154,9 @@ export const IsruStats = () => {
 			</p>
 			<p>
 				<b style={{ color: "orange" }}>
-					Additionally, I haven't created any logic around excellence
-					bonuses given out after I started crawling. I will do that
-					once we have a good initial dataset.
+					I believe I now have logic around excellence bonuses,
+					however it requires me to manually run the script. I will
+					work on automating it tomorrow.
 				</b>
 			</p>
 			<p>

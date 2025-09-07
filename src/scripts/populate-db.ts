@@ -138,6 +138,70 @@ const getPoints = async ({
 	return points;
 };
 
+const populateUser = async (user: IsruUser) => {
+	let error = false;
+	do {
+		error = false;
+		try {
+			console.log("Populating user", user.username);
+			const { data: existingUser } = await supabase
+				.from("users")
+				.select("id, isru_id")
+				.eq("username", user.username)
+				.single();
+			if (existingUser) {
+				console.log(existingUser);
+				if ("isru_id" in existingUser && !existingUser.isru_id) {
+					await supabase
+						.from("users")
+						.update({
+							isru_id: user.id,
+						})
+						.eq("id", existingUser.id);
+				}
+				console.log("Existing user!", existingUser);
+				continue;
+			}
+			console.log("Getting points");
+			const points = await getPoints({
+				username: user.username,
+			});
+			const { error, data } = await supabase
+				.from("users")
+				.insert({
+					username: user.username,
+					isru_id: user.id,
+				})
+				.select();
+			const userId = data?.[0]?.id;
+			if (!userId) {
+				throw new Error("User not found");
+			}
+			if (error) {
+				throw new Error("User error", error);
+			}
+			const { error: pointsError } = await supabase
+				.from("point_histories")
+				.insert(
+					points.map((i) => ({
+						date: i.formattedDate,
+						user_id: userId,
+						points: i.points,
+						source_name: i.sourceName,
+						reason: i.reason,
+					})),
+				);
+			console.log("Points Error", pointsError);
+			if (pointsError) {
+				throw new Error("Points error", pointsError);
+			}
+		} catch (e) {
+			error = true;
+			console.error(e);
+		}
+	} while (error);
+};
+
 const populateDb = async () => {
 	await supabase.from("run_data").update({
 		is_running: true,
@@ -161,77 +225,129 @@ const populateDb = async () => {
 			});
 			page = page + 1;
 			for (const bandUser of bandUsers.users) {
-				let error = false;
-				do {
-					error = false;
-					try {
-						console.log("Populating user", bandUser.username);
-						const { data: existingUser } = await supabase
-							.from("users")
-							.select("id, isru_id")
-							.eq("username", bandUser.username)
-							.single();
-						if (existingUser) {
-							console.log(existingUser);
-							if (
-								"isru_id" in existingUser &&
-								!existingUser.isru_id
-							) {
-								await supabase
-									.from("users")
-									.update({
-										isru_id: bandUser.id,
-									})
-									.eq("id", existingUser.id);
-							}
-							console.log("Existing user!", existingUser);
-							continue;
-						}
-						console.log("Getting points");
-						const points = await getPoints({
-							username: bandUser.username,
-						});
-						const { error, data } = await supabase
-							.from("users")
-							.insert({
-								username: bandUser.username,
-								isru_id: bandUser.id,
-							})
-							.select();
-						const userId = data?.[0]?.id;
-						if (!userId) {
-							throw new Error("User not found");
-						}
-						if (error) {
-							throw new Error("User error", error);
-						}
-						const { error: pointsError } = await supabase
-							.from("point_histories")
-							.insert(
-								points.map((i) => ({
-									date: i.formattedDate,
-									user_id: userId,
-									points: i.points,
-									source_name: i.sourceName,
-									reason: i.reason,
-								})),
-							);
-						console.log("Points Error", pointsError);
-						if (pointsError) {
-							throw new Error("Points error", pointsError);
-						}
-					} catch (e) {
-						error = true;
-						console.error(e);
-					}
-				} while (error);
+				await populateUser(bandUser);
 			}
 		} while (bandUsers?.hasMore);
 	}
 };
 
+type Excellence = {
+	userHandle: string;
+	excellenceAwardedAt: string;
+	excellenceScope: string;
+	excellenceCategories: string[];
+	submissionDate: string;
+	user: number;
+};
+const excellenceFetch = async ({
+	page,
+}: {
+	page: number;
+}): Promise<Excellence[]> => {
+	const response = await fetch(
+		`https://isrucamp.com/api/activities/daily-submissions/featured_submissions/?limit=10&offset=${page * 10}&excellent_only=true`,
+		{ headers },
+	);
+	return await response.json();
+};
+
+const formatDate = (date: Date) => {
+	const month = date.getMonth() + 1;
+	const day = date.getDate();
+	return `${date.getFullYear()}-${month < 10 ? "0" + month : month}-${
+		day < 10 ? "0" + day : day
+	}`;
+};
+
+const checkNewExcellence = async () => {
+	let page = 0;
+	do {
+		console.log("Fetching excellence!");
+		const excellencesToCheck = await excellenceFetch({ page });
+		page = page + 1;
+		for (const excellence of excellencesToCheck) {
+			if (excellence.excellenceAwardedAt < "2025-09-06") {
+				continue;
+			}
+			const { data: existingUser } = await supabase
+				.from("users")
+				.select("id, isru_id")
+				.eq("username", excellence.userHandle)
+				.single();
+			if (!existingUser) {
+				console.log(
+					"User not found, populating it!",
+					excellence.userHandle,
+				);
+				await populateUser({
+					username: excellence.userHandle,
+					id: excellence.user,
+				});
+			} else {
+				console.log("Searching for excellence point!", {
+					category: excellence.excellenceCategories[0],
+					submissionDate: formatDate(
+						new Date(excellence.submissionDate),
+					),
+					test: `Excellence Award: ${excellence.excellenceCategories[0]}%`,
+					userId: existingUser.id,
+				});
+				const {
+					data: existingExcellence,
+					error: existingExcellenceError,
+				} = await supabase
+					.from("point_histories")
+					.select("id")
+					.ilike(
+						"reason",
+						`Excellence Award: ${excellence.excellenceCategories[0]}%`,
+					)
+					.gte("date", "2025-09-04")
+					.eq("user_id", existingUser.id)
+					.single();
+				if (!existingExcellence) {
+					console.log(
+						"No existing excellence point, adding it!",
+						existingExcellenceError,
+					);
+					const points = await getPoints({
+						username: excellence.userHandle,
+					});
+					const excellencePoint = points.find((p) =>
+						p.reason.includes(
+							`Excellence Award: ${excellence.excellenceCategories[0]}`,
+						),
+					);
+					if (excellencePoint) {
+						console.log("Found excellence point!", excellencePoint);
+						await supabase.from("point_histories").insert({
+							user_id: existingUser.id,
+							points: excellencePoint.points,
+							date: excellencePoint.formattedDate,
+							source_name: excellencePoint.sourceName,
+							reason: excellencePoint.reason,
+						});
+					}
+				} else {
+					console.log(
+						"Existing excellence point found! Not adding it again.",
+						existingExcellence,
+					);
+				}
+			}
+		}
+
+		const lastExcellence =
+			excellencesToCheck[excellencesToCheck.length - 1];
+		if (lastExcellence.excellenceAwardedAt < "2025-09-06") {
+			page = -1;
+		}
+	} while (page > -1);
+};
+
 try {
-	populateDb();
+	await checkNewExcellence();
+	await populateDb();
 } catch (error) {
 	console.error(error);
 } finally {
