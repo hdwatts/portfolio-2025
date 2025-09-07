@@ -343,7 +343,69 @@ const checkNewExcellence = async () => {
 	} while (page > -1);
 };
 
+const usersToPopulate = [
+	{
+		username: "eternaldj",
+		id: 3343,
+	},
+	{
+		username: "meshiaann",
+		id: 3793,
+	},
+	{
+		username: "taejin",
+		id: 4795,
+	},
+	{
+		username: "ian_n05",
+		id: 3931,
+	},
+	{
+		username: "bronxbert",
+		id: 3560,
+	},
+	{
+		username: "newyellow",
+		id: 2651,
+	},
+	{
+		username: "adrianf1",
+		id: 4348,
+	},
+	{
+		username: "kontrolego",
+		id: 4915,
+	},
+	{
+		username: "kevinv",
+		id: 4112,
+	},
+	{
+		username: "parksangho",
+		id: 3466,
+	},
+	{
+		username: "halfbloodprincess",
+		id: 4215,
+	},
+	{
+		username: "twinboyzllj",
+		id: 4207,
+	},
+	{
+		username: "cfmeo",
+		id: 269,
+	},
+	{
+		username: "taichi",
+		id: 642,
+	},
+];
 const execute = async () => {
+	for (const user of usersToPopulate) {
+		await populateUser(user);
+	}
+	return;
 	try {
 		await checkNewExcellence();
 		await supabase.functions.invoke("refresh_view");

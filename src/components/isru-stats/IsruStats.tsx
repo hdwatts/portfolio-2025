@@ -149,6 +149,13 @@ export const IsruStats = () => {
 					</b>
 				</li>
 				<li>
+					Doubled up points are not counted for cumulative point
+					bonuses, even if they haven't been caught by mods. See users
+					like "taichi" who have multiple points. They are currently
+					still counted as normal points as it is too difficult to
+					filter out.
+				</li>
+				<li>
 					Tie breaking based on the internal ISRU ID of each user.
 				</li>
 			</ol>
