@@ -92,7 +92,7 @@ export const IsruStats = () => {
 			</p>
 			<h2>What is this?</h2>
 			<p>
-				The goal of this project is to provide an accurate snapshot of
+				The goal of this project is to provide an estimated snapshot of
 				the leaderboard <b>as of the end of camp</b> + excellence after
 				camp. It aims to accomplish this by:
 			</p>
