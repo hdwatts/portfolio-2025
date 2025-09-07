@@ -50,6 +50,7 @@ const columns: ColumnDef<IsruRow>[] = [
 
 export const IsruStats = () => {
 	const tableContainerRef = useRef<HTMLDivElement>(null);
+	const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 	const [data, setData] = useState<IsruRow[] | null>(null);
 	const [textInput, setTextInput] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -59,7 +60,8 @@ export const IsruStats = () => {
 			setLoading(true);
 			try {
 				const response = await fetch("/api/leaderboard");
-				const data = await response.json();
+				const { data, last_updated_at } = await response.json();
+				setLastUpdatedAt(last_updated_at);
 				setData(
 					data.map((i: IsruRow, idx: number) => ({
 						...i,
@@ -88,7 +90,7 @@ export const IsruStats = () => {
 		<div>
 			<h1>IsruStats</h1>
 			<p>
-				<i>Last updated at 12:05 AM EST on September 7, 2025.</i>
+				<i>Last updated at: {lastUpdatedAt}.</i>
 			</p>
 			<h2>What is this?</h2>
 			<p>
