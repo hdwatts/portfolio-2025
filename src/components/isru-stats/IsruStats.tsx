@@ -137,7 +137,17 @@ export const IsruStats = () => {
 					point, as streaks and bonuses are now dynamically
 					calculated.
 				</li>
-				<li>Only count a single "Shared their Movie" submission.</li>
+				<li>
+					Only count a single "Shared their Movie" submission as 101
+					points. The reason we include the bonus 100 points no matter
+					what is because it gets calculated in EST, so PST users who
+					uploaded at like 10PM on the last day would end up with a
+					100 point bonus recorded after the deadline.{" "}
+					<b>
+						This feels wrong to me, so I include those points, but
+						we don't know how ISRU will handle it.
+					</b>
+				</li>
 				<li>
 					Tie breaking based on the internal ISRU ID of each user.
 				</li>

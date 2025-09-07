@@ -301,31 +301,28 @@ const checkNewExcellence = async () => {
 					test: `Excellence Award: ${excellence.excellenceCategories[0]}%`,
 					userId: existingUser.id,
 				});
-				const {
-					data: existingExcellence,
-					error: existingExcellenceError,
-				} = await supabase
-					.from("point_histories")
-					.select("id")
-					.ilike(
-						"reason",
-						`Excellence Award: ${excellence.excellenceCategories[0]}%`,
-					)
-					.lte("created_at", lastCrawledAt.created_at)
-					.eq("user_id", existingUser.id)
-					.single();
-				if (!existingExcellence) {
-					console.log("No existing excellence point, adding it!");
-					const points = await getPoints({
-						username: excellence.userHandle,
-					});
-					const excellencePoint = points.find((p) =>
-						p.reason.includes(
-							`Excellence Award: ${excellence.excellenceCategories[0]}`,
-						),
-					);
-					if (excellencePoint) {
-						console.log("Found excellence point!");
+
+				const points = await getPoints({
+					username: excellence.userHandle,
+				});
+				const excellencePoint = points.find((p) =>
+					p.reason.includes(
+						`Excellence Award: ${excellence.excellenceCategories[0]}`,
+					),
+				);
+				if (excellencePoint) {
+					console.log("Found excellence point!");
+					const { data: existingExcellence } = await supabase
+						.from("point_histories")
+						.select("id")
+						.eq("user_id", existingUser.id)
+						.eq("reason", excellencePoint.reason)
+						.eq("points", excellencePoint.points)
+						.eq("date", excellencePoint.formattedDate)
+						.eq("source_name", excellencePoint.sourceName)
+						.single();
+					if (!existingExcellence) {
+						console.log("No existing excellence point, adding it!");
 						await supabase.from("point_histories").insert({
 							user_id: existingUser.id,
 							points: excellencePoint.points,
@@ -334,11 +331,6 @@ const checkNewExcellence = async () => {
 							reason: excellencePoint.reason,
 						});
 					}
-				} else {
-					console.log(
-						"Existing excellence point found! Not adding it again.",
-						existingExcellence,
-					);
 				}
 			}
 		}
