@@ -97,8 +97,8 @@ export const IsruStats = () => {
 			<h2>What is this?</h2>
 			<p>
 				The goal of this project is to provide an accurate snapshot of
-				the leaderboard for the end of camp. It aims to accomplish this
-				by:
+				the leaderboard <b>as of the end of camp</b> + excellence after
+				camp. It aims to accomplish this by:
 			</p>
 			<ol>
 				<li>
