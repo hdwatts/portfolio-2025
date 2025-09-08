@@ -274,10 +274,7 @@ const checkNewExcellence = async () => {
 		const excellencesToCheck = await excellenceFetch({ page });
 		page = page + 1;
 		for (const excellence of excellencesToCheck) {
-			if (
-				excellence.excellenceAwardedAt < "2025-09-06" ||
-				excellence.excellenceAwardedAt < lastCrawledAt.last_ran_at
-			) {
+			if (excellence.excellenceAwardedAt < "2025-09-06") {
 				console.log("Excellence already crawled, skipping!");
 				continue;
 			}
@@ -339,10 +336,7 @@ const checkNewExcellence = async () => {
 
 		const lastExcellence =
 			excellencesToCheck[excellencesToCheck.length - 1];
-		if (
-			lastExcellence.excellenceAwardedAt < "2025-09-06" ||
-			lastExcellence.excellenceAwardedAt < lastCrawledAt.last_ran_at
-		) {
+		if (lastExcellence.excellenceAwardedAt < "2025-09-06") {
 			page = -1;
 		}
 	} while (page > -1);
@@ -366,21 +360,21 @@ const execute = async () => {
 	// return;
 
 	try {
-		// await checkNewExcellence();
-		// await supabase.functions.invoke("refresh_view");
-		// await supabase
-		// 	.from("run_data")
-		// 	.update({
-		// 		last_ran_at: new Date().toISOString(),
-		// 	})
-		// 	.eq("id", 1);
-		// return;
+		await checkNewExcellence();
+		await supabase.rpc("refresh_view");
+		await supabase
+			.from("run_data")
+			.update({
+				last_ran_at: new Date().toISOString(),
+			})
+			.eq("id", 1);
+		return;
 		await populateDb();
 	} catch (error) {
 		console.error(error);
 	} finally {
 		console.log("Refreshing view");
-		await supabase.functions.invoke("refresh_view");
+		await supabase.rpc("refresh_view");
 		await supabase
 			.from("run_data")
 			.update({
