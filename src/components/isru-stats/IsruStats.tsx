@@ -15,6 +15,8 @@ import {
 	type ColumnDef,
 	type ColumnFiltersState,
 } from "@tanstack/react-table";
+import { downloadCSVFromObjects } from "../../lib/exportCsv";
+import omit from "lodash/omit";
 
 type IsruRow = {
 	rank: number;
@@ -207,6 +209,23 @@ export const IsruStats = () => {
 						);
 					}}
 				/>
+				<button
+					onClick={() =>
+						downloadCSVFromObjects(
+							data?.map((i) =>
+								omit(i, [
+									"last_checked_on",
+									"created_at",
+									"id",
+									"user_id",
+								]),
+							) ?? [],
+						)
+					}
+					disabled={loading}
+				>
+					Download CSV
+				</button>
 			</div>
 			{loading ? <div>Loading...</div> : null}
 			<div
