@@ -330,6 +330,8 @@ const checkNewExcellence = async () => {
 							source_name: excellencePoint.sourceName,
 							reason: excellencePoint.reason,
 						});
+					} else {
+						console.log("Existing excellence point, skipping!");
 					}
 				}
 			}
@@ -337,7 +339,10 @@ const checkNewExcellence = async () => {
 
 		const lastExcellence =
 			excellencesToCheck[excellencesToCheck.length - 1];
-		if (lastExcellence.excellenceAwardedAt < "2025-09-06") {
+		if (
+			lastExcellence.excellenceAwardedAt < "2025-09-06" ||
+			lastExcellence.excellenceAwardedAt < lastCrawledAt.last_ran_at
+		) {
 			page = -1;
 		}
 	} while (page > -1);
@@ -345,83 +350,44 @@ const checkNewExcellence = async () => {
 
 const usersToPopulate = [
 	{
-		username: "eternaldj",
-		id: 3343,
+		username: "sib",
+		id: 273638,
 	},
 	{
-		username: "meshiaann",
-		id: 3793,
-	},
-	{
-		username: "taejin",
-		id: 4795,
-	},
-	{
-		username: "ian_n05",
-		id: 3931,
-	},
-	{
-		username: "bronxbert",
-		id: 3560,
-	},
-	{
-		username: "newyellow",
-		id: 2651,
-	},
-	{
-		username: "adrianf1",
-		id: 4348,
-	},
-	{
-		username: "kontrolego",
-		id: 4915,
-	},
-	{
-		username: "kevinv",
-		id: 4112,
-	},
-	{
-		username: "parksangho",
-		id: 3466,
-	},
-	{
-		username: "halfbloodprincess",
-		id: 4215,
-	},
-	{
-		username: "twinboyzllj",
-		id: 4207,
-	},
-	{
-		username: "cfmeo",
-		id: 269,
-	},
-	{
-		username: "taichi",
-		id: 642,
+		username: "brandon",
+		id: 24061,
 	},
 ];
+
 const execute = async () => {
-	for (const user of usersToPopulate) {
-		await populateUser(user);
-	}
-	return;
+	// for (const user of usersToPopulate) {
+	// 	await populateUser(user);
+	// }
+	// return;
+
 	try {
-		await checkNewExcellence();
-		await supabase.functions.invoke("refresh_view");
-		await supabase.from("run_data").update({
-			last_ran_at: new Date().toISOString(),
-		});
+		// await checkNewExcellence();
+		// await supabase.functions.invoke("refresh_view");
+		// await supabase
+		// 	.from("run_data")
+		// 	.update({
+		// 		last_ran_at: new Date().toISOString(),
+		// 	})
+		// 	.eq("id", 1);
+		// return;
 		await populateDb();
 	} catch (error) {
 		console.error(error);
 	} finally {
 		console.log("Refreshing view");
 		await supabase.functions.invoke("refresh_view");
-		await supabase.from("run_data").update({
-			is_running: false,
-			last_ran_at: new Date().toISOString(),
-		});
+		await supabase
+			.from("run_data")
+			.update({
+				is_running: false,
+				last_ran_at: new Date().toISOString(),
+			})
+			.eq("id", 1);
 	}
 };
 execute();

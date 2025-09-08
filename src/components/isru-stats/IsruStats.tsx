@@ -32,7 +32,7 @@ const columns: ColumnDef<IsruRow>[] = [
 	},
 	{
 		id: "isru_id",
-		header: "ISRU ID",
+		header: "Internal ID",
 		accessorKey: "isru_id",
 	},
 	{
