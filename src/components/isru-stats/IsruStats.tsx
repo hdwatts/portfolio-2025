@@ -226,10 +226,11 @@ export const IsruStats = () => {
 			</p>
 			<p>
 				<b style={{ color: "orange" }}>
-					I believe I now have logic built around post-seasonally
-					awarded excellence bonuses, however it requires me to
-					manually run the script. I will work on automating it
-					tomorrow.
+					Postseason excellence is working but it is a manual process.
+					If you received excellence after the "Last Updated At" date
+					above then it is not yet reflected in the leaderboard. I run
+					the script pretty often, so it should be updated in due
+					time!
 				</b>
 			</p>
 			<p>
