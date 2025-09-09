@@ -360,15 +360,8 @@ const execute = async () => {
 	// return;
 
 	try {
-		await checkNewExcellence();
-		await supabase.rpc("refresh_view");
-		await supabase
-			.from("run_data")
-			.update({
-				last_ran_at: new Date().toISOString(),
-			})
-			.eq("id", 1);
-		return;
+		// await checkNewExcellence();
+		// return;
 		await populateDb();
 	} catch (error) {
 		console.error(error);

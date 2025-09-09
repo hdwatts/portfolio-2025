@@ -107,13 +107,25 @@ export const IsruStats = () => {
 				</li>
 				<li>
 					Filtering out all points that were earned in preseason, post
-					season, and bonuses. The bonuses are filtered out because
-					they are calculated as of EST, so users in Asia and Europe
-					got red badge upgrades for dates after camp.{" "}
-					<b>
-						We do not know if ISRU will take this into account, but
-						it should be safe to assume!
-					</b>
+					season, and bonuses. The bonuses are filtered out because:
+					<ul>
+						<li>
+							Bonuses are calculated as of EST, so users in Asia
+							and Europe got red badge upgrades for dates after
+							camp.
+						</li>
+						<li>
+							A small subset of users have a "double badge rank up
+							to yellow" glitch for Ten Free throws, giving them
+							an extra 14 points. This feels wrong to me.
+						</li>
+						<li>
+							<b>
+								We do not know if ISRU will take the above into
+								account!
+							</b>
+						</li>
+					</ul>
 				</li>
 				<li>
 					Keeping all negative adjustments that occur in the post
