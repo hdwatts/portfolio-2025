@@ -246,23 +246,7 @@ export const IsruStats = () => {
 				>
 					Search
 				</button>
-				<button
-					onClick={() =>
-						downloadCSVFromObjects(
-							data?.map((i) =>
-								omit(i, [
-									"last_checked_on",
-									"created_at",
-									"id",
-									"user_id",
-								]),
-							) ?? [],
-						)
-					}
-					disabled={loading}
-				>
-					Download CSV
-				</button>
+
 				{searchTerm && (
 					<button
 						onClick={() => {
