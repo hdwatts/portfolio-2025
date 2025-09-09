@@ -141,7 +141,8 @@ export const IsruStats = () => {
 				</li>
 				<li>
 					Filtering out all points that were earned in preseason, post
-					season, and bonuses. The bonuses are filtered out because:
+					season, and streak/rankup bonuses. The bonuses are filtered
+					out because:
 					<ul>
 						<li>
 							Bonuses are calculated as of EST, so users in Asia
