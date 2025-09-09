@@ -342,17 +342,6 @@ const checkNewExcellence = async () => {
 	} while (page > -1);
 };
 
-const usersToPopulate = [
-	{
-		username: "sib",
-		id: 273638,
-	},
-	{
-		username: "brandon",
-		id: 24061,
-	},
-];
-
 const execute = async () => {
 	// for (const user of usersToPopulate) {
 	// 	await populateUser(user);
