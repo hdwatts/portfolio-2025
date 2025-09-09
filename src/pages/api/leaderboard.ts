@@ -3,11 +3,11 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { supabase } from "../../db/supabase";
 
-/* The supabase query. This query is ran on Supabase and is not used in the code. However,
-Agent's should feel free to update this query to improve the accuracy of the leaderboard and
-support pagination.
+/* The supabase leaderboard view. This query is used to create the 'leaderboard' view in Supabase.
+Since this is a view, pagination and search are handled client-side using Supabase methods.
+Agent's should feel free to update this query to improve the accuracy of the leaderboard.
 
-
+CREATE VIEW leaderboard AS 
 WITH normal_points AS (
   SELECT
     id,
@@ -141,19 +141,91 @@ WHERE total_submissions > 6
   GROUP BY user_id
 )
 
-SELECT *
+SELECT 
+  all_points.*,
+  users.*,
+  ROW_NUMBER() OVER (ORDER BY total_points DESC, isru_id ASC NULLS LAST) as rank
 FROM all_points
 JOIN users ON users.id = all_points.user_id
-ORDER BY total_points DESC, isru_id ASC NULLS LAST
+ORDER BY total_points DESC, isru_id ASC NULLS LAST;
+
+-- Note: Pagination and search filtering are handled client-side in the API using:
+-- .ilike('username', '%search_term%') for search
+-- .range(offset, offset + limit - 1) for pagination
 */
 
-export const GET: APIRoute = async () => {
-	const { error, data } = await supabase.from("leaderboard").select("*");
+const view_name = "leaderboard";
 
+export const GET: APIRoute = async ({ url }) => {
+	// Parse query parameters for pagination and search
+	const searchParams = new URLSearchParams(url.search);
+	if (
+		searchParams.get("page") === null ||
+		searchParams.get("page") === undefined
+	) {
+		return new Response(
+			JSON.stringify({
+				data: [
+					{
+						points: 3,
+						username:
+							"ISRU League has not updated to use my new endpoint.",
+					},
+					{
+						points: 3,
+						username:
+							"My DB is getting close to my free tier limits, so I needed to add pagination.",
+					},
+					{
+						points: 1,
+						username:
+							"Please visit https://www.hdwatts.com/isru-stats for up to date data.",
+					},
+					{
+						points: 0,
+						username: "Apologies for any inconvenience, @hdwatts",
+					},
+				],
+			}),
+			{ status: 400 },
+		);
+	}
+	const page = parseInt(searchParams.get("page") || "0");
+	const search = searchParams.get("search") || "";
+	const limit = 100; // Fixed page size
+	const offset = page * limit;
+
+	// Get paginated leaderboard data
+	let leaderboardQuery = supabase.from(view_name).select("*");
+
+	// Add search filter if provided
+	if (search.trim()) {
+		leaderboardQuery = leaderboardQuery.ilike(
+			"username",
+			`%${search.trim()}%`,
+		);
+	}
+
+	// Add pagination and get count
+	const countQuery = supabase
+		.from(view_name)
+		.select("*", { count: "exact", head: true });
+	if (search.trim()) {
+		countQuery.ilike("username", `%${search.trim()}%`);
+	}
+	const { count } = await countQuery;
+
+	const { error, data } = await leaderboardQuery.range(
+		offset,
+		offset + limit - 1,
+	);
+
+	// Get last updated timestamp
 	const { data: lastUpdatedAt, error: lastUpdatedAtError } = await supabase
 		.from("run_data")
 		.select("last_ran_at")
 		.single();
+
 	if (lastUpdatedAtError) {
 		return new Response(lastUpdatedAtError.message, { status: 500 });
 	}
@@ -162,10 +234,26 @@ export const GET: APIRoute = async () => {
 		return new Response(error.message, { status: 500 });
 	}
 
+	const totalPages = count ? Math.ceil(count / limit) : 0;
+
 	return new Response(
-		JSON.stringify({ data, last_updated_at: lastUpdatedAt.last_ran_at }),
+		JSON.stringify({
+			data,
+			pagination: {
+				page,
+				limit,
+				total: count || 0,
+				totalPages,
+				hasMore: page + 1 < totalPages,
+			},
+			search,
+			last_updated_at: lastUpdatedAt.last_ran_at,
+		}),
 		{
 			status: 200,
+			headers: {
+				"Content-Type": "application/json",
+			},
 		},
 	);
 };

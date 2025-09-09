@@ -6,14 +6,12 @@ import {
 } from "@tanstack/react-virtual";
 import {
 	useReactTable,
-	getFilteredRowModel,
 	getCoreRowModel,
 	createColumnHelper,
 	flexRender,
 	type Row,
 	type Table,
 	type ColumnDef,
-	type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { downloadCSVFromObjects } from "../../lib/exportCsv";
 import omit from "lodash/omit";
@@ -24,13 +22,28 @@ type IsruRow = {
 	total_points: number;
 };
 
+type PaginationInfo = {
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+	hasMore: boolean;
+};
+
+type LeaderboardResponse = {
+	data: IsruRow[];
+	pagination: PaginationInfo;
+	search: string;
+	last_updated_at: string;
+};
+
 const columnHelper = createColumnHelper<IsruRow>();
 
 const columns: ColumnDef<IsruRow>[] = [
 	{
 		id: "rank",
 		header: "Rank",
-		accessorKey: "idx",
+		accessorKey: "rank",
 	},
 	{
 		id: "isru_id",
@@ -41,7 +54,6 @@ const columns: ColumnDef<IsruRow>[] = [
 		id: "username",
 		header: "Username",
 		accessorKey: "username",
-		filterFn: "includesString",
 	},
 	{
 		id: "total_points",
@@ -56,36 +68,35 @@ export const IsruStats = () => {
 	const [data, setData] = useState<IsruRow[] | null>(null);
 	const [textInput, setTextInput] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+	const [searchTerm, setSearchTerm] = useState("");
+
+	const fetchData = async (page: number = 0, search: string = "") => {
+		setLoading(true);
+		try {
+			const searchParams = new URLSearchParams({
+				page: page.toString(),
+				...(search && { search }),
+			});
+			const response = await fetch(`/api/leaderboard?${searchParams}`);
+			const result: LeaderboardResponse = await response.json();
+			setLastUpdatedAt(result.last_updated_at);
+			setData(result.data);
+			setPagination(result.pagination);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		const fetchData = async () => {
-			setLoading(true);
-			try {
-				const response = await fetch("/api/leaderboard");
-				const { data, last_updated_at } = await response.json();
-				setLastUpdatedAt(last_updated_at);
-				setData(
-					data.map((i: IsruRow, idx: number) => ({
-						...i,
-						idx: idx + 1,
-					})),
-				);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchData();
-	}, []);
+		fetchData(currentPage, searchTerm);
+	}, [currentPage, searchTerm]);
 
 	const table = useReactTable({
 		data: data ?? [],
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(), // needed for client-side filtering
-		state: {
-			columnFilters,
-		},
-		onColumnFiltersChange: setColumnFilters,
 	});
 
 	return (
@@ -182,7 +193,8 @@ export const IsruStats = () => {
 					not be viewed as a 100% accurate snapshot of the
 					leaderboard. I still haven't even scraped all the data yet,
 					as of right now there are{" "}
-					{data ? data?.length : "Loading..."} users in the database.
+					{pagination ? pagination.total : "Loading..."} users in the
+					database.
 				</b>
 			</p>
 			<p>
@@ -206,21 +218,34 @@ export const IsruStats = () => {
 				</a>
 				.
 			</p>
-			<div>
+			<div style={{ marginBottom: "20px" }}>
 				<input
 					type="text"
 					disabled={loading}
 					placeholder="Search for username..."
-					style={{ width: 500 }}
+					style={{ width: 500, marginRight: "10px" }}
 					value={textInput}
 					onChange={(e) => {
 						const value = e.target.value;
 						setTextInput(value);
-						setColumnFilters(
-							value.length > 0 ? [{ id: "username", value }] : [],
-						);
+					}}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							setSearchTerm(textInput);
+							setCurrentPage(0); // Reset to first page on search
+						}
 					}}
 				/>
+				<button
+					onClick={() => {
+						setSearchTerm(textInput);
+						setCurrentPage(0);
+					}}
+					disabled={loading}
+					style={{ marginRight: "10px" }}
+				>
+					Search
+				</button>
 				<button
 					onClick={() =>
 						downloadCSVFromObjects(
@@ -238,7 +263,103 @@ export const IsruStats = () => {
 				>
 					Download CSV
 				</button>
+				{searchTerm && (
+					<button
+						onClick={() => {
+							setSearchTerm("");
+							setTextInput("");
+							setCurrentPage(0);
+						}}
+						disabled={loading}
+						style={{ marginLeft: "10px" }}
+					>
+						Clear Search
+					</button>
+				)}
 			</div>
+
+			{/* Pagination Info */}
+			{pagination && (
+				<div style={{ marginBottom: "10px" }}>
+					<p>
+						Showing {data?.length || 0} of {pagination.total} users
+						{searchTerm && ` matching "${searchTerm}"`}
+						{" | "}Page {pagination.page + 1} of{" "}
+						{pagination.totalPages}
+					</p>
+				</div>
+			)}
+
+			{/* Pagination Controls */}
+			{pagination && pagination.totalPages > 1 && (
+				<div style={{ marginBottom: "20px" }}>
+					<button
+						onClick={() => setCurrentPage(0)}
+						disabled={loading || currentPage === 0}
+						style={{ marginRight: "5px" }}
+					>
+						First
+					</button>
+					<button
+						onClick={() => setCurrentPage(currentPage - 1)}
+						disabled={loading || currentPage === 0}
+						style={{ marginRight: "5px" }}
+					>
+						Previous
+					</button>
+
+					{/* Page numbers */}
+					{Array.from(
+						{ length: Math.min(5, pagination.totalPages) },
+						(_, i) => {
+							const startPage = Math.max(0, currentPage - 2);
+							const pageNumber = startPage + i;
+							if (pageNumber >= pagination.totalPages)
+								return null;
+
+							return (
+								<button
+									key={pageNumber}
+									onClick={() => setCurrentPage(pageNumber)}
+									disabled={loading}
+									style={{
+										marginRight: "5px",
+										backgroundColor:
+											pageNumber === currentPage
+												? "#007bff"
+												: "transparent",
+										color:
+											pageNumber === currentPage
+												? "white"
+												: "black",
+									}}
+								>
+									{pageNumber + 1}
+								</button>
+							);
+						},
+					)}
+
+					<button
+						onClick={() => setCurrentPage(currentPage + 1)}
+						disabled={loading || !pagination.hasMore}
+						style={{ marginLeft: "5px", marginRight: "5px" }}
+					>
+						Next
+					</button>
+					<button
+						onClick={() =>
+							setCurrentPage(pagination.totalPages - 1)
+						}
+						disabled={
+							loading || currentPage === pagination.totalPages - 1
+						}
+						style={{ marginLeft: "5px" }}
+					>
+						Last
+					</button>
+				</div>
+			)}
 			{loading ? <div>Loading...</div> : null}
 			<div
 				className="container"
