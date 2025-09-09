@@ -165,29 +165,30 @@ export const GET: APIRoute = async ({ url }) => {
 	) {
 		return new Response(
 			JSON.stringify({
+				last_updated_at: "2025-09-09T12:00:00Z",
 				data: [
 					{
-						points: 3,
+						points: 1500,
 						username:
 							"ISRU League has not updated to use my new endpoint.",
 					},
 					{
-						points: 3,
+						points: 1400,
 						username:
 							"My DB is getting close to my free tier limits, so I needed to add pagination.",
 					},
 					{
-						points: 1,
+						points: 1300,
 						username:
 							"Please visit https://www.hdwatts.com/isru-stats for up to date data.",
 					},
 					{
-						points: 0,
+						points: 1200,
 						username: "Apologies for any inconvenience, @hdwatts",
 					},
 				],
 			}),
-			{ status: 400 },
+			{ status: 200 },
 		);
 	}
 	const page = parseInt(searchParams.get("page") || "0");
