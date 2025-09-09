@@ -129,7 +129,7 @@ export const IsruStats = () => {
 			<div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 				<div className="mb-8 text-center">
 					<h1 className="mb-4 text-4xl font-bold text-gray-900">
-						ISRU End of Camp Leaderboard
+						ISRU Estimated End of Camp Leaderboard
 					</h1>
 					<p className="text-sm text-gray-500 italic">
 						Last updated: {lastUpdatedAt}
