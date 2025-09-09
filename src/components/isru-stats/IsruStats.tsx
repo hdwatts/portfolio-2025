@@ -175,6 +175,12 @@ export const IsruStats = () => {
 					each user.
 				</li>
 				<li>
+					Ten users have Wall Drawing points on the day before the
+					wall drawing challenge was supposed to begin. I have
+					filtered those out when it comes to streaks, as they end up
+					with an extra 30 points that no other user can get.
+				</li>
+				<li>
 					If a user used make up points and end up earning double
 					cumulative point bonuses, those are currently not being
 					counted. TBD on how I will handle those. See user: "dizzy"
