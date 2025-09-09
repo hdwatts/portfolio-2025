@@ -79,7 +79,11 @@ const columns: ColumnDef<IsruRow>[] = [
 		cell: ({ row }) => {
 			return (
 				<div>
-					{((row.original.rank / totalActiveUsers) * 100).toFixed(3)}%
+					{(
+						100 -
+						((row.original.rank - 1) / (totalActiveUsers - 1)) * 100
+					).toFixed(3)}
+					%
 				</div>
 			);
 		},
