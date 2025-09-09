@@ -39,6 +39,8 @@ type LeaderboardResponse = {
 
 const columnHelper = createColumnHelper<IsruRow>();
 
+const totalActiveUsers = 45161;
+
 const columns: ColumnDef<IsruRow>[] = [
 	{
 		id: "rank",
@@ -54,11 +56,32 @@ const columns: ColumnDef<IsruRow>[] = [
 		id: "username",
 		header: "Username",
 		accessorKey: "username",
+		cell: ({ row }) => {
+			return (
+				<a
+					href={`https://isrucamp.com/leaderboard#${row.original.username}`}
+					target="_blank"
+				>
+					{row.original.username}
+				</a>
+			);
+		},
 	},
 	{
 		id: "total_points",
 		header: "Total Points",
 		accessorKey: "total_points",
+	},
+	{
+		id: "percentile",
+		header: "Percentile",
+		cell: ({ row }) => {
+			return (
+				<div>
+					{((row.original.rank / totalActiveUsers) * 100).toFixed(3)}%
+				</div>
+			);
+		},
 	},
 ];
 
@@ -182,6 +205,10 @@ export const IsruStats = () => {
 				</li>
 				<li>
 					Tie breaking based on the internal ISRU ID of each user.
+				</li>
+				<li>
+					Percentile is based on the current total number of active
+					users: {totalActiveUsers}.
 				</li>
 			</ol>
 			<h2>
