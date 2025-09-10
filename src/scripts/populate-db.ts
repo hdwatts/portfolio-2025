@@ -261,6 +261,7 @@ const formatDate = (date: Date) => {
 
 const checkNewExcellence = async () => {
 	let page = 0;
+	let didExcellence = false;
 	do {
 		const { data: lastCrawledAt } = await supabase
 			.from("run_data")
@@ -273,6 +274,7 @@ const checkNewExcellence = async () => {
 		}
 		const excellencesToCheck = await excellenceFetch({ page });
 		page = page + 1;
+		didExcellence = false;
 		for (const excellence of excellencesToCheck) {
 			if (excellence.excellenceAwardedAt < "2025-09-06") {
 				console.log("Excellence already crawled, skipping!");
@@ -285,6 +287,7 @@ const checkNewExcellence = async () => {
 				.single();
 			if (!existingUser) {
 				console.log("User not found, populating it!");
+				didExcellence = true;
 				await populateUser({
 					username: excellence.userHandle,
 					id: excellence.user,
@@ -319,6 +322,7 @@ const checkNewExcellence = async () => {
 						.eq("source_name", excellencePoint.sourceName)
 						.single();
 					if (!existingExcellence) {
+						didExcellence = true;
 						console.log("No existing excellence point, adding it!");
 						await supabase.from("point_histories").insert({
 							user_id: existingUser.id,
@@ -336,7 +340,10 @@ const checkNewExcellence = async () => {
 
 		const lastExcellence =
 			excellencesToCheck[excellencesToCheck.length - 1];
-		if (lastExcellence.excellenceAwardedAt < "2025-09-06") {
+		if (
+			lastExcellence.excellenceAwardedAt < "2025-09-06" ||
+			didExcellence === false
+		) {
 			page = -1;
 		}
 	} while (page > -1);
@@ -349,9 +356,9 @@ const execute = async () => {
 	// return;
 
 	try {
-		// await checkNewExcellence();
-		// return;
-		await populateDb();
+		await checkNewExcellence();
+		return;
+		// await populateDb();
 	} catch (error) {
 		console.error(error);
 	} finally {
