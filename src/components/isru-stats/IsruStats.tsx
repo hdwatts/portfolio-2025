@@ -99,12 +99,20 @@ export const IsruStats = () => {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [pagination, setPagination] = useState<PaginationInfo | null>(null);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [currentView, setCurrentView] = useState<
+		"leaderboard" | "leaderboard_with_missing"
+	>("leaderboard");
 
-	const fetchData = async (page: number = 0, search: string = "") => {
+	const fetchData = async (
+		page: number = 0,
+		search: string = "",
+		view: string = currentView,
+	) => {
 		setLoading(true);
 		try {
 			const searchParams = new URLSearchParams({
 				page: page.toString(),
+				view: view,
 				...(search && { search }),
 			});
 			const response = await fetch(`/api/leaderboard?${searchParams}`);
@@ -118,8 +126,8 @@ export const IsruStats = () => {
 	};
 
 	useEffect(() => {
-		fetchData(currentPage, searchTerm);
-	}, [currentPage, searchTerm]);
+		fetchData(currentPage, searchTerm, currentView);
+	}, [currentPage, searchTerm, currentView]);
 
 	const table = useReactTable({
 		data: data ?? [],
@@ -288,6 +296,64 @@ export const IsruStats = () => {
 						</a>
 						.
 					</p>
+				</div>
+				<div className="mb-6 rounded-lg bg-white p-4 shadow-md">
+					<h3 className="mb-3 text-lg font-medium text-gray-800">
+						Leaderboard Toggle
+					</h3>
+					<div className="flex flex-wrap gap-2">
+						<button
+							onClick={() => {
+								setCurrentView("leaderboard");
+								setCurrentPage(0);
+							}}
+							disabled={loading}
+							className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed ${
+								currentView === "leaderboard"
+									? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+									: "bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500 disabled:bg-gray-100"
+							}`}
+						>
+							Standard Leaderboard
+						</button>
+						<button
+							onClick={() => {
+								setCurrentView("leaderboard_with_missing");
+								setCurrentPage(0);
+							}}
+							disabled={loading}
+							className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed ${
+								currentView === "leaderboard_with_missing"
+									? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+									: "bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500 disabled:bg-gray-100"
+							}`}
+						>
+							Leaderboard With Makeup Days (BETA)
+						</button>
+					</div>
+					<div className="mt-4 border-l-4 border-red-400 bg-red-50 p-4">
+						<ul className="list-inside list-disc space-y-3 leading-relaxed text-gray-700">
+							<li className="pl-2">
+								<b>Standard Leaderboard</b> shows users without
+								any of the makeup days applied from the
+								2025-09-11 emails.
+							</li>
+							<li className="pl-2">
+								<b>Leaderboard With Makeup Days</b> assumes that
+								all users who were missing known makeup days
+								(2025-07-17, 2025-07-18, 2025-07-24, 2025-09-02,
+								2025-09-03) made those days up.{" "}
+								<b className="font-semibold text-red-700">
+									It should not be viewed as an accurate
+									representation of reality, but as a view
+									into what the "best case scenario" for all
+									users who missed the above days could look
+									like. It is also under EXTREMELY active
+									development. There may be bugs.
+								</b>
+							</li>
+						</ul>
+					</div>
 				</div>
 				<div className="mb-6 rounded-lg bg-white p-6 shadow-md">
 					<div className="flex flex-row items-center gap-3">

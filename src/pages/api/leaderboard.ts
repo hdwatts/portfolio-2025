@@ -154,11 +154,19 @@ ORDER BY total_points DESC, isru_id ASC NULLS LAST;
 -- .range(offset, offset + limit - 1) for pagination
 */
 
-const view_name = "leaderboard";
+const VALID_VIEWS = ["leaderboard", "leaderboard_with_missing"] as const;
+type ViewName = (typeof VALID_VIEWS)[number];
 
 export const GET: APIRoute = async ({ url }) => {
-	// Parse query parameters for pagination and search
+	// Parse query parameters for pagination, search, and view
 	const searchParams = new URLSearchParams(url.search);
+
+	// Validate and set view name
+	const viewParam = searchParams.get("view");
+	const view_name: ViewName = VALID_VIEWS.includes(viewParam as ViewName)
+		? (viewParam as ViewName)
+		: "leaderboard";
+
 	if (
 		searchParams.get("page") === null ||
 		searchParams.get("page") === undefined
