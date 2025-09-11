@@ -4,23 +4,103 @@ CREATE MATERIALIZED VIEW leaderboard_with_missing AS WITH given_params AS (
     -- date::date, points::int, source_name::text
     SELECT *
     FROM (
-            VALUES ('2025-07-17'::date, 1, 'Ten Free Throws'),
-                ('2025-07-18'::date, 1, 'Ten Free Throws'),
-                ('2025-07-24'::date, 1, 'Ten Free Throws'),
-                ('2025-07-24'::date, 1, 'Output Before Input'),
-                ('2025-09-02'::date, 1, 'Ten Free Throws'),
-                ('2025-09-02'::date, 1, 'Output Before Input'),
-                ('2025-09-02'::date, 1, 'Wall Drawing'),
-                ('2025-09-02'::date, 1, 'Medicine Ball'),
-                ('2025-09-02'::date, 1, 'Read Before Bed'),
-                ('2025-09-02'::date, 1, 'Out and Back'),
-                ('2025-09-03'::date, 1, 'Ten Free Throws'),
-                ('2025-09-03'::date, 1, 'Output Before Input'),
-                ('2025-09-03'::date, 1, 'Wall Drawing'),
-                ('2025-09-03'::date, 1, 'Medicine Ball'),
-                ('2025-09-03'::date, 1, 'Read Before Bed'),
-                ('2025-09-03'::date, 1, 'Out and Back')
-        ) AS v(date, points, source_name)
+            VALUES (
+                    '2025-07-17'::date,
+                    1,
+                    'Ten Free Throws',
+                    'Took 10 shots'
+                ),
+                (
+                    '2025-07-18'::date,
+                    1,
+                    'Ten Free Throws',
+                    'Took 10 shots'
+                ),
+                (
+                    '2025-07-24'::date,
+                    1,
+                    'Ten Free Throws',
+                    'Took 10 shots'
+                ),
+                (
+                    '2025-07-24'::date,
+                    1,
+                    'Output Before Input',
+                    'Embraced the liminal'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Ten Free Throws',
+                    'Took 10 shots'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Output Before Input',
+                    'Embraced the liminal'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Wall Drawing',
+                    'Pushed the Line'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Medicine Ball',
+                    'Trained with confidence'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Read Before Bed',
+                    'Read before bed'
+                ),
+                (
+                    '2025-09-02'::date,
+                    1,
+                    'Out and Back',
+                    'Made it back'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Ten Free Throws',
+                    'Took 10 shots'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Output Before Input',
+                    'Embraced the liminal'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Wall Drawing',
+                    'Pushed the Line'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Medicine Ball',
+                    'Trained with confidence'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Read Before Bed',
+                    'Read before bed'
+                ),
+                (
+                    '2025-09-03'::date,
+                    1,
+                    'Out and Back',
+                    'Made it back'
+                )
+        ) AS v(date, points, source_name, reason)
 ),
 /* Existing normalization */
 normal_points AS (
@@ -73,7 +153,7 @@ missing_points AS (
         gp.date,
         u.id AS user_id,
         gp.source_name,
-        'MISSING: expected (' || gp.date || ', ' || gp.points || ', ' || gp.source_name || ')' AS reason
+        gp.reason
     FROM users u
         CROSS JOIN given_params gp
     WHERE NOT EXISTS (
@@ -82,6 +162,7 @@ missing_points AS (
             WHERE np.user_id = u.id
                 AND np.date = gp.date
                 AND np.source_name = gp.source_name
+                AND np.reason = gp.reason
                 AND np.points = gp.points -- match on normalized points
         )
 ),
