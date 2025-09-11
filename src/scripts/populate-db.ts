@@ -3,8 +3,6 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
-console.log(process.env);
-
 const headers = {
 	accept: "application/json, text/plain, */*",
 	"accept-language": "en-US,en;q=0.9",
