@@ -9,8 +9,7 @@ const headers = {
 	accept: "application/json, text/plain, */*",
 	"accept-language": "en-US,en;q=0.9",
 	"cache-control": "no-cache",
-	newrelic:
-		"eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjY4OTM5NzUiLCJhcCI6IjExMjA0MjQ3NDgiLCJpZCI6ImIzZmExNTA5MjY3ZjRjZWEiLCJ0ciI6IjExMzNmZDI3ZDViMjgyZDNlMTAxZjMzOTI0ZTA4MzQ0IiwidGkiOjE3NTcxNjY5MDAzNTd9fQ==",
+	newrelic: process.env.NEWRELIC ?? "",
 	pragma: "no-cache",
 	priority: "u=1, i",
 	"sec-ch-ua":
@@ -25,7 +24,7 @@ const headers = {
 		"6893975@nr=0-1-6893975-1120424748-b3fa1509267f4cea----1757166900357",
 	"x-csrftoken": "JthyQ9I7b8nGe9vLlDpROGDAIGSI8dRh",
 	"x-newrelic-id": "Ug4OUl9UDRABVFhUAQMBX1YI",
-	cookie: "csrftoken=JthyQ9I7b8nGe9vLlDpROGDAIGSI8dRh; sessionid=ly84t9kedwk9iacv0u6npt2hotp96ttp",
+	cookie: process.env.COOKIE ?? "",
 	Referer: "https://isrucamp.com/leaderboard",
 };
 
