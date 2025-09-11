@@ -270,6 +270,7 @@ export const IsruStats = () => {
 							</span>{" "}
 							users in the database.
 						</p>
+						<br />
 						<p className="font-semibold text-red-700">
 							I am not a member of ISRU staff. This leaderboard is
 							purely an informed but heavily estimated opinion. If
