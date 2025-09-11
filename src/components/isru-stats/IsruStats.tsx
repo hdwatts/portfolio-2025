@@ -271,10 +271,12 @@ export const IsruStats = () => {
 							users in the database.
 						</p>
 						<p className="font-semibold text-red-700">
-							If you choose to ignore these disclaimers and treat
-							this leaderboard as definitive, any frustration or
-							disappointment over not receiving an invoice is
-							entirely your own doing.
+							I am not a member of ISRU staff. This leaderboard is
+							purely an informed but heavily estimated opinion. If
+							you choose to ignore these disclaimers and treat it
+							as definitive, any frustration or disappointment
+							over not receiving an invoice is entirely your own
+							responsibility.
 						</p>
 					</div>
 					<div className="mb-4 border-l-4 border-orange-400 bg-orange-50 p-4">
