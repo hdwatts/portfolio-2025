@@ -270,6 +270,12 @@ export const IsruStats = () => {
 							</span>{" "}
 							users in the database.
 						</p>
+						<p className="font-semibold text-red-700">
+							If you choose to ignore these disclaimers and treat
+							this leaderboard as definitive, any frustration or
+							disappointment over not receiving an invoice is
+							entirely your own doing.
+						</p>
 					</div>
 					<div className="mb-4 border-l-4 border-orange-400 bg-orange-50 p-4">
 						<p className="font-semibold text-orange-700">
