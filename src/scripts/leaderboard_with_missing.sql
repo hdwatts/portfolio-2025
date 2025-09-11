@@ -64,13 +64,12 @@ normal_points AS (
         AND reason != 'Documented their Ritual'
         AND reason NOT LIKE 'Reversed all points from deleted submission: Choose Your Ritual%'
 ),
-/* Create zero-point rows for missing [date, points, source_name] per user */
+/* Create  rows for missing [date, points, source_name] per user */
 missing_points AS (
     SELECT
         /* no original id; synthesize null */
         NULL::bigint AS id,
         gp.points,
-        -- do not affect totals
         gp.date,
         u.id AS user_id,
         gp.source_name,
