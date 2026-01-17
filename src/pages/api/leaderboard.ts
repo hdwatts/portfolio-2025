@@ -1,7 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { supabase } from "../../db/supabase";
 
 /* The supabase leaderboard view. This query is used to create the 'leaderboard' view in Supabase.
 Since this is a view, pagination and search are handled client-side using Supabase methods.
@@ -169,97 +168,30 @@ export const GET: APIRoute = async ({ url }) => {
 
 
 	return new Response(
-			JSON.stringify({
-				last_updated_at: "2026-01-17T12:00:00Z",
-				data: [
-					{
-						points: 1500,
-						username:
-							"ISRU League has ended.",
-					},
-					{
-						points: 1400,
-						username:
-							"My DB hit it's free tier limits, so this experiment is now closed.",
-					},
-					{
-						points: 1300,
-						username:
-							"Thank you for participating and for a great summer camp!.",
-					},
-					{
-						points: 1200,
-						username: "Apologies for any inconvenience, @hdwatts",
-					},
-				],
-			}),
-			{ status: 200 },
-		);
-	}
-	const page = parseInt(searchParams.get("page") || "0");
-	const search = searchParams.get("search") || "";
-	const limit = 100; // Fixed page size
-	const offset = page * limit;
-
-	// Get paginated leaderboard data
-	let leaderboardQuery = supabase.from(view_name).select("*");
-
-	// Add search filter if provided
-	if (search.trim()) {
-		leaderboardQuery = leaderboardQuery.ilike(
-			"username",
-			`%${search.trim()}%`,
-		);
-	}
-
-	// Add pagination and get count
-	const countQuery = supabase
-		.from(view_name)
-		.select("*", { count: "exact", head: true });
-	if (search.trim()) {
-		countQuery.ilike("username", `%${search.trim()}%`);
-	}
-	const { count } = await countQuery;
-
-	const { error, data } = await leaderboardQuery.range(
-		offset,
-		offset + limit - 1,
-	);
-
-	// Get last updated timestamp
-	const { data: lastUpdatedAt, error: lastUpdatedAtError } = await supabase
-		.from("run_data")
-		.select("last_ran_at")
-		.single();
-
-	if (lastUpdatedAtError) {
-		return new Response(lastUpdatedAtError.message, { status: 500 });
-	}
-
-	if (error) {
-		return new Response(error.message, { status: 500 });
-	}
-
-	const totalPages = count ? Math.ceil(count / limit) : 0;
-
-	return new Response(
 		JSON.stringify({
-			data,
-			pagination: {
-				page,
-				limit,
-				total: count || 0,
-				totalPages,
-				hasMore: page + 1 < totalPages,
-			},
-			search,
-			last_updated_at: lastUpdatedAt.last_ran_at,
+			last_updated_at: "2026-01-17T12:00:00Z",
+			data: [
+				{
+					points: 1500,
+					username:
+						"ISRU League has ended.",
+				},
+				{
+					points: 1400,
+					username:
+						"My DB hit it's free tier limits, so this experiment is now closed.",
+				},
+				{
+					points: 1300,
+					username:
+						"Thank you for participating and for a great summer camp!.",
+				},
+				{
+					points: 1200,
+					username: "Apologies for any inconvenience, @hdwatts",
+				},
+			],
 		}),
-		{
-			status: 200,
-			headers: {
-				"Content-Type": "application/json",
-			},
-		},
+		{ status: 200 },
 	);
 };
