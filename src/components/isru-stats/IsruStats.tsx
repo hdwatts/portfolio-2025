@@ -73,21 +73,6 @@ const columns: ColumnDef<IsruRow>[] = [
 		header: "Total Points",
 		accessorKey: "total_points",
 	},
-	{
-		id: "percentile",
-		header: "Percentile",
-		cell: ({ row }) => {
-			return (
-				<div>
-					{(
-						100 -
-						((row.original.rank - 1) / (totalActiveUsers - 1)) * 100
-					).toFixed(3)}
-					%
-				</div>
-			);
-		},
-	},
 ];
 
 export const IsruStats = () => {
