@@ -167,28 +167,25 @@ export const GET: APIRoute = async ({ url }) => {
 		? (viewParam as ViewName)
 		: "leaderboard";
 
-	if (
-		searchParams.get("page") === null ||
-		searchParams.get("page") === undefined
-	) {
-		return new Response(
+
+	return new Response(
 			JSON.stringify({
-				last_updated_at: "2025-09-09T12:00:00Z",
+				last_updated_at: "2026-01-17T12:00:00Z",
 				data: [
 					{
 						points: 1500,
 						username:
-							"ISRU League has not updated to use my new endpoint.",
+							"ISRU League has ended.",
 					},
 					{
 						points: 1400,
 						username:
-							"My DB is getting close to my free tier limits, so I needed to add pagination.",
+							"My DB hit it's free tier limits, so this experiment is now closed.",
 					},
 					{
 						points: 1300,
 						username:
-							"Please visit https://www.hdwatts.com/isru-stats for up to date data.",
+							"Thank you for participating and for a great summer camp!.",
 					},
 					{
 						points: 1200,
