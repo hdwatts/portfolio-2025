@@ -1,3 +1,3 @@
 {
-  "buildCommand": "astro build && pagefind --site .vercel/output/static"
+  "buildCommand": "astro build && node src/scripts/prune-unused-assets.mjs .vercel/output/static && pagefind --site .vercel/output/static"
 }

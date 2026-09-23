@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 
@@ -15,8 +16,12 @@ const {
 	ogImage,
 	articleDate,
 } = Astro.props;
+// Resize the OG image so the full-resolution original isn't emitted into the build.
+const socialImage = ogImage
+	? await getImage({ src: ogImage, width: 1200, format: "jpg" })
+	: undefined;
 const socialImageURL = new URL(
-	ogImage ? ogImage.src : "/og-image.png",
+	socialImage ? socialImage.src : "/og-image.png",
 	Astro.url,
 ).href;
 
