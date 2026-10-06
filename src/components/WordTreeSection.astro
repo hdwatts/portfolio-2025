@@ -1,81 +1,43 @@
+---
+import PhoneVideo from "./PhoneVideo.astro";
+import StoreBadges from "./StoreBadges.astro";
+---
+
 <div class="flex w-full max-w-[1200px] flex-col justify-between lg:flex-row">
 	<div class="flex flex-col gap-6 p-8 lg:max-w-sm">
 		<h2 class="text-2xl font-bold">WordTree</h2>
 		<p>
 			<a href="https://www.wordtree.app" class="underline" target="_blank"
 				>WordTree</a
-			> is a cross-platform app built with React Native and Expo. It challenges
-			players to think strategically and plan ahead while testing their vocabulary.
+			> is a word puzzle played one letter at a time. Players fill a tree of
+			five rows, from a one-letter word at the top to a five-letter word at
+			the bottom, without knowing which letter comes next.
 		</p>
 		<p>
-			Initially developed in 2023 as an experiment in cross-platform
-			application development, WordTree has since grown into a thriving
-			game with over 1,000 active users. Give it a try!
+			First built in 2023 as an experiment in cross-platform development,
+			the original grew to over 1,000 active users. In 2026 I did a
+			ground-up rewrite for iOS and Android with a shared Daily Puzzle, an
+			Endless mode, live head-to-head duels, verified leaderboards, and
+			replays.
 		</p>
+		<p>
+			Under the hood, a deterministic TypeScript engine runs unmodified on
+			the phone and in a Cloudflare Worker, so the server can replay every
+			move to verify scores. That one property powers the anti-cheat,
+			multiplayer fairness, and replays. Give it a try!
+		</p>
+		<StoreBadges
+			name="WordTree"
+			appStore="https://apps.apple.com/us/app/wordtree-a-daily-word-puzzle/id6446817670"
+			googlePlay="https://play.google.com/store/apps/details?id=com.hdwatts.wordtree"
+		/>
 	</div>
-	<div
-		class="flex min-w-[360px] flex-col gap-6 p-8 lg:max-w-[1280px] lg:p-16"
-	>
-		<a
+	<div class="flex justify-center p-8 lg:flex-1 lg:p-16">
+		<PhoneVideo
 			href="https://www.wordtree.app"
-			target="_blank"
-			class="outline-accent bg-accent relative block w-full -rotate-3 rounded-lg pr-8 outline-6 transition-transform hover:scale-105 hover:rotate-3"
-			aria-label="Play WordTree"
-		>
-			<video
-				autoplay
-				loop
-				muted
-				playsinline
-				class="lazy-video bg-background aspect-video rounded-lg"
-			>
-				<source
-					data-src="/video/wordtree-demo.mp4"
-					type="video/mp4"
-					class="aspect-video min-h-full min-w-full"
-				/>
-			</video>
-			<div
-				class="bg-secondary absolute top-[calc(50%-12px)] right-0 h-6 w-6 rounded-full outline outline-gray-600"
-			>
-			</div>
-		</a>
+			src="/video/wordtree-preview.mp4"
+			poster="/video/wordtree-preview-poster.jpg"
+			label="Play WordTree"
+		/>
 	</div>
 </div>
-
-<script is:inline>
-	document.addEventListener("DOMContentLoaded", function () {
-		var lazyVideos = [].slice.call(
-			document.querySelectorAll("video.lazy-video"),
-		);
-
-		if ("IntersectionObserver" in window) {
-			var lazyVideoObserver = new IntersectionObserver(function (
-				entries,
-				observer,
-			) {
-				entries.forEach(function (video) {
-					if (video.isIntersecting) {
-						for (var source in video.target.children) {
-							var videoSource = video.target.children[source];
-							if (
-								typeof videoSource.tagName === "string" &&
-								videoSource.tagName === "SOURCE"
-							) {
-								videoSource.src = videoSource.dataset.src;
-							}
-						}
-
-						video.target.load();
-						video.target.classList.remove("lazy");
-						lazyVideoObserver.unobserve(video.target);
-					}
-				});
-			});
-
-			lazyVideos.forEach(function (lazyVideo) {
-				lazyVideoObserver.observe(lazyVideo);
-			});
-		}
-	});
-</script>

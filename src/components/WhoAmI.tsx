@@ -30,7 +30,8 @@ export const WhoAmI = ({ headshot }: WhoAmIProps) => (
 				</span>
 				<span className="text-sm md:text-base">
 					Creator of{" "}
-					<Link href="https://www.wordtree.app">WordTree.app</Link>
+					<Link href="https://www.wordtree.app">WordTree</Link> and{" "}
+					<Link href="https://www.lexgame.app">Lex</Link>
 				</span>
 			</div>
 			<div className="flex items-center gap-4 text-xs md:text-sm">

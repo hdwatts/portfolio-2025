@@ -1,0 +1,38 @@
+---
+interface Props {
+	name: string;
+	appStore: string;
+	googlePlay: string;
+}
+
+const { name, appStore, googlePlay } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center gap-3">
+	<a
+		href={appStore}
+		target="_blank"
+		class="transition-transform hover:scale-105"
+	>
+		<img
+			src="/badges/app-store.svg"
+			alt={`Download ${name} on the App Store`}
+			width="120"
+			height="40"
+			class="h-10 w-auto"
+		/>
+	</a>
+	<a
+		href={googlePlay}
+		target="_blank"
+		class="transition-transform hover:scale-105"
+	>
+		<img
+			src="/badges/google-play.png"
+			alt={`Get ${name} on Google Play`}
+			width="133"
+			height="40"
+			class="h-10 w-auto"
+		/>
+	</a>
+</div>

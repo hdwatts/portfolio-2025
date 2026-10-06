@@ -1,0 +1,39 @@
+---
+import PhoneVideo from "./PhoneVideo.astro";
+import StoreBadges from "./StoreBadges.astro";
+---
+
+<div
+	class="flex w-full max-w-[1200px] flex-col-reverse justify-between lg:flex-row"
+>
+	<div class="flex justify-center p-8 lg:flex-1 lg:p-16">
+		<PhoneVideo
+			href="https://www.lexgame.app"
+			src="/video/lex-preview.mp4"
+			poster="/video/lex-preview-poster.jpg"
+			label="Play Lex"
+			tilt="right"
+		/>
+	</div>
+	<div class="flex flex-col gap-6 p-8 lg:max-w-sm">
+		<h2 class="text-2xl font-bold">Lex</h2>
+		<p>
+			<a href="https://www.lexgame.app" class="underline" target="_blank"
+				>Lex</a
+			> is a wordbuilding roguelike that combines Scrabble and Poker into one
+			experience. Players spell words to score points, then craft synergies
+			and stack absurd multipliers to survive an escalating gauntlet of Bosses.
+		</p>
+		<p>
+			With over 100 unique Editors that bend the rules, 14 starting Bags,
+			and tile upgrades like Steel, Glass, and Stone, no two runs play the
+			same. Spelling a word is easy. Breaking the dictionary is where the
+			fun begins.
+		</p>
+		<StoreBadges
+			name="Lex"
+			appStore="https://apps.apple.com/us/app/lex-wordbuilding-roguelike/id6769525969"
+			googlePlay="https://play.google.com/store/apps/details?id=com.hdwatts.lex&hl=en_US"
+		/>
+	</div>
+</div>

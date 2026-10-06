@@ -1,0 +1,61 @@
+---
+interface Props {
+	href: string;
+	src: string;
+	poster: string;
+	label: string;
+	tilt?: "left" | "right";
+}
+
+const { href, src, poster, label, tilt = "left" } = Astro.props;
+---
+
+<a
+	href={href}
+	target="_blank"
+	class:list={[
+		"outline-accent bg-accent relative block w-[240px] rounded-[2rem] pb-10 outline-6 transition-transform hover:scale-105 sm:w-[280px]",
+		tilt === "left"
+			? "-rotate-3 hover:rotate-3"
+			: "rotate-3 hover:-rotate-3",
+	]}
+	aria-label={label}
+>
+	<video
+		autoplay
+		loop
+		muted
+		playsinline
+		poster={poster}
+		class="lazy-video bg-background aspect-[83/180] w-full rounded-[2rem] object-cover"
+	>
+		<source data-src={src} type="video/mp4" />
+	</video>
+	<div
+		class="bg-secondary absolute bottom-2 left-[calc(50%-12px)] h-6 w-6 rounded-full outline outline-gray-600"
+	>
+	</div>
+</a>
+
+<script>
+	const lazyVideos =
+		document.querySelectorAll<HTMLVideoElement>("video.lazy-video");
+
+	if ("IntersectionObserver" in window) {
+		const lazyVideoObserver = new IntersectionObserver(
+			(entries, observer) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) return;
+					const video = entry.target as HTMLVideoElement;
+					video.querySelectorAll("source").forEach((source) => {
+						if (source.dataset.src) source.src = source.dataset.src;
+					});
+					video.load();
+					observer.unobserve(video);
+				});
+			},
+		);
+
+		lazyVideos.forEach((video) => lazyVideoObserver.observe(video));
+	}
+</script>
