@@ -1,0 +1,40 @@
+src/components/PhoneVideo.astro
+  s_e7c67ccc4f83cb::t_bcb73de2a49190 1-40,43-44,55,58-61
+  s_e7c67ccc4f83cb::t_d88162fc0b1af1 41-42,45-54,56-57
+public/badges/app-store.svg
+  s_e7c67ccc4f83cb::t_76409d7ef6df85 1-46
+src/components/WhoAmI.tsx
+  s_e7c67ccc4f83cb::t_aac290efc13daa 33-34
+src/layouts/Layout.astro
+  s_e7c67ccc4f83cb::t_f10551a2ce5431 68
+src/components/WordTreeSection.astro
+  s_e7c67ccc4f83cb::t_d88162fc0b1af1 3,29-33
+  s_e7c67ccc4f83cb::t_09848bccd28f2f 18
+  s_e7c67ccc4f83cb::t_6ced9ec3d33daf 1-2,4-5,35-36,38-41
+  s_e7c67ccc4f83cb::t_c7d21ef5ebb4a5 12-17,19-21,24-27
+src/components/StoreBadges.astro
+  s_e7c67ccc4f83cb::t_d88162fc0b1af1 12-16
+  s_e7c67ccc4f83cb::t_02ed0beb5dbd89 1-11,17-38
+src/components/LexSection.astro
+  s_e7c67ccc4f83cb::t_91bb7ab7b11922 33-37
+  s_e7c67ccc4f83cb::t_8894fe11ad0345 3
+  s_e7c67ccc4f83cb::t_28ae4c8a06f023 1-2,4-32,38-39
+src/pages/index.astro
+  s_e7c67ccc4f83cb::t_fdc1624571e569 12,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5074eaad1d032d7de9b572603f4d39a568f065a6",
+  "prompts": {},
+  "sessions": {
+    "s_e7c67ccc4f83cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aca56f67-cc3a-4e50-8aef-7717104cb6b8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
