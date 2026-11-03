@@ -93,6 +93,17 @@ export interface Colophon {
 	links: { label: string; url: string }[];
 }
 
+/**
+ * Phrases that must be links wherever they appear in prose: person.headline,
+ * person.summary, writing paragraphs, experience highlights, and colophon
+ * paragraphs/steps. Render those strings with linkify() from src/data.ts.
+ * (Project descriptions are exempt; the project block links on its own.)
+ */
+export interface AutoLink {
+	text: string;
+	url: string;
+}
+
 export type LabelKey =
 	| "nav.home"
 	| "nav.history"
@@ -137,6 +148,7 @@ export interface Portfolio {
 	skills: { technical: Skill[]; soft: string[] };
 	testimonials: Testimonial[];
 	colophon: Colophon;
+	autolinks: AutoLink[];
 	labels: Record<LabelKey, string[]>;
 	meta: { siteUrl: string; siteTitle: string; description: string; ogImage: string };
 }

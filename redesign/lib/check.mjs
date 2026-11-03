@@ -231,6 +231,46 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 				const allText = normalize(found.runs.map((r) => r.parts.join(" ")).join(" "));
 				if (!allText.includes(normalize(data.person.name))) errors.push(`The page must show the name "${data.person.name}".`);
 				for (const p of data.projects) if (!allText.includes(normalize(p.name))) errors.push(`Project "${p.name}" is not shown.`);
+				// Every experience entry with a url must link to it.
+				const missingCompany = data.experience.filter((e) => e.url && !hrefs.has(normHref(e.url))).map((e) => `${e.company} → ${e.url}`);
+				if (missingCompany.length) errors.push(`Company links missing:\n` + missingCompany.map((m) => `  - ${m}`).join("\n"));
+
+				// Autolink phrases inside prose fields must be links (use linkify()).
+				if (data.autolinks?.length) {
+					const prose = [
+						...data.person.headline,
+						data.person.summary,
+						...(data.writing ?? []).flatMap((w) => w.paragraphs),
+						...data.experience.flatMap((e) => e.highlights),
+						...(data.colophon?.paragraphs ?? []),
+						...(data.colophon?.steps ?? []).map((s) => s.text),
+					].map(normalize);
+					const unlinked = await page.evaluate(
+						({ phrases, prose }) => {
+							const norm = (t) =>
+								t.normalize("NFKC").replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2010-\u2015]/g, "-").replace(/\s+/g, " ").trim().toLowerCase();
+							const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+							const isInline = (el) => getComputedStyle(el).display.startsWith("inline") || getComputedStyle(el).display === "contents";
+							const found = new Set();
+							const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+							for (let n; (n = walker.nextNode()); ) {
+								if (n.parentElement?.closest("a, script, style, noscript, template")) continue;
+								let block = n.parentElement;
+								while (block && block !== document.body && isInline(block)) block = block.parentElement;
+								const blockText = norm(block?.textContent ?? "");
+								if (!blockText || !prose.some((p) => p.includes(blockText) || blockText.includes(p))) continue;
+								for (const ph of phrases) {
+									if (new RegExp(`(^|[^\\p{L}\\p{N}])${esc(ph)}($|[^\\p{L}\\p{N}])`, "u").test(n.nodeValue)) found.add(ph);
+								}
+							}
+							return [...found];
+						},
+						{ phrases: data.autolinks.map((l) => l.text), prose },
+					);
+					if (unlinked.length)
+						errors.push(`These phrases appear in prose without a link (render prose with linkify() from src/data.ts): ${unlinked.map((u) => `"${u}"`).join(", ")}`);
+				}
+
 				if (data.colophon) {
 					if (!allText.includes(normalize(data.colophon.tagline))) errors.push(`The colophon tagline "${data.colophon.tagline}" is not shown (see data.colophon).`);
 					const missingColophon = data.colophon.links.map((l) => l.url).filter((u) => !hrefs.has(normHref(u)));

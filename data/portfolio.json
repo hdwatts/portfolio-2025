@@ -414,6 +414,32 @@
 			}
 		]
 	},
+	"autolinks": [
+		{
+			"text": "Chronograph Private Equity",
+			"url": "https://www.chronograph.pe"
+		},
+		{
+			"text": "Chronograph.pe",
+			"url": "https://www.chronograph.pe"
+		},
+		{
+			"text": "WordTree",
+			"url": "https://www.wordtree.app"
+		},
+		{
+			"text": "Lex",
+			"url": "https://www.lexgame.app"
+		},
+		{
+			"text": "GitHub Action",
+			"url": "https://github.com/hdwatts/portfolio-2025/blob/main/.github/workflows/redesign.yml"
+		},
+		{
+			"text": "Gemini",
+			"url": "https://deepmind.google/models/gemini/"
+		}
+	],
 	"labels": {
 		"nav.home": [
 			"Home"

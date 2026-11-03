@@ -1,4 +1,4 @@
-import { data, label } from "./data";
+import { data, label, linkify } from "./data";
 
 // Minimal placeholder that passes every publishing check. Replace all of it
 // with this week's design.
@@ -11,11 +11,11 @@ export function App() {
 				<div>
 					<h1 className="text-3xl font-bold">{person.name}</h1>
 					{person.headline.map((h) => (
-						<p key={h}>{h}</p>
+						<p key={h}>{linkify(h, "underline")}</p>
 					))}
 				</div>
 			</header>
-			<p>{person.summary}</p>
+			<p>{linkify(person.summary, "underline")}</p>
 
 			<section className="flex flex-col gap-6">
 				<h2 className="text-xl font-semibold">{label("section.projects")}</h2>
@@ -42,7 +42,7 @@ export function App() {
 				<h2 className="text-xl font-semibold">{data.colophon.heading}</h2>
 				<p className="font-semibold">{data.colophon.tagline}</p>
 				{data.colophon.paragraphs.map((p) => (
-					<p key={p}>{p}</p>
+					<p key={p}>{linkify(p, "underline")}</p>
 				))}
 				<div className="flex gap-4 underline">
 					{data.colophon.links.map((l) => (

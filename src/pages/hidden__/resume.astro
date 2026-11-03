@@ -39,7 +39,7 @@ const bullet = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stro
 			{
 				data.experience.map((job) => (
 					<div class="flex flex-col gap-2 text-sm">
-						<div class="text-base font-bold">{job.company}</div>
+						<div class="text-base font-bold">{job.url ? <a href={job.url} class="underline">{job.company}</a> : job.company}</div>
 						<div class="flex justify-between">
 							<span class="font-semibold">{job.role}</span>
 							<span class="italic">{job.period}</span>
