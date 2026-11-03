@@ -66,7 +66,12 @@ function die(msg, code = 1) {
 function setOutput(key, value) {
 	if (!process.env.GITHUB_OUTPUT) return;
 	const v = String(value);
-	if (v.includes("\n")) fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}<<__EOF__\n${v}\n__EOF__\n`);
+	if (v.includes("\n")) {
+		// Random, unguessable delimiter so values can't terminate the heredoc early.
+		const delim = `EOF_${crypto.randomBytes(16).toString("hex")}`;
+		if (v.includes(delim)) throw new Error("output value contains its delimiter");
+		fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}<<${delim}\n${v}\n${delim}\n`);
+	}
 	else fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${v}\n`);
 }
 
@@ -373,7 +378,12 @@ async function buildAndCheck(attempt) {
 	scanForKey(dest);
 	const screenshots = {};
 	for (const name of ["desktop", "mobile"]) if (fs.existsSync(path.join(dest, `${name}.jpg`))) screenshots[name] = path.join(dest, `${name}.jpg`);
-	return { ok: r.ok === true, errors: Array.isArray(r.errors) ? r.errors.map(String) : [], warnings: Array.isArray(r.warnings) ? r.warnings.map(String) : [], screenshots };
+	// The result JSON was written by the agent user: treat every string as untrusted.
+	const clean = (list, max) =>
+		(Array.isArray(list) ? list : [])
+			.slice(0, 60)
+			.map((x) => String(x).replace(/[\u0000-\u0008\u000B-\u001F\u007F\u2028\u2029]/g, " ").slice(0, max));
+	return { ok: r.ok === true, errors: clean(r.errors, 6000), warnings: clean(r.warnings, 500).map((w) => w.replace(/\n/g, " ")), screenshots };
 }
 
 // ---------- 4. sandbox + secret guard ----------
