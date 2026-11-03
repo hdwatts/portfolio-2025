@@ -1,0 +1,45 @@
+redesign/lib/check.mjs
+  s_8b6400ddbdfa5c::t_1b71090431e8bd 153-164,169,232-233
+.github/workflows/sync-data.yml
+  s_8b6400ddbdfa5c::t_5489ad3b907035 53,76-79,87,89,92-94,98-100,106-107
+redesign/run.mjs
+  s_8b6400ddbdfa5c::t_2c1ab95c910bb0 161,180-184,186-191,193-194,209,273
+  s_8b6400ddbdfa5c::t_035f602c279e29 316,330
+redesign/ci-publish.sh
+  s_8b6400ddbdfa5c::t_6cfd5b2a892bc3 45-46
+redesign/finalize-site.mjs
+  s_8b6400ddbdfa5c::t_7243403f4dc523 84
+  s_8b6400ddbdfa5c::t_34665135763951 12,29-31,55-57,75,77,79
+redesign/lib/serve.mjs
+  s_8b6400ddbdfa5c::t_1b71090431e8bd 9,34-39,41-48,54-55,57
+redesign/lib/packages.mjs
+  s_8b6400ddbdfa5c::t_035f602c279e29 3,9-14,21,25-44
+redesign/sanitize-design.mjs
+  s_8b6400ddbdfa5c::t_6cfd5b2a892bc3 1-49
+redesign/prompt.md
+  s_8b6400ddbdfa5c::t_1b71090431e8bd 31-32
+public/_intro/analytics.js
+  s_8b6400ddbdfa5c::t_79189777d84319 1-6
+public/_intro/boot.js
+  s_8b6400ddbdfa5c::t_7ffd1065365b63 1-17
+public/_intro/intro.js
+  s_8b6400ddbdfa5c::t_6e0ca5d34ac630 4-5,14-17
+redesign/lib/csp.mjs
+  s_8b6400ddbdfa5c::t_25a65cb580c5d2 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "925c6ac9ee208a1d2c868ab55cb5ca61974b1085",
+  "prompts": {},
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
