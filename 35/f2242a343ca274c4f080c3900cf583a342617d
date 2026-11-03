@@ -1,0 +1,24 @@
+data/portfolio.json
+  s_8b6400ddbdfa5c::t_dabbbd3eabb017 12,61,94-95,104,288,321,371-372,525
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35f2242a343ca274c4f080c3900cf583a342617d",
+  "prompts": {},
+  "humans": {
+    "h_29c51a938449ee": {
+      "author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  },
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
