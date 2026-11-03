@@ -106,11 +106,35 @@ function scaffold(prompt) {
 // root-owned file, which Gemini CLI requires before it will honor them.
 const AGENT_USER = process.env.REDESIGN_AGENT_USER || null;
 const SETTINGS_DIR = "/etc/gemini-cli-redesign";
-const AGENT_DIR = path.join(LOG_DIR, "agent"); // agent-writable: telemetry, hook log, HOME, npm cache
+const AGENT_DIR = path.join(LOG_DIR, "agent"); // agent-writable: telemetry + hook log only (uploaded as logs)
+// The agent's HOME (sessions, npm cache, tmp) stays OUT of the uploaded log dir, so
+// nothing it plants there (e.g. symlinks to runner-only files) can reach the artifact.
+const AGENT_HOME = AGENT_USER ? `/home/${AGENT_USER}` : path.join(LOG_DIR, "agent-home");
 const sudo = (...args) => execFileSync("sudo", ["-n", ...args], { stdio: "pipe" });
 
+/** Send a signal to every process owned by the agent user. */
+function killAgent(sig = "SIGKILL") {
+	try {
+		sudo("pkill", `-${sig === "SIGKILL" ? "KILL" : "TERM"}`, "-u", AGENT_USER);
+	} catch {}
+}
+/** Kill until `pgrep -u agent` finds nothing; fail the run if processes survive. */
+function killAgentCompletely() {
+	for (let i = 0; i < 20; i++) {
+		killAgent("SIGKILL");
+		try {
+			sudo("pgrep", "-u", AGENT_USER);
+		} catch {
+			return; // pgrep exits non-zero when no processes match
+		}
+		execFileSync("sleep", ["0.5"]);
+	}
+	die(`Could not stop all processes owned by ${AGENT_USER}; aborting before touching its output.`);
+}
+
 function prepareAgentDir() {
-	fs.mkdirSync(path.join(AGENT_DIR, "home"), { recursive: true });
+	fs.mkdirSync(AGENT_DIR, { recursive: true });
+	if (!AGENT_USER) fs.mkdirSync(AGENT_HOME, { recursive: true });
 	if (AGENT_USER) {
 		sudo("chown", "-R", `${AGENT_USER}:${AGENT_USER}`, AGENT_DIR, SANDBOX);
 		sudo("chmod", "-R", "u+rwX,go+rX", AGENT_DIR);
@@ -155,9 +179,9 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 	const env = {
 		PATH: process.env.PATH,
 		LANG: process.env.LANG ?? "C.UTF-8",
-		HOME: path.join(AGENT_DIR, "home"),
-		TMPDIR: path.join(AGENT_DIR, "home"),
-		npm_config_cache: path.join(AGENT_DIR, "home", ".npm"),
+		HOME: AGENT_HOME,
+		TMPDIR: AGENT_HOME,
+		npm_config_cache: path.join(AGENT_HOME, ".npm"),
 		...(process.env.PLAYWRIGHT_BROWSERS_PATH ? { PLAYWRIGHT_BROWSERS_PATH: process.env.PLAYWRIGHT_BROWSERS_PATH } : {}),
 		GEMINI_CLI_SYSTEM_SETTINGS_PATH: settingsFile,
 		GEMINI_TELEMETRY_ENABLED: "true",
@@ -184,12 +208,13 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 		} else {
 			child = spawn(gemini, cliArgs, { cwd: SANDBOX, env: { ...env, GEMINI_API_KEY: process.env.GEMINI_API_KEY }, stdio: ["ignore", "pipe", "pipe"], detached: true });
 		}
-		// Kill every process the agent owns (including anything it backgrounded).
 		const killAll = (sig) => {
-			try {
-				if (AGENT_USER) sudo("pkill", `-${sig === "SIGKILL" ? "KILL" : "TERM"}`, "-u", AGENT_USER);
-				else process.kill(-child.pid, sig);
-			} catch {}
+			if (AGENT_USER) killAgent(sig);
+			else {
+				try {
+					process.kill(-child.pid, sig);
+				} catch {}
+			}
 		};
 		const out = fs.createWriteStream(streamFile);
 		let buf = "";
@@ -252,18 +277,64 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 
 		child.on("close", (code) => {
 			clearInterval(watchdog);
-			killAll("SIGKILL"); // reap leftover background processes
-			if (AGENT_USER) {
-				// Hand the sandbox back to the pipeline user for building and checks.
-				try {
-					sudo("chown", "-R", `${process.getuid()}:${process.getgid()}`, SANDBOX);
-				} catch {}
-			}
+			if (AGENT_USER) killAgentCompletely();
+			else killAll("SIGKILL"); // reap leftover background processes
 			out.end();
 			const usage = spendFromTelemetry(telemetryFile, config.pricing);
 			resolve({ code, usage, finalText: finalText.trim(), resultStats, killedFor, tampered, settingsIgnored });
 		});
 	});
+}
+
+// ---------- build + check ----------
+/** Copy a tree, refusing anything but regular files and directories. */
+function copyRegularTree(src, dst) {
+	fs.mkdirSync(dst, { recursive: true });
+	for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+		const from = path.join(src, e.name);
+		const to = path.join(dst, e.name);
+		const st = fs.lstatSync(from);
+		if (st.isDirectory()) copyRegularTree(from, to);
+		else if (st.isFile()) fs.copyFileSync(from, to);
+		else die(`Sandbox violation: build output contains a non-regular file: ${path.relative(SANDBOX, from)}`);
+	}
+}
+
+async function buildAndCheck(attempt) {
+	const dest = publishDir(date);
+	fs.rmSync(dest, { recursive: true, force: true });
+	if (!AGENT_USER) {
+		// Local / dry runs: build in-process (no sudo-capable account is at stake).
+		let r;
+		try {
+			buildDesign(date, { outDir: dest, base: designBase(date), quiet: true });
+			r = await checkDesign({ date, buildDir: dest, snapDir: dest });
+		} catch (e) {
+			r = { ok: false, errors: [`Build failed:\n${String(e.stderr ?? "")}${String(e.stdout ?? "")}${e.message}`.slice(0, 6000)], warnings: [], screenshots: {} };
+		}
+		return r;
+	}
+	// CI: agent-authored code runs only as the agent user. Its verdict is advisory;
+	// the publish job re-verifies independently.
+	prepareAgentDir();
+	const out = path.join(SANDBOX, ".publish");
+	const json = path.join(AGENT_DIR, `check-${attempt}.json`);
+	const env = [`PATH=${process.env.PATH}`, `HOME=${AGENT_HOME}`, `TMPDIR=${AGENT_HOME}`, `npm_config_cache=${path.join(AGENT_HOME, ".npm")}`, "CI=true", "LANG=C.UTF-8", ...(process.env.PLAYWRIGHT_BROWSERS_PATH ? [`PLAYWRIGHT_BROWSERS_PATH=${process.env.PLAYWRIGHT_BROWSERS_PATH}`] : [])];
+	try {
+		execFileSync("sudo", ["-n", "-u", AGENT_USER, "--", "/usr/bin/env", "-i", ...env, "node", path.join(ROOT, "redesign", "lib", "build-check.mjs"), "--date", date, "--out", out, "--json", json], { cwd: SANDBOX, stdio: "inherit", timeout: 15 * 60_000 });
+	} catch {}
+	killAgentCompletely();
+	let r;
+	try {
+		r = JSON.parse(fs.readFileSync(json, "utf8"));
+	} catch {
+		return { ok: false, errors: ["Build/check produced no result."], warnings: [], screenshots: {} };
+	}
+	if (!fs.existsSync(path.join(out, "index.html"))) return { ok: false, errors: r.errors?.length ? r.errors : ["Build produced no index.html."], warnings: [], screenshots: {} };
+	copyRegularTree(out, dest);
+	const screenshots = {};
+	for (const name of ["desktop", "mobile"]) if (fs.existsSync(path.join(dest, `${name}.jpg`))) screenshots[name] = path.join(dest, `${name}.jpg`);
+	return { ok: r.ok === true, errors: Array.isArray(r.errors) ? r.errors.map(String) : [], warnings: Array.isArray(r.warnings) ? r.warnings.map(String) : [], screenshots };
 }
 
 // ---------- 4. sandbox + secret guard ----------
@@ -334,14 +405,7 @@ for (let attempt = 1; attempt <= (DRY ? 1 : config.attempts); attempt++) {
 		verifySandbox(before);
 	}
 
-	try {
-		buildDesign(date, { outDir: publishDir(date), base: designBase(date), quiet: true });
-	} catch (e) {
-		result = { ok: false, errors: [`Build failed:\n${String(e.stderr ?? "")}${String(e.stdout ?? "")}${e.message}`.slice(0, 6000)], warnings: [] };
-		log(formatReport(result));
-		continue;
-	}
-	result = await checkDesign({ date, buildDir: publishDir(date), snapDir: publishDir(date) });
+	result = await buildAndCheck(attempt);
 	log(formatReport(result));
 	if (result.ok) break;
 }
@@ -359,7 +423,11 @@ for (const [name, file] of Object.entries(result.screenshots)) {
 	fs.renameSync(file, dest);
 	shots[name] = `${designBase(date)}_screenshot-${name}.jpg`;
 }
-for (const junk of ["dist", ".snap", "node_modules", ".gemini"]) fs.rmSync(path.join(SANDBOX, junk), { recursive: true, force: true });
+if (AGENT_USER) {
+	killAgentCompletely();
+	sudo("chown", "-R", `${process.getuid()}:${process.getgid()}`, SANDBOX);
+}
+for (const junk of ["dist", ".snap", "node_modules", ".gemini", ".publish"]) fs.rmSync(path.join(SANDBOX, junk), { recursive: true, force: true });
 
 const pkgs = packageReview(date);
 const design = {

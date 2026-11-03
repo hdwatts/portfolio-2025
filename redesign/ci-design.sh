@@ -45,7 +45,18 @@ for d in ${dates//,/ }; do
 		cp "$logdir/failure.md" "$OUT/$d/failure.md" 2>/dev/null || echo "Redesign $d failed before producing a report." > "$OUT/$d/failure.md"
 		sudo rm -rf "designs/$d" "public/v/$d"
 	fi
-	# Let the logs upload read everything the agent wrote.
-	[ -d "$logdir" ] && sudo chmod -R a+rX "$logdir" || true
+	# Logs are uploaded as an artifact: remove anything that is not a regular file
+	# or directory (a symlink could make the uploader read runner-only files),
+	# then make what remains readable.
+	if [ -d "$logdir" ]; then
+		sudo find "$logdir" -mindepth 1 ! -type f ! -type d -print -delete || true
+		sudo chown -R "$(id -u):$(id -g)" "$logdir"
+		chmod -R a+rX "$logdir"
+	fi
+	# Design output must be plain files only; anything else voids this date.
+	if [ -d "$OUT/$d" ] && [ -n "$(find "$OUT/$d" -mindepth 1 ! -type f ! -type d)" ]; then
+		rm -rf "$OUT/$d" && mkdir -p "$OUT/$d"
+		echo "Rejected: design output for $d contained symlinks or special files." > "$OUT/$d/failure.md"
+	fi
 	echo "::endgroup::"
 done
