@@ -27,3 +27,10 @@ pnpm-debug.log*
 public/pagefind/
 .vercel
 .env.local
+# weekly redesigns: only sources + published builds are committed
+designs/*/node_modules/
+designs/*/dist/
+designs/*/.snap/
+designs/*/.gemini/
+redesign/template/node_modules/
+redesign/template/dist/

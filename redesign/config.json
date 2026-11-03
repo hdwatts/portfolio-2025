@@ -1,0 +1,28 @@
+{
+	"_comment": "Weekly redesign pipeline settings. Prices are USD per 1M tokens; verify against https://ai.google.dev/gemini-api/docs/pricing when changing models.",
+	"model": "gemini-3.1-pro-preview",
+	"geminiCliVersion": "0.66.0",
+	"budgetUsd": 10,
+	"budgetSafetyMarginUsd": 0.5,
+	"attempts": 2,
+	"maxSessionTurns": 150,
+	"timelineMaxFrames": 24,
+	"pricing": {
+		"_comment": "Billing is conservative: cached input is charged at the full input rate, thinking tokens at the output rate. Any model not listed is charged at the 'fallback' rate.",
+		"gemini-3.1-pro-preview": { "inputPer1M": 2.0, "outputPer1M": 12.0, "longContextThreshold": 200000, "inputPer1MLong": 4.0, "outputPer1MLong": 18.0 },
+		"gemini-3-flash-preview": { "inputPer1M": 2.0, "outputPer1M": 12.0, "longContextThreshold": 200000, "inputPer1MLong": 4.0, "outputPer1MLong": 18.0 },
+		"fallback": { "inputPer1M": 7.2, "outputPer1M": 32.4, "longContextThreshold": 0, "inputPer1MLong": 7.2, "outputPer1MLong": 32.4 }
+	},
+	"preapprovedPackages": {
+		"_comment": "Packages a design may depend on WITHOUT triggering a review PR. Everything in redesign/template/package.json is implicitly approved; add more names here (exact name or prefix ending in *).",
+		"names": []
+	},
+	"screenshots": {
+		"desktop": { "width": 1440, "height": 900 },
+		"mobile": { "width": 390, "height": 844 }
+	},
+	"a11y": {
+		"_comment": "axe-core rule ids that fail the run. Other violations are recorded in design.json as warnings.",
+		"failOn": ["color-contrast", "image-alt", "link-name", "button-name", "html-has-lang"]
+	}
+}

@@ -1,0 +1,100 @@
+name: Weekly redesign
+
+# Two jobs separated by a credential boundary:
+#   design  - runs the Gemini agent and its builds. Read-only token, no push credentials.
+#   publish - fresh checkout with write access. Never builds or runs agent-authored
+#             Node code; it validates the artifact, re-verifies the static build
+#             with trusted tooling, then commits / opens a PR / opens an issue.
+
+on:
+  schedule:
+    # Mondays 14:00 UTC = 09:00 New York (EST) / 10:00 (EDT).
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+    inputs:
+      dates:
+        description: "Dates to design, comma-separated YYYY-MM-DD (blank = today). Each date gets its own budget. Use this to seed back-dated designs."
+        required: false
+        default: ""
+      dry_run:
+        description: "Dry run: skip Gemini and publish nothing (result is uploaded as an artifact)."
+        type: boolean
+        default: false
+
+concurrency:
+  group: redesign
+  cancel-in-progress: false
+
+jobs:
+  design:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - name: Install Gemini CLI (pinned)
+        run: npm install -g "@google/gemini-cli@$(node -p "require('./redesign/config.json').geminiCliVersion")"
+      - name: Design
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATES: ${{ inputs.dates }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          OUT: ${{ runner.temp }}/out
+        run: bash redesign/ci-design.sh
+      - name: Upload designs
+        uses: actions/upload-artifact@v4
+        with:
+          name: designs
+          path: ${{ runner.temp }}/out
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: redesign-logs
+          path: ${{ runner.temp }}/redesign-*
+          if-no-files-found: ignore
+          retention-days: 30
+
+  publish:
+    needs: design
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - uses: actions/download-artifact@v4
+        with:
+          name: designs
+          path: ${{ runner.temp }}/in
+        continue-on-error: true
+      - name: Verify and publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IN: ${{ runner.temp }}/in
+          BASE_BRANCH: ${{ github.ref_name }}
+        run: bash redesign/ci-publish.sh

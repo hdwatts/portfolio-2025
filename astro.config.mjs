@@ -1,30 +1,24 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
-import react from '@astrojs/react';
-import vercelStatic from '@astrojs/vercel';
-import pdf from 'astro-pdf'
-import mdx from '@astrojs/mdx';
+import vercelStatic from "@astrojs/vercel";
+import sitemap from "@astrojs/sitemap";
 
-import sitemap from '@astrojs/sitemap';
-
+// The home page is replaced after build by the latest weekly design
+// (see redesign/finalize-site.mjs). Astro owns /history, the resume, and the
+// fallback home page used before any design exists.
 export default defineConfig({
-  site: 'https://hdwatts.com',
-  integrations: [react(), mdx(), sitemap(
-  {
-    filter: (page) => !page.includes('hidden__') && !page.includes('ten-freethrows'),
-  }
-)],
-  output: 'static',
-  adapter: vercelStatic({
-    webAnalytics: { enabled: true }
-  }),
-  vite: {
-    plugins: [tailwindcss()],
-    build: {
-      rollupOptions: {
-        external: '/pagefind/pagefind.js?url'
-      }
-    }
-  }
+	site: "https://hdwatts.com",
+	integrations: [
+		sitemap({
+			filter: (page) => !page.includes("hidden__"),
+		}),
+	],
+	output: "static",
+	adapter: vercelStatic({
+		webAnalytics: { enabled: true },
+	}),
+	vite: {
+		plugins: [tailwindcss()],
+	},
 });

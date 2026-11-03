@@ -1,98 +1,35 @@
 ---
-type Props = {
-	title: string;
-	description?: string;
-	image?: ImageMetadata;
-	articleDate?: string;
-};
 import Analytics from "@vercel/analytics/astro";
-import { CodeXml } from "lucide-react";
-import BaseHead from "../components/BaseHead.astro";
-import { Search } from "../components/Search";
-const { title, description, image, articleDate } = Astro.props;
+import "../styles/global.css";
+import data from "../../data/portfolio.json";
+
+type Props = { title?: string; description?: string; noindex?: boolean };
+const { title, description = data.meta.description, noindex = false } = Astro.props;
+const siteTitle = title ? `${title} | ${data.meta.siteTitle}` : data.meta.siteTitle;
+const ogImage = new URL(data.meta.ogImage, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead
-			title={title}
-			description={description}
-			ogImage={image}
-			articleDate={articleDate}
-		/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="icon" href="/favicon.ico" />
+		<title>{siteTitle}</title>
+		<meta name="description" content={description} />
+		<meta name="author" content={data.person.name} />
+		{noindex && <meta name="robots" content="noindex" />}
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={Astro.url} />
+		<meta property="og:title" content={siteTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<slot name="head" />
 	</head>
-	<body class="bg-background">
-		<header
-			class="border-grid bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 mb-10 w-full border-b backdrop-blur"
-		>
-			<div class="container-wrapper flex items-center justify-center">
-				<div class="container flex h-14 items-center px-5">
-					<div
-						class="flex w-full justify-between gap-4 sm:justify-start"
-					>
-						<a class="flex items-center gap-2" href="/">
-							<CodeXml />
-							<span class="font-bold">HDWATTS</span>
-						</a>
-						<nav class="flex items-center gap-4 text-sm">
-							<a
-								class="opacity-80 transition-opacity hover:opacity-100"
-								href="/">Home</a
-							>
-							<a
-								class="opacity-80 transition-opacity hover:opacity-100"
-								href="/blog">Blog</a
-							>
-							<a
-								class="opacity-80 transition-opacity hover:opacity-100"
-								href="/photography">Photography</a
-							>
-							<!-- <a
-								class="opacity-80 transition-opacity hover:opacity-100"
-								target="_blank"
-								href="/resume.pdf">Resume</a
-							> -->
-						</nav>
-						<Search client:load />
-					</div>
-				</div>
-			</div>
-		</header>
-		<div class="flex justify-center">
-			<main class="flex w-full flex-col items-center gap-6 md:gap-12">
-				<slot />
-			</main>
-		</div>
-		<footer class="mt-10 flex h-14 w-full justify-center text-sm">
-			© hdwatts, 2026
-		</footer>
+	<body class="bg-ink text-paper min-h-dvh font-sans antialiased">
+		<slot />
 		<Analytics />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-	html {
-		scrollbar-gutter: stable;
-	}
-</style>
-
-<style is:global>
-	@keyframes bump {
-		0% {
-			transform: scale(1);
-		}
-		50% {
-			transform: scale(1.1);
-		}
-		100% {
-			transform: scale(1);
-		}
-	}
-</style>

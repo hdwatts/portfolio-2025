@@ -1,0 +1,20 @@
+{
+	"_comment": "Resume-only fields. Never passed to the design agent and never served publicly except inside resume.pdf.",
+	"contact": {
+		"email": "howard@hdwatts.com",
+		"phone": "443-758-7382"
+	},
+	"title": "Staff Software Engineer",
+	"projectHighlights": {
+		"wordtree": {
+			"heading": "WordTree - A Daily Word Puzzle",
+			"year": "2023",
+			"highlights": [
+				"Designed, developed, and distributed a daily word puzzle game with over 1,000 monthly active users.",
+				"Built using React Native and Expo to build for iOS, Android, and the web with one codebase."
+			]
+		}
+	},
+	"technicalSkills": ["TypeScript", "SQL", "Python", "C#", "React", "Node", "AWS", "NextJS", ".NET", "ColdFusion"],
+	"education": null
+}

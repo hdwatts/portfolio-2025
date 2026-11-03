@@ -1,56 +1,24 @@
 ---
+// Fallback home page, shown only until the first weekly design is published.
+// After build, redesign/finalize-site.mjs replaces this page with the latest design.
 export const prerender = true;
-import { About } from "../components/About";
-import { Experience } from "../components/Experience/Experience";
-import Headshot from "../components/Headshot.astro";
-import { WhoAmI } from "../components/WhoAmI";
 import Layout from "../layouts/Layout.astro";
-import Theme from "../layouts/Theme.astro";
-import PauseAnimationButton from "../components/PauseAnimationButton.astro";
-import { LoaderCircle } from "lucide-react";
-import WordTreeSection from "../components/WordTreeSection.astro";
-import LexSection from "../components/LexSection.astro";
-import { Testimonials } from "../components/Testimonials";
+import data from "../../data/portfolio.json";
 ---
 
-<Theme />
-<Layout title="Welcome">
-	<WhoAmI>
-		<Headshot slot="headshot" />
-	</WhoAmI>
-	<About />
-	<Experience />
-	<div
-		class="flex w-full max-w-[1200px] flex-col-reverse justify-between lg:flex-row"
-	>
-		<div
-			class="flex w-full min-w-[360px] flex-col justify-center lg:max-w-[1280px] lg:px-16"
-		>
-			<Testimonials client:load />
-		</div>
-		<div class="flex flex-col gap-6 p-8 lg:max-w-lg">
-			<h2 class="text-2xl font-bold">Soft Skills & Testimonials</h2>
-			<p>
-				Working in software is not an individual sport. It requires
-				empathy, communication, and collaboration. Strong technical
-				skills are important, but the ability to listen, adapt, and work
-				effectively with others is what truly drives impactful software
-				development and team growth.
-			</p>
-			<p>
-				In that vein, I believe that soft skills are a key to being a
-				force multiplier. Whether through mentorship, clear
-				documentation, or refining developer workflows, I work hard to
-				raise the floor so that every engineer can contribute at their
-				best. Great teams aren't just built on individual talent but on
-				the systems and support that help everyone thrive. By investing
-				in people as much as in code, we can ensure long-term success
-				for both the team and the software we create.
-			</p>
-		</div>
-	</div>
-	<WordTreeSection />
-	<LexSection />
-
-	<PauseAnimationButton />
+<Layout>
+	<main class="mx-auto flex max-w-2xl flex-col gap-10 px-6 py-16">
+		<header class="flex items-center gap-6">
+			<img src={data.person.headshot.src} alt={data.person.headshot.alt} class="h-24 w-24 rounded-full" />
+			<div>
+				<h1 class="text-2xl font-semibold">{data.person.name}</h1>
+				{data.person.headline.map((h) => <p class="text-muted">{h}</p>)}
+			</div>
+		</header>
+		<p>{data.person.summary}</p>
+		<nav class="flex flex-wrap gap-4 underline">
+			{data.person.links.map((l) => <a href={l.url}>{l.label}</a>)}
+			<a href="/history">{data.labels["nav.history"][0]}</a>
+		</nav>
+	</main>
 </Layout>

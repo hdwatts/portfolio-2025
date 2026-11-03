@@ -1,0 +1,104 @@
+name: Sync data
+
+# When you edit your data: regenerate resume.pdf and re-publish the CURRENT
+# design with the new data (older designs stay frozen as history).
+# Building a design runs agent-authored code (its vite.config.ts), so the build
+# job is read-only and a separate job publishes after re-verifying.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "src/pages/hidden__/**"
+  workflow_dispatch:
+
+concurrency:
+  group: redesign
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      latest: ${{ steps.rebuild.outputs.latest }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - name: Resume PDF
+        run: npx astro build && npm run resume:pdf
+      - name: Re-publish latest design with current data
+        id: rebuild
+        run: |
+          node redesign/rebuild-latest.mjs
+          latest="$(node -e "const {listDesigns}=await import('./redesign/lib/paths.mjs');console.log(listDesigns().filter(d=>d.url&&!d.legacy).at(-1)?.date??'')" --input-type=module)"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/out"
+          cp public/resume.pdf "$RUNNER_TEMP/out/"
+          if [ -n "$latest" ]; then
+            mkdir -p "$RUNNER_TEMP/out/v" && cp -R "public/v/$latest/." "$RUNNER_TEMP/out/v/"
+            cp "designs/$latest/design.json" "designs/$latest/portfolio.json" "$RUNNER_TEMP/out/"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sync
+          path: ${{ runner.temp }}/out
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - uses: actions/download-artifact@v4
+        with:
+          name: sync
+          path: ${{ runner.temp }}/in
+      - name: Verify and commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LATEST: ${{ needs.build.outputs.latest }}
+          IN: ${{ runner.temp }}/in
+        run: |
+          set -euo pipefail
+          [ -z "$(find "$IN" ! -type f ! -type d)" ] || { echo "Artifact contains non-regular files"; exit 1; }
+          cp "$IN/resume.pdf" public/resume.pdf
+          if [ -n "$LATEST" ]; then
+            [[ "$LATEST" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+            rm -rf "public/v/$LATEST" && mkdir -p "public/v/$LATEST" && cp -R "$IN/v/." "public/v/$LATEST/"
+            cp "$IN/design.json" "$IN/portfolio.json" "designs/$LATEST/"
+            if ! node redesign/verify-published.mjs "$LATEST" > verify.txt 2>&1; then
+              { echo "Re-publishing design $LATEST with updated data failed checks:"; echo '```'; cat verify.txt; echo '```'; } > issue.md
+              gh issue create --title "Latest design failed checks after a data update" --body-file issue.md || true
+              git checkout -- "public/v/$LATEST" "designs/$LATEST"
+            fi
+            rm -f verify.txt issue.md
+          fi
+          git config user.name "portfolio-redesign[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/resume.pdf designs public/v
+          git diff --cached --quiet && { echo "No changes."; exit 0; }
+          b64() { printf '%s' "$1" | base64 | tr -d '\n'; }
+          git -c core.hooksPath=/dev/null commit -m "Sync resume and current design with data"
+          git -c core.hooksPath=/dev/null -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $(b64 "x-access-token:${GH_TOKEN}")" push
