@@ -1,0 +1,24 @@
+name: Weekly redesign
+
+# Placeholder so this workflow can be started manually against the
+# `weekly-redesign` branch (GitHub requires the file to exist on the default
+# branch). When a run is started on another branch, GitHub uses THAT branch's
+# version of this file. Merging `weekly-redesign` replaces this stub with the
+# real workflow, including the weekly schedule.
+on:
+  workflow_dispatch:
+    inputs:
+      dates:
+        description: "Dates to design, comma-separated YYYY-MM-DD (blank = today)."
+        required: false
+        default: ""
+      dry_run:
+        description: "Dry run: skip Gemini and publish nothing."
+        type: boolean
+        default: false
+
+jobs:
+  stub:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Run this workflow against the weekly-redesign branch (Use workflow from → weekly-redesign)." && exit 1
