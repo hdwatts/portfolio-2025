@@ -1,0 +1,139 @@
+.github/workflows/sync-data.yml
+  s_8b6400ddbdfa5c::t_a07d1657aa9d4c 5-6,20,23-26,29-30,40,42-49,51-55,57-82,84-97,102-104
+  s_8b6400ddbdfa5c::t_d568e9b23bd67e 1-4,7-19,21-22,27-28,31-39,41,50,56,83,98-101
+redesign/config.json
+  s_8b6400ddbdfa5c::t_e3f968fb9a7b07 1-28
+redesign/verify-published.mjs
+  s_8b6400ddbdfa5c::t_7129c599cc119c 1-15
+src/styles/global.css
+  s_8b6400ddbdfa5c::t_d85796f3627f69 3-4,6-10
+redesign/lib/packages.mjs
+  s_8b6400ddbdfa5c::t_f47a3351e9008b 1-23
+README.md
+  s_8b6400ddbdfa5c::t_fd3c5aaa34188e 36-44
+  s_8b6400ddbdfa5c::t_0288a90c6b2934 1,3-6,8,10-19,21-35,45-62
+data/portfolio.json
+  h_29c51a938449ee 12,64,76-77,81
+  s_8b6400ddbdfa5c::t_a425d9b4f788e8 1-11,13-63,65-66,83-97,106-126,133,140-169,175-176,185-208,326-365,463-470
+  s_8b6400ddbdfa5c::t_c6b3db60f3a092 67-75,78-80,82,98-105,127-132,134-139,170-174,177-184,209-325,366-462
+redesign/template/src/App.tsx
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-2,5,7,43-51
+  s_8b6400ddbdfa5c::t_52d1a5352f107b 3-4,6,8-42
+redesign/template/src/main.tsx
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-10
+.gitignore
+  s_8b6400ddbdfa5c::t_2cd25bde91f93a 29-36
+redesign/prompt.md
+  s_8b6400ddbdfa5c::t_5460b2f021dbf3 1-43
+src/layouts/Layout.astro
+  s_8b6400ddbdfa5c::t_d85796f3627f69 3-9,15-29,31-32
+vercel.json
+  s_8b6400ddbdfa5c::t_1396f2c07143b6 2
+redesign/template/index.html
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-12
+redesign/capture-legacy.mjs
+  s_8b6400ddbdfa5c::t_9e516a37bcacb0 1-33
+redesign/ci-design.sh
+  s_8b6400ddbdfa5c::t_7129c599cc119c 1-29
+redesign/lib/check.mjs
+  s_8b6400ddbdfa5c::t_919a9b72559221 12,157,165
+  s_8b6400ddbdfa5c::t_de8d5a2e17459f 1-11,13-156,158-164,166-244
+redesign/lib/agent-check.mjs
+  s_8b6400ddbdfa5c::t_9ee7062002efc9 1-25
+astro.config.mjs
+  s_8b6400ddbdfa5c::t_2cd25bde91f93a 2,4-5,7-9,11-24
+redesign/rebuild-latest.mjs
+  s_8b6400ddbdfa5c::t_34fb4ddf3da65b 1-23,26-31
+  s_8b6400ddbdfa5c::t_a07d1657aa9d4c 24-25
+redesign/template/src/data.ts
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-12
+redesign/resume-pdf.mjs
+  s_8b6400ddbdfa5c::t_9fd112ef9f544c 1-33
+redesign/template/src/index.css
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1
+redesign/lib/budget.mjs
+  s_8b6400ddbdfa5c::t_c6b3db60f3a092 1-76,82-88
+  s_8b6400ddbdfa5c::t_38ad8eb71eacad 77-81
+redesign/hooks/before-model.mjs
+  s_8b6400ddbdfa5c::t_38ad8eb71eacad 1-32
+src/pages/hidden__/resume.astro
+  s_8b6400ddbdfa5c::t_2d335da8d1983b 7-8,62
+  s_8b6400ddbdfa5c::t_9fd112ef9f544c 2-3,5-6,9,13-28,31-33,35-52,54-61,63-88
+package.json
+  s_8b6400ddbdfa5c::t_1396f2c07143b6 7,9-12,23-24,28-30
+redesign/template/.gitignore
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-3
+redesign/variants.json
+  s_8b6400ddbdfa5c::t_e3f968fb9a7b07 1-103
+redesign/finalize-site.mjs
+  s_8b6400ddbdfa5c::t_1b5e707b356091 1-87
+redesign/hooks/before-tool.mjs
+  s_8b6400ddbdfa5c::t_38ad8eb71eacad 1-86
+redesign/lib/build-design.mjs
+  s_8b6400ddbdfa5c::t_2d73e83a4d66a7 2,15-22,24-28
+  s_8b6400ddbdfa5c::t_6cbb9efa20a798 23
+  s_8b6400ddbdfa5c::t_9299e547fe1040 1,3-14,29-57
+redesign/template/package.json
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-26
+src/pages/history.astro
+  s_8b6400ddbdfa5c::t_88346f942cce5e 1-92
+redesign/lib/serve.mjs
+  s_8b6400ddbdfa5c::t_9299e547fe1040 3-4,6-9,12-16,18-19,21,41,43
+  s_8b6400ddbdfa5c::t_919a9b72559221 1-2,5,10-11,17,20,22-40,42
+data/portfolio.d.ts
+  s_8b6400ddbdfa5c::t_8952662e6b7569 1-126
+tsconfig.json
+  s_8b6400ddbdfa5c::t_2cd25bde91f93a 3-4,6,8
+redesign/template/vite.config.ts
+  s_8b6400ddbdfa5c::t_8532e8c0e5e80a 1-25
+redesign/run.mjs
+  s_8b6400ddbdfa5c::t_34fb4ddf3da65b 311,317-322
+  s_8b6400ddbdfa5c::t_56b435297a4cf0 1-26,28-131,134,136-148,156-170,172-184,187-192,194-290,292-310,312-316,323
+  s_8b6400ddbdfa5c::t_f3cb409f060804 171
+  s_8b6400ddbdfa5c::t_f47a3351e9008b 27,149-155,185-186,193,291
+  s_8b6400ddbdfa5c::t_2d73e83a4d66a7 132-133,135
+.github/workflows/redesign.yml
+  s_8b6400ddbdfa5c::t_d568e9b23bd67e 1-2,9-19,21-28,30-31,34-42,44-45,47-50,60-63,65-66
+  s_8b6400ddbdfa5c::t_52a7a907d9f804 83,99
+  s_8b6400ddbdfa5c::t_a07d1657aa9d4c 3-8,20,29,32-33,43,46,51-59,64,67-82,84-98,100
+redesign/lib/paths.mjs
+  s_8b6400ddbdfa5c::t_c6b3db60f3a092 1-40
+data/resume.json
+  s_8b6400ddbdfa5c::t_dd8f03753ad12e 1-20
+src/pages/index.astro
+  s_8b6400ddbdfa5c::t_d85796f3627f69 2-3,6,9-23
+public/_intro/intro.js
+  s_8b6400ddbdfa5c::t_4854577089eccb 1-170
+redesign/ci-publish.sh
+  s_8b6400ddbdfa5c::t_ce48c2ca93dc23 56-57
+  s_8b6400ddbdfa5c::t_f47a3351e9008b 53
+  s_8b6400ddbdfa5c::t_7129c599cc119c 1-7,11-30,32-52,54-55,58-69,72-73,75-78
+  s_8b6400ddbdfa5c::t_52a7a907d9f804 8-10,31,70-71,74
+package-lock.json
+  s_8b6400ddbdfa5c::t_208c629e67dec5 19-20,26,128-133,135,138,141,1098-1101,1104-1106,1108-1139,1141,1146,1149-1152,1159,1624-1626,1629-1635,1637-1642,1645-1651,1653-1658,1661-1664,1667-1673,2227-2236,2333-2344,2790-2791,2794-2798,2800-2803,3285-3289,3291-3294,3297,5050-5078,5308-5311,5314,5316-5317,5320-5323,5325-5326,5329,6146-6147
+redesign/template/package-lock.json
+  s_8b6400ddbdfa5c::t_7affe4c4e25b29 1-1474
+designs/2025-02-08/design.json
+  s_8b6400ddbdfa5c::t_8e640c60fe463a 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f3787a39ee9f10ff87eedbf0d1d8a434a0c74f10",
+  "prompts": {},
+  "humans": {
+    "h_29c51a938449ee": {
+      "author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  },
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
