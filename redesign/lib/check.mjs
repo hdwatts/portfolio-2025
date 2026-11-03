@@ -155,7 +155,7 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 	const shell = fs.readFileSync(path.join(buildDir, "index.html"), "utf8");
 	if (/http-equiv\s*=\s*["']?refresh/i.test(shell)) errors.push("index.html must not use <meta http-equiv=\"refresh\">.");
 	if (/http-equiv\s*=\s*["']?content-security-policy/i.test(shell)) errors.push("index.html must not set its own Content-Security-Policy.");
-	if (headEnd(shell) < 0) errors.push("index.html must start with exactly <!doctype html><html ...><head ...> (no comments or other content before <head>).");
+	if (headEnd(shell) < 0) errors.push("index.html must start with exactly <!doctype html><html lang="en"><head> (bare <head>, no comments or other content before it).");
 	if (/<base\b/i.test(shell)) errors.push("index.html must not use <base>.");
 	for (const m of shell.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
 		if (!/\bsrc\s*=/.test(m[1]) && m[2].trim() && !/type\s*=\s*["']?application\/(ld\+)?json/i.test(m[1]))

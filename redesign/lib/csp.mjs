@@ -34,12 +34,15 @@ export const ROOT_CSP = serialize({
 export const cspMeta = (policy) => `<meta http-equiv="Content-Security-Policy" content="${policy}">`;
 
 /**
- * Strict document prologue: optional doctype, <html ...>, then <head ...>, with
+ * Strict document prologue: optional doctype, <html ...>, then a bare <head>, with
  * only whitespace between them (no comments). Returns the index just after the
  * real <head> tag, or -1. Used by both the checker and the injector so they can
  * never disagree about where <head> is.
  */
 export function headEnd(html) {
-	const m = html.match(/^\uFEFF?\s*(?:<!doctype html>\s*)?<html(?:\s[^<>]*)?>\s*<head(?:\s[^<>]*)?>/i);
+	// <html> may carry only well-formed attributes; <head> must be bare. A quoted
+	// ">" can't end a tag early, so the CSP can never land inside an attribute.
+	const attr = `\\s+[a-z][a-z0-9-]*(?:\\s*=\\s*(?:"[^"<>]*"|'[^'<>]*'|[^\\s"'<>=\`]+))?`;
+	const m = html.match(new RegExp(`^\\uFEFF?\\s*(?:<!doctype html>\\s*)?<html(?:${attr})*\\s*>\\s*<head>`, "i"));
 	return m ? m[0].length : -1;
 }
