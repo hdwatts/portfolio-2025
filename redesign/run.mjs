@@ -43,6 +43,19 @@ const log = (...a) => console.log(`[redesign ${date}]`, ...a);
 
 function die(msg, code = 1) {
 	console.error(`\n✖ ${msg}`);
+	// Never leave agent processes running behind a failure.
+	if (process.env.REDESIGN_AGENT_USER) {
+		for (let i = 0; i < 20; i++) {
+			try {
+				execFileSync("sudo", ["-n", "pkill", "-KILL", "-u", process.env.REDESIGN_AGENT_USER], { stdio: "pipe" });
+			} catch {}
+			try {
+				execFileSync("sudo", ["-n", "pgrep", "-u", process.env.REDESIGN_AGENT_USER], { stdio: "pipe" });
+			} catch {
+				break;
+			}
+		}
+	}
 	try {
 		fs.writeFileSync(path.join(LOG_DIR, "failure.md"), `### Weekly redesign ${date} failed\n\n${msg}\n`);
 	} catch {}
@@ -132,7 +145,14 @@ function killAgentCompletely() {
 	die(`Could not stop all processes owned by ${AGENT_USER}; aborting before touching its output.`);
 }
 
+let agentHomeReset = false;
 function prepareAgentDir() {
+	if (AGENT_USER && !agentHomeReset) {
+		// Fresh HOME per date: nothing carries over from earlier dates' agents.
+		sudo("rm", "-rf", AGENT_HOME);
+		sudo("install", "-d", "-o", AGENT_USER, "-g", AGENT_USER, "-m", "0700", AGENT_HOME);
+		agentHomeReset = true;
+	}
 	fs.mkdirSync(AGENT_DIR, { recursive: true });
 	if (!AGENT_USER) fs.mkdirSync(AGENT_HOME, { recursive: true });
 	if (AGENT_USER) {
@@ -287,6 +307,21 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 }
 
 // ---------- build + check ----------
+/** Fail if the Gemini key appears in any regular file under dir (symlinks are refused elsewhere). */
+function scanForKey(dir) {
+	const key = process.env.GEMINI_API_KEY;
+	if (!key) return;
+	const walk = (d) => {
+		for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+			const full = path.join(d, e.name);
+			const st = fs.lstatSync(full);
+			if (st.isDirectory()) walk(full);
+			else if (st.isFile() && st.size < 50e6 && fs.readFileSync(full).includes(key)) die(`Secret leak: the API key was found in ${path.relative(ROOT, full)}.`);
+		}
+	};
+	walk(dir);
+}
+
 /** Copy a tree, refusing anything but regular files and directories. */
 function copyRegularTree(src, dst) {
 	fs.mkdirSync(dst, { recursive: true });
@@ -330,8 +365,12 @@ async function buildAndCheck(attempt) {
 	} catch {
 		return { ok: false, errors: ["Build/check produced no result."], warnings: [], screenshots: {} };
 	}
-	if (!fs.existsSync(path.join(out, "index.html"))) return { ok: false, errors: r.errors?.length ? r.errors : ["Build produced no index.html."], warnings: [], screenshots: {} };
+	const outStat = fs.existsSync(out) ? fs.lstatSync(out) : null;
+	if (outStat && !outStat.isDirectory()) die("Sandbox violation: .publish is not a real directory (symlink or special file).");
+	verifySandbox(before); // symlink + key scan of everything the build step touched
+	if (!outStat || !fs.existsSync(path.join(out, "index.html"))) return { ok: false, errors: r.errors?.length ? r.errors : ["Build produced no index.html."], warnings: [], screenshots: {} };
 	copyRegularTree(out, dest);
+	scanForKey(dest);
 	const screenshots = {};
 	for (const name of ["desktop", "mobile"]) if (fs.existsSync(path.join(dest, `${name}.jpg`))) screenshots[name] = path.join(dest, `${name}.jpg`);
 	return { ok: r.ok === true, errors: Array.isArray(r.errors) ? r.errors.map(String) : [], warnings: Array.isArray(r.warnings) ? r.warnings.map(String) : [], screenshots };
@@ -427,6 +466,8 @@ if (AGENT_USER) {
 	killAgentCompletely();
 	sudo("chown", "-R", `${process.getuid()}:${process.getgid()}`, SANDBOX);
 }
+verifySandbox(before); // no symlinks/secrets before the runner reads package.json or writes design.json
+scanForKey(publishDir(date));
 for (const junk of ["dist", ".snap", "node_modules", ".gemini", ".publish"]) fs.rmSync(path.join(SANDBOX, junk), { recursive: true, force: true });
 
 const pkgs = packageReview(date);
@@ -447,7 +488,8 @@ const design = {
 	warnings: result.warnings,
 	agentSummary: summary.slice(0, 2000),
 };
-writeJson(path.join(SANDBOX, "design.json"), design);
+fs.rmSync(path.join(SANDBOX, "design.json"), { force: true }); // replace, never write through, whatever is there
+fs.writeFileSync(path.join(SANDBOX, "design.json"), JSON.stringify(design, null, "\t") + "\n", { flag: "wx" });
 
 const summaryMd = [
 	`**Variants**`, ...Object.entries(picks).map(([k, v]) => `- ${k}: ${v}`),

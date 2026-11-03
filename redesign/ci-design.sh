@@ -48,6 +48,15 @@ for d in ${dates//,/ }; do
 	# Logs are uploaded as an artifact: remove anything that is not a regular file
 	# or directory (a symlink could make the uploader read runner-only files),
 	# then make what remains readable.
+	# First make sure no agent process is still alive to race the cleanup.
+	if [ -n "${REDESIGN_AGENT_USER:-}" ]; then
+		for _ in $(seq 1 20); do
+			sudo pkill -KILL -u "$REDESIGN_AGENT_USER" || true
+			sudo pgrep -u "$REDESIGN_AGENT_USER" >/dev/null || break
+			sleep 0.5
+		done
+		if sudo pgrep -u "$REDESIGN_AGENT_USER" >/dev/null; then echo "agent processes survived; aborting"; exit 1; fi
+	fi
 	if [ -d "$logdir" ]; then
 		sudo find "$logdir" -mindepth 1 ! -type f ! -type d -print -delete || true
 		sudo chown -R "$(id -u):$(id -g)" "$logdir"
