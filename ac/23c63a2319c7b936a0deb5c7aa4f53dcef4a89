@@ -1,0 +1,21 @@
+redesign/lib/build-check.mjs
+  s_8b6400ddbdfa5c::t_9eb59ab1249df0 1-21
+redesign/run.mjs
+  s_8b6400ddbdfa5c::t_9eb59ab1249df0 109-112,115-134,136-137,182-184,212-217,280-281,289-339,408,426-430
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac23c63a2319c7b936a0deb5c7aa4f53dcef4a89",
+  "prompts": {},
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
