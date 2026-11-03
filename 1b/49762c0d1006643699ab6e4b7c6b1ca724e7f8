@@ -1,0 +1,29 @@
+redesign/lib/check.mjs
+  s_8b6400ddbdfa5c::t_909a4d65d352cc 234-238
+redesign/template/src/App.tsx
+  s_8b6400ddbdfa5c::t_8c8bbd8f33b8d6 41-55
+redesign/prompt.md
+  s_8b6400ddbdfa5c::t_909a4d65d352cc 30
+src/pages/history.astro
+  s_8b6400ddbdfa5c::t_8c8bbd8f33b8d6 31-35,37
+data/portfolio.d.ts
+  s_8b6400ddbdfa5c::t_909a4d65d352cc 82-95,106,139
+data/portfolio.json
+  s_8b6400ddbdfa5c::t_909a4d65d352cc 365-416,514-519
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b49762c0d1006643699ab6e4b7c6b1ca724e7f8",
+  "prompts": {},
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
