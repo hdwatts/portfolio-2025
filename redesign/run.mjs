@@ -416,7 +416,9 @@ const gitStatus = () =>
 
 function verifySandbox(before) {
 	const rel = path.relative(ROOT, SANDBOX) + "/";
-	const escaped = [...gitStatus()].filter((f) => !before.has(f) && !f.startsWith(rel));
+	// public/v/<date>/ is written by the pipeline itself (the agent user can't write it in CI).
+	const published = path.relative(ROOT, publishDir(date)) + "/";
+	const escaped = [...gitStatus()].filter((f) => !before.has(f) && !f.startsWith(rel) && !f.startsWith(published));
 	if (escaped.length) die(`Sandbox violation: the agent changed files outside ${rel}:\n${escaped.map((f) => `- ${f}`).join("\n")}`);
 
 	const offenders = [];
