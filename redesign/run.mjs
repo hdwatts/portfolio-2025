@@ -312,6 +312,25 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 }
 
 // ---------- build + check ----------
+/** True if `needle` occurs in the file. Streams in overlapping chunks, so size never skips a file. */
+function fileContains(file, needle) {
+	const n = Buffer.from(needle);
+	const fd = fs.openSync(file, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW ?? 0));
+	try {
+		const chunk = Buffer.alloc(1 << 20);
+		let carry = Buffer.alloc(0);
+		for (;;) {
+			const read = fs.readSync(fd, chunk, 0, chunk.length, null);
+			if (read === 0) return false;
+			const window = Buffer.concat([carry, chunk.subarray(0, read)]);
+			if (window.includes(n)) return true;
+			carry = window.subarray(Math.max(0, window.length - (n.length - 1)));
+		}
+	} finally {
+		fs.closeSync(fd);
+	}
+}
+
 /** Fail if the Gemini key appears in any regular file under dir (symlinks are refused elsewhere). */
 function scanForKey(dir) {
 	const key = process.env.GEMINI_API_KEY;
@@ -321,7 +340,7 @@ function scanForKey(dir) {
 			const full = path.join(d, e.name);
 			const st = fs.lstatSync(full);
 			if (st.isDirectory()) walk(full);
-			else if (st.isFile() && st.size < 50e6 && fs.readFileSync(full).includes(key)) die(`Secret leak: the API key was found in ${path.relative(ROOT, full)}.`);
+			else if (st.isFile() && fileContains(full, key)) die(`Secret leak: the API key was found in ${path.relative(ROOT, full)}.`);
 		}
 	};
 	walk(dir);
@@ -407,7 +426,7 @@ function verifySandbox(before) {
 			const full = path.join(dir, e.name);
 			if (e.isSymbolicLink()) offenders.push(`symlink ${path.relative(ROOT, full)}`);
 			else if (e.isDirectory()) walk(full);
-			else if (process.env.GEMINI_API_KEY && fs.statSync(full).size < 5e6 && fs.readFileSync(full, "utf8").includes(process.env.GEMINI_API_KEY))
+			else if (process.env.GEMINI_API_KEY && e.isFile() && fileContains(full, process.env.GEMINI_API_KEY))
 				offenders.push(`API key found in ${path.relative(ROOT, full)}`);
 		}
 	};
