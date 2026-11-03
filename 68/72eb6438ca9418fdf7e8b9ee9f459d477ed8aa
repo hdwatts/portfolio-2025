@@ -1,0 +1,19 @@
+redesign/run.mjs
+  s_8b6400ddbdfa5c::t_44d51cea2afe22 419-421
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6872eb6438ca9418fdf7e8b9ee9f459d477ed8aa",
+  "prompts": {},
+  "sessions": {
+    "s_8b6400ddbdfa5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dee018fc-2e83-47dd-9f2b-6440d4a06a79",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
