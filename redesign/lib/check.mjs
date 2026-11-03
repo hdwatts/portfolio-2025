@@ -150,11 +150,23 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 	const normHref = (h) => normalize(h).replace(/\/$/, "");
 	const allowedNorm = new Set([...allowedHrefs].map(normHref));
 
+	// Static checks on the HTML shell, since a CSP can't prevent these.
+	const shell = fs.readFileSync(path.join(buildDir, "index.html"), "utf8");
+	if (/http-equiv\s*=\s*["']?refresh/i.test(shell)) errors.push("index.html must not use <meta http-equiv=\"refresh\">.");
+	if (/http-equiv\s*=\s*["']?content-security-policy/i.test(shell)) errors.push("index.html must not set its own Content-Security-Policy.");
+	const headAt = shell.search(/<head[\s>]/i);
+	if (headAt < 0 || /<(script|link|meta|base)\b/i.test(shell.slice(0, headAt))) errors.push("index.html must have a <head> and nothing (scripts, links, meta, base) before it.");
+	if (/<base\b/i.test(shell)) errors.push("index.html must not use <base>.");
+	for (const m of shell.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+		if (!/\bsrc\s*=/.test(m[1]) && m[2].trim() && !/type\s*=\s*["']?application\/(ld\+)?json/i.test(m[1]))
+			errors.push("index.html contains an inline <script>; all scripts must be bundled files (CSP: script-src 'self').");
+	}
+
 	const browser = await chromium.launch();
 	try {
 		for (const [name, viewport] of Object.entries(config.screenshots)) {
 			const context = await browser.newContext({ viewport, deviceScaleFactor: 1, reducedMotion: "no-preference" });
-			const designUrl = await routeDesign(context, { date, buildDir });
+			const { url: designUrl, blocked } = await routeDesign(context, { date, buildDir });
 			const page = await context.newPage();
 			const consoleErrors = [];
 			page.on("pageerror", (e) => consoleErrors.push(`Uncaught: ${e.message}`));
@@ -217,6 +229,8 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 				await page.emulateMedia({ reducedMotion: "no-preference" });
 			}
 
+			if (blocked.length) errors.push(`[${name}] requests to other origins are not allowed (only Google Fonts):\n` + [...new Set(blocked)].slice(0, 10).map((u) => `  - ${u}`).join("\n"));
+			if (!page.url().startsWith(designUrl)) errors.push(`[${name}] the page navigated away to ${page.url()}; designs must not redirect.`);
 			if (found.overflowX > 1) errors.push(`[${name}] page scrolls horizontally by ${found.overflowX}px at ${viewport.width}px wide.`);
 			if (consoleErrors.length) errors.push(`[${name}] browser errors:\n` + [...new Set(consoleErrors)].slice(0, 15).map((e) => `  - ${e}`).join("\n"));
 

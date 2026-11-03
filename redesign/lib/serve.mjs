@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { PUBLIC_DIR } from "./paths.mjs";
+import { DESIGN_CSP, FONT_ORIGINS } from "./csp.mjs";
 
 export const ORIGIN = "http://design.test";
 
@@ -30,14 +31,28 @@ export function resolveRequest(urlPath, { date, buildDir }) {
 	return fs.existsSync(file) ? { file, type: TYPES[path.extname(file).toLowerCase()] ?? "application/octet-stream" } : null;
 }
 
-/** Install routing on a Playwright BrowserContext. Returns the design's URL. */
+/**
+ * Install routing on a Playwright BrowserContext. HTML is served with the
+ * production CSP; requests to any other origin except Google Fonts are blocked
+ * and recorded in `blocked`.
+ * @returns {Promise<{ url: string, blocked: string[] }>}
+ */
 export async function routeDesign(context, opts) {
+	const blocked = [];
+	await context.route(/.*/, async (route) => {
+		const url = route.request().url();
+		if (url.startsWith(ORIGIN + "/")) return route.fallback();
+		if (url.startsWith("data:") || url.startsWith("blob:") || FONT_ORIGINS.some((o) => url.startsWith(o + "/"))) return route.continue();
+		blocked.push(url);
+		return route.abort("blockedbyclient");
+	});
 	await context.route(`${ORIGIN}/**`, async (route) => {
 		const { pathname } = new URL(route.request().url());
 		const hit = resolveRequest(pathname, opts);
 		if (!hit) return route.fulfill({ status: 404, body: "not found" });
 		if (hit.stub) return route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><title>history</title>" });
-		return route.fulfill({ status: 200, contentType: hit.type, body: fs.readFileSync(hit.file) });
+		const headers = hit.type.startsWith("text/html") ? { "content-security-policy": DESIGN_CSP } : {};
+		return route.fulfill({ status: 200, contentType: hit.type, headers, body: fs.readFileSync(hit.file) });
 	});
-	return `${ORIGIN}/v/${opts.date}/`;
+	return { url: `${ORIGIN}/v/${opts.date}/`, blocked };
 }

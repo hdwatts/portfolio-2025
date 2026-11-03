@@ -158,6 +158,7 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 		let finalText = "";
 		let resultStats = null;
 		let killedFor = null;
+		let tampered = false;
 		child.stdout.on("data", (chunk) => {
 			out.write(chunk);
 			buf += chunk;
@@ -176,9 +177,21 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 		child.stderr.on("data", (c) => fs.appendFileSync(path.join(LOG_DIR, `stderr-${attempt}.log`), c));
 
 		const deadline = Date.now() + 45 * 60_000;
+		// Telemetry is append-only. If a byte we've already seen changes or the file
+		// shrinks, someone rewrote it to hide spend: stop and fail the run.
+		let seenLen = 0;
+		let seenHash = "";
+		const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
 		const watchdog = setInterval(() => {
+			if (fs.existsSync(telemetryFile)) {
+				const buf = fs.readFileSync(telemetryFile);
+				if (buf.length < seenLen || sha(buf.subarray(0, seenLen)) !== seenHash) tampered = true;
+				seenLen = buf.length;
+				seenHash = sha(buf);
+			} else if (seenLen > 0) tampered = true;
 			const spent = priorSpend + spendFromTelemetry(telemetryFile, config.pricing).usd;
-			if (spent >= config.budgetUsd) killedFor = `budget ($${spent.toFixed(2)} ≥ $${config.budgetUsd})`;
+			if (tampered) killedFor = "telemetry file was modified during the run";
+			else if (spent >= config.budgetUsd) killedFor = `budget ($${spent.toFixed(2)} ≥ $${config.budgetUsd})`;
 			else if (Date.now() > deadline) killedFor = "45-minute timeout";
 			if (killedFor) {
 				log(`watchdog: stopping Gemini for ${killedFor}`);
@@ -193,7 +206,7 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 			killGroup("SIGKILL"); // reap leftover background processes
 			out.end();
 			const usage = spendFromTelemetry(telemetryFile, config.pricing);
-			resolve({ code, usage, finalText: finalText.trim(), resultStats, killedFor });
+			resolve({ code, usage, finalText: finalText.trim(), resultStats, killedFor, tampered });
 		});
 	});
 }
@@ -257,6 +270,7 @@ for (let attempt = 1; attempt <= (DRY ? 1 : config.attempts); attempt++) {
 		spend += run.usage.usd;
 		tokens = { input: tokens.input + run.usage.inputTokens, output: tokens.output + run.usage.outputTokens, calls: tokens.calls + run.usage.calls };
 		summary = run.finalText || summary;
+		if (run.tampered) die(`The agent's telemetry file was modified during attempt ${attempt}, so spend can't be trusted. Run aborted.`);
 		log(`attempt ${attempt}: exit ${run.code}${run.killedFor ? ` (stopped: ${run.killedFor})` : ""}, $${run.usage.usd.toFixed(2)} over ${run.usage.calls} calls`);
 		verifySandbox(before);
 	}
@@ -299,7 +313,7 @@ const design = {
 	attempts,
 	costUsd: Number(spend.toFixed(4)),
 	tokens,
-	packages: { added: pkgs.added, unusual: pkgs.unusual },
+	packages: { added: pkgs.added, lockAdded: pkgs.lockAdded, unusual: pkgs.unusual },
 	needsReview: pkgs.needsReview,
 	screenshots: shots,
 	url: designBase(date),
@@ -313,6 +327,7 @@ const summaryMd = [
 	"", `**Cost:** $${spend.toFixed(2)} (${tokens.calls} model calls, ${attempts} attempt(s))`,
 	pkgs.added.length ? `**New packages:** ${pkgs.added.join(", ")}` : "**New packages:** none",
 	pkgs.unusual.length ? `**Unusual package specs:** ${pkgs.unusual.join(", ")}` : "",
+	pkgs.lockAdded.length ? `**New packages in lockfile only:** ${pkgs.lockAdded.slice(0, 30).join(", ")}${pkgs.lockAdded.length > 30 ? ", …" : ""}` : "",
 	result.warnings.length ? `\n**Warnings**\n${result.warnings.map((w) => `- ${w}`).join("\n")}` : "",
 ].filter((l) => l !== "").join("\n");
 writeJson(path.join(LOG_DIR, "result.json"), { date, needsReview: pkgs.needsReview, costUsd: spend, dryRun: DRY });

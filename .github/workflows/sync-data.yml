@@ -34,8 +34,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium-headless-shell
-      - name: Resume PDF
-        run: npx astro build && npm run resume:pdf
       - name: Re-publish latest design with current data
         id: rebuild
         run: |
@@ -43,7 +41,6 @@ jobs:
           latest="$(node -e "const {listDesigns}=await import('./redesign/lib/paths.mjs');console.log(listDesigns().filter(d=>d.url&&!d.legacy).at(-1)?.date??'')" --input-type=module)"
           echo "latest=$latest" >> "$GITHUB_OUTPUT"
           mkdir -p "$RUNNER_TEMP/out"
-          cp public/resume.pdf "$RUNNER_TEMP/out/"
           if [ -n "$latest" ]; then
             mkdir -p "$RUNNER_TEMP/out/v" && cp -R "public/v/$latest/." "$RUNNER_TEMP/out/v/"
             cp "designs/$latest/design.json" "designs/$latest/portfolio.json" "$RUNNER_TEMP/out/"
@@ -53,6 +50,7 @@ jobs:
           name: sync
           path: ${{ runner.temp }}/out
           retention-days: 7
+          if-no-files-found: ignore
 
   publish:
     needs: build
@@ -75,6 +73,10 @@ jobs:
         with:
           name: sync
           path: ${{ runner.temp }}/in
+        continue-on-error: true
+      # Generated here, from trusted code only: this job never runs agent-authored code.
+      - name: Resume PDF
+        run: npx astro build && npm run resume:pdf
       - name: Verify and commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,22 +84,27 @@ jobs:
           IN: ${{ runner.temp }}/in
         run: |
           set -euo pipefail
+          mkdir -p "$IN"
           [ -z "$(find "$IN" ! -type f ! -type d)" ] || { echo "Artifact contains non-regular files"; exit 1; }
-          cp "$IN/resume.pdf" public/resume.pdf
-          if [ -n "$LATEST" ]; then
+          if [ -n "$LATEST" ] && [ -d "$IN/v" ]; then
             [[ "$LATEST" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
             rm -rf "public/v/$LATEST" && mkdir -p "public/v/$LATEST" && cp -R "$IN/v/." "public/v/$LATEST/"
-            cp "$IN/design.json" "$IN/portfolio.json" "designs/$LATEST/"
+            cp "$IN/portfolio.json" "designs/$LATEST/"
+            # design.json is NOT taken from the artifact; only the data timestamp changes.
+            node -e 'const f=process.argv[1],d=JSON.parse(require("fs").readFileSync(f));d.dataUpdatedAt=new Date().toISOString();require("fs").writeFileSync(f,JSON.stringify(d,null,"\t")+"\n")' "designs/$LATEST/design.json"
             if ! node redesign/verify-published.mjs "$LATEST" > verify.txt 2>&1; then
               { echo "Re-publishing design $LATEST with updated data failed checks:"; echo '```'; cat verify.txt; echo '```'; } > issue.md
               gh issue create --title "Latest design failed checks after a data update" --body-file issue.md || true
-              git checkout -- "public/v/$LATEST" "designs/$LATEST"
+              # Remove everything (including new untracked files) before restoring the committed version.
+              rm -rf "public/v/$LATEST" "designs/$LATEST"
+              git checkout HEAD -- "public/v/$LATEST" "designs/$LATEST"
             fi
             rm -f verify.txt issue.md
           fi
           git config user.name "portfolio-redesign[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/resume.pdf designs public/v
+          git add public/resume.pdf
+          [ -n "$LATEST" ] && git add "designs/$LATEST" "public/v/$LATEST"
           git diff --cached --quiet && { echo "No changes."; exit 0; }
           b64() { printf '%s' "$1" | base64 | tr -d '\n'; }
           git -c core.hooksPath=/dev/null commit -m "Sync resume and current design with data"

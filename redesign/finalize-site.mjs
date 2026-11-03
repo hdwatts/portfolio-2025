@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { listDesigns, loadConfig, loadData } from "./lib/paths.mjs";
+import { DESIGN_CSP, ROOT_CSP, cspMeta } from "./lib/csp.mjs";
 
 const outDir = path.resolve(process.argv[2] ?? "dist");
 const config = loadConfig();
@@ -24,8 +25,10 @@ for (const d of live) {
 	let html = fs.readFileSync(file, "utf8");
 	if (!html.includes('name="robots"')) {
 		html = html.replace(/<\/head>/i, `<meta name="robots" content="noindex"><link rel="canonical" href="${esc(data.meta.siteUrl)}/">\n</head>`);
-		fs.writeFileSync(file, html);
 	}
+	// CSP goes first in <head> so it applies before any of the design's own tags.
+	if (!html.includes("Content-Security-Policy")) html = html.replace(/<head([^>]*)>/i, `<head$1>${cspMeta(DESIGN_CSP)}`);
+	fs.writeFileSync(file, html);
 }
 
 if (!latest) {
@@ -49,9 +52,9 @@ const timeline = {
 };
 
 const ogImage = latest.screenshots?.desktop ? `${data.meta.siteUrl}${latest.screenshots.desktop}` : `${data.meta.siteUrl}${data.meta.ogImage}`;
-const headStart = `
-<script>(function(){try{var q=new URLSearchParams(location.search).get("intro");var s=null;try{s=localStorage.getItem("hdw-intro-seen")}catch(e){}
-if(${frames.length > 1}&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&q!=="0"&&(q==="1"||s!==${JSON.stringify(latest.date)})){var r=document.documentElement;r.classList.add("hdw-intro");setTimeout(function(){r.classList.remove("hdw-intro")},6000)}}catch(e){}})()</script>
+const headStart = `${cspMeta(ROOT_CSP)}
+<meta name="hdw-intro" content="${esc(latest.date)}|${frames.length}">
+<script src="/_intro/boot.js"></script>
 <style>html.hdw-intro body{overflow:hidden}html.hdw-intro::after{content:"";position:fixed;inset:0;background:#09090b;z-index:2147483646}</style>`;
 
 const seo = `
@@ -69,16 +72,16 @@ const seo = `
 <meta name="hdw-design" content="${esc(latest.date)}">`;
 
 const bodyEnd = `
-<script>window.__HDW_TIMELINE__=${JSON.stringify(timeline).replace(/</g, "\\u003c")}</script>
+<script type="application/json" id="hdw-timeline">${JSON.stringify(timeline).replace(/</g, "\\u003c")}</script>
 <script src="/_intro/intro.js" defer></script>
-<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)}</script>
+<script src="/_intro/analytics.js"></script>
 <script defer src="/_vercel/insights/script.js"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PJGYL19J0K"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-PJGYL19J0K");</script>`;
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PJGYL19J0K"></script>`;
 
 let html = fs.readFileSync(path.join(outDir, latest.url, "index.html"), "utf8");
 // Drop the archive-only tags added above, then add the root page's own.
 html = html.replace(/<meta name="robots" content="noindex"><link rel="canonical"[^>]*>\n?/i, "");
+html = html.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/gi, ""); // root gets ROOT_CSP below
 html = html.replace(/<meta\s+name="description"[^>]*>/gi, "");
 html = html.replace(/<head([^>]*)>/i, `<head$1>${headStart}`);
 html = html.replace(/<\/head>/i, `${seo}\n</head>`);

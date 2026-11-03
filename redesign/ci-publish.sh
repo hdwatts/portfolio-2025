@@ -42,6 +42,8 @@ for dir in $(find "$IN" -mindepth 1 -maxdepth 1 -type d | sort); do
 	cp -R "$dir/designs/." "designs/$d/"
 	cp -R "$dir/v/." "public/v/$d/"
 	rm -rf "designs/$d/node_modules"
+	# Rebuild design.json from trusted values (also recomputes package review).
+	needs_review="$(node redesign/sanitize-design.mjs "$d")"
 
 	if ! node redesign/verify-published.mjs "$d" > "$dir/verify.txt" 2>&1; then
 		{ echo "Design $d passed in the design job but failed independent re-verification:"; echo '```'; cat "$dir/verify.txt"; echo '```'; } > "$dir/reverify.md"
@@ -49,8 +51,6 @@ for dir in $(find "$IN" -mindepth 1 -maxdepth 1 -type d | sort); do
 		fail "$d" "$dir/reverify.md"; echo "::endgroup::"; continue
 	fi
 
-	# Trust the pipeline's design.json for the review decision, not the agent's result.json.
-	needs_review="$(node redesign/lib/packages.mjs "$d")"
 	"${GIT[@]}" add "designs/$d" "public/v/$d"
 	if [ "$needs_review" = "true" ]; then
 		branch="redesign/$d"

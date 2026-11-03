@@ -1,7 +1,8 @@
 // Home-page intro: past designs flash by on a timeline that runs up to today,
 // then the frame expands into the live (current) design underneath.
 //
-// Injected by redesign/finalize-site.mjs together with window.__HDW_TIMELINE__:
+// Injected by redesign/finalize-site.mjs together with a JSON data block
+// <script type="application/json" id="hdw-timeline">:
 //   { latest, frames: [{ date, desktop, mobile }], labels: { skip, replay, present } }
 //
 // Plays once per new design per browser. ?intro=1 forces it, ?intro=0 skips it.
@@ -9,8 +10,11 @@
 // framed window, never full-bleed, so the rapid changes stay below
 // photosensitivity flash thresholds.
 (() => {
-	const T = window.__HDW_TIMELINE__;
 	const root = document.documentElement;
+	let T = null;
+	try {
+		T = JSON.parse(document.getElementById("hdw-timeline")?.textContent ?? "null");
+	} catch {}
 	const KEY = "hdw-intro-seen";
 	if (!T || !T.frames || T.frames.length < 2) return root.classList.remove("hdw-intro");
 
