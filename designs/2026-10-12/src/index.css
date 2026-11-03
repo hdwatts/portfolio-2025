@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-amber: #FFB000;
+  --color-dark: #080705;
+  --color-clay: #16130B;
+  
+  --font-display: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+@layer base {
+  :root {
+    --fs-body: 1rem;
+    --fs-display: clamp(1.75rem, 5vw, 3rem);
+  }
+
+  body {
+    background-color: var(--color-dark);
+    color: var(--color-amber);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+  }
+
+  h1, h2, .display-text {
+    font-family: var(--font-display);
+    font-size: var(--fs-display);
+    line-height: 1.1;
+    font-weight: 900;
+  }
+  
+  h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+}
+
+@layer utilities {
+  .clay {
+    background-color: var(--color-clay);
+    border-radius: 1.5rem;
+    box-shadow: 
+      6px 6px 12px rgba(0,0,0,0.9),
+      -4px -4px 10px rgba(255,176,0,0.03),
+      inset 1px 1px 3px rgba(255,176,0,0.1),
+      inset -2px -2px 4px rgba(0,0,0,0.6);
+  }
+  
+  .clay-interactive {
+    background-color: var(--color-clay);
+    border-radius: 1.5rem;
+    box-shadow: 
+      6px 6px 12px rgba(0,0,0,0.9),
+      -4px -4px 10px rgba(255,176,0,0.03),
+      inset 1px 1px 3px rgba(255,176,0,0.1),
+      inset -2px -2px 4px rgba(0,0,0,0.6);
+    transition-property: all;
+    transition-duration: 0.1s;
+    transition-timing-function: steps(3, end);
+    cursor: pointer;
+  }
+  
+  .clay-interactive:hover {
+    box-shadow: 
+      4px 4px 8px rgba(0,0,0,0.9),
+      -2px -2px 8px rgba(255,176,0,0.05),
+      inset 2px 2px 5px rgba(255,176,0,0.15),
+      inset -1px -1px 3px rgba(0,0,0,0.6);
+    transform: translateY(2px);
+  }
+
+  .clay-interactive:active {
+    box-shadow: 
+      inset 4px 4px 8px rgba(0,0,0,0.9),
+      inset -2px -2px 6px rgba(255,176,0,0.05);
+    transform: translateY(4px);
+  }
+
+  .fs-body {
+    font-size: var(--fs-body);
+  }
+
+  .fs-display {
+    font-size: var(--fs-display);
+  }
+}

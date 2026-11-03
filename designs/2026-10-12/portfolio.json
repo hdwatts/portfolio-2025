@@ -1,0 +1,554 @@
+{
+	"person": {
+		"name": "Howard Dean Watts",
+		"preferredName": "Dean",
+		"handle": "hdwatts",
+		"title": "Founding Staff Software Engineer",
+		"location": "New York, NY",
+		"headline": [
+			"Founding Staff Software Engineer at Chronograph.pe",
+			"Creator of WordTree and Lex"
+		],
+		"summary": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of AI tools that automate the extraction of unstructured data from our clients.",
+		"headshot": {
+			"src": "/media/headshot.png",
+			"alt": "Howard Dean Watts",
+			"width": 500,
+			"height": 500
+		},
+		"logo": {
+			"src": "/media/logos/hdwatts.svg",
+			"alt": "hdwatts"
+		},
+		"links": [
+			{
+				"kind": "linkedin",
+				"label": "LinkedIn",
+				"url": "https://www.linkedin.com/in/hdwatts/"
+			},
+			{
+				"kind": "github",
+				"label": "GitHub",
+				"url": "https://www.github.com/hdwatts/"
+			},
+			{
+				"kind": "resume",
+				"label": "Resume",
+				"url": "/resume.pdf"
+			}
+		]
+	},
+	"writing": [
+		{
+			"id": "teamwork",
+			"heading": "Soft Skills & Testimonials",
+			"paragraphs": [
+				"Working in software is not an individual sport. It requires empathy, communication, and collaboration. Strong technical skills are important, but the ability to listen, adapt, and work effectively with others is what truly drives impactful software development and team growth.",
+				"In that vein, I believe that soft skills are a key to being a force multiplier. Whether through mentorship, clear documentation, or refining developer workflows, I work hard to raise the floor so that every engineer can contribute at their best. Great teams aren't just built on individual talent but on the systems and support that help everyone thrive. By investing in people as much as in code, we can ensure long-term success for both the team and the software we create."
+			]
+		}
+	],
+	"experience": [
+		{
+			"company": "Chronograph Private Equity",
+			"companyShort": "Chronograph",
+			"url": "https://www.chronograph.pe",
+			"role": "Founding Staff Software Engineer",
+			"start": "2017",
+			"end": null,
+			"period": "2017 - Present",
+			"highlights": [
+				"Developed automation tools, including custom microservices and machine learning-powered AWS Lambda functions, significantly improving internal workflows. In one case study, reduced task processing time from 2.5 hours per document to just 1 minute.",
+				"Designed, built, and maintained a high-performance Excel plugin, now used by thousands of employees at leading global fund managers.",
+				"Engineered scalable, high-quality features to extract and transform a dataset encompassing over $29 trillion in assets, enhancing data accessibility and analysis.",
+				"Established foundational best practices for codebase architecture, API design, data security, and employee onboarding, scaling the company from a 3-person startup to a 180-employee enterprise."
+			],
+			"stats": [
+				{
+					"value": "2.5 hours",
+					"label": "per document"
+				},
+				{
+					"value": "1 minute",
+					"label": "per document"
+				},
+				{
+					"value": "$29 trillion",
+					"label": "in assets"
+				},
+				{
+					"value": "3-person startup",
+					"label": "to a 180-employee enterprise"
+				}
+			]
+		},
+		{
+			"company": "StructuredWeb",
+			"companyShort": "StructuredWeb",
+			"url": null,
+			"role": "Lead Software Engineer",
+			"start": "2016",
+			"end": "2017",
+			"period": "2016 - 2017",
+			"highlights": [
+				"Led an overhaul of our codebase to prepare for a security audit, making over 26,000 individual improvements across 2,134 files over a 2-month period in order to prevent XSS, CSRF, and SQL injection attacks.",
+				"Delivered features for high-profile clients such as Intel and Amazon in .NET, C#, and ColdFusion."
+			],
+			"stats": [
+				{
+					"value": "26,000",
+					"label": "individual improvements"
+				},
+				{
+					"value": "2,134 files",
+					"label": "over a 2-month period"
+				}
+			]
+		}
+	],
+	"projects": [
+		{
+			"id": "wordtree",
+			"name": "WordTree",
+			"url": "https://www.wordtree.app",
+			"tagline": "A Daily Word Puzzle",
+			"year": "2023",
+			"description": [
+				"WordTree is a word puzzle played one letter at a time. Players fill a tree of five rows, from a one-letter word at the top to a five-letter word at the bottom, without knowing which letter comes next.",
+				"First built in 2023 as an experiment in cross-platform development, the original grew to over 1,000 active users. In 2026 I did a ground-up rewrite for iOS and Android with a shared Daily Puzzle, an Endless mode, live head-to-head duels, verified leaderboards, and replays.",
+				"Under the hood, a deterministic TypeScript engine runs unmodified on the phone and in a Cloudflare Worker, so the server can replay every move to verify scores. That one property powers the anti-cheat, multiplayer fairness, and replays. Give it a try!"
+			],
+			"features": [
+				"Daily Puzzle",
+				"Endless mode",
+				"live head-to-head duels",
+				"verified leaderboards",
+				"replays"
+			],
+			"tech": [
+				"TypeScript",
+				"React Native",
+				"Expo",
+				"Cloudflare Worker"
+			],
+			"stats": [
+				{
+					"value": "1,000",
+					"label": "active users"
+				}
+			],
+			"media": {
+				"kind": "phone-video",
+				"video": "/media/projects/wordtree-preview.mp4",
+				"poster": "/media/projects/wordtree-preview-poster.jpg",
+				"aspectRatio": "83/180",
+				"alt": "Play WordTree"
+			},
+			"stores": {
+				"appStore": {
+					"url": "https://apps.apple.com/us/app/wordtree-a-daily-word-puzzle/id6446817670",
+					"badge": "/media/badges/app-store.svg",
+					"alt": "Download WordTree on the App Store"
+				},
+				"googlePlay": {
+					"url": "https://play.google.com/store/apps/details?id=com.hdwatts.wordtree",
+					"badge": "/media/badges/google-play.png",
+					"alt": "Get WordTree on Google Play"
+				}
+			}
+		},
+		{
+			"id": "lex",
+			"name": "Lex",
+			"url": "https://www.lexgame.app",
+			"tagline": "Wordbuilding Roguelike",
+			"year": "2026",
+			"description": [
+				"Lex is a wordbuilding roguelike that combines Scrabble and Poker into one experience. Players spell words to score points, then craft synergies and stack absurd multipliers to survive an escalating gauntlet of Bosses.",
+				"With over 100 unique Editors that bend the rules, 14 starting Bags, and tile upgrades like Steel, Glass, and Stone, no two runs play the same. Spelling a word is easy. Breaking the dictionary is where the fun begins."
+			],
+			"features": [
+				"100 unique Editors",
+				"14 starting Bags",
+				"Steel, Glass, and Stone"
+			],
+			"tech": [],
+			"stats": [
+				{
+					"value": "100",
+					"label": "unique Editors"
+				},
+				{
+					"value": "14",
+					"label": "starting Bags"
+				}
+			],
+			"media": {
+				"kind": "phone-video",
+				"video": "/media/projects/lex-preview.mp4",
+				"poster": "/media/projects/lex-preview-poster.jpg",
+				"aspectRatio": "83/180",
+				"alt": "Play Lex"
+			},
+			"stores": {
+				"appStore": {
+					"url": "https://apps.apple.com/us/app/lex-wordbuilding-roguelike/id6769525969",
+					"badge": "/media/badges/app-store.svg",
+					"alt": "Download Lex on the App Store"
+				},
+				"googlePlay": {
+					"url": "https://play.google.com/store/apps/details?id=com.hdwatts.lex&hl=en_US",
+					"badge": "/media/badges/google-play.png",
+					"alt": "Get Lex on Google Play"
+				}
+			}
+		}
+	],
+	"skills": {
+		"technical": [
+			{
+				"name": "TypeScript",
+				"logo": "/media/logos/typescript.svg",
+				"brandColor": "#3178c6",
+				"url": "https://www.typescriptlang.org/"
+			},
+			{
+				"name": "React",
+				"logo": "/media/logos/react.svg",
+				"brandColor": "rgb(35 39 47)",
+				"url": "https://react.dev/"
+			},
+			{
+				"name": "tailwindcss",
+				"logo": "/media/logos/tailwind.svg",
+				"brandColor": "oklch(.13 .028 261.692)",
+				"url": "https://tailwindcss.com/"
+			},
+			{
+				"name": "shadcn/ui",
+				"logo": "/media/logos/shadcn.svg",
+				"brandColor": "hsl(0 0% 3.9%)",
+				"url": "https://ui.shadcn.com/"
+			},
+			{
+				"name": "Astro",
+				"logo": "/media/logos/astro.svg",
+				"brandColor": "rgb(23 25 30)",
+				"url": "https://astro.build/"
+			},
+			{
+				"name": "Rust",
+				"logo": "/media/logos/rust.svg",
+				"brandColor": "hsl(0 0% 3.9%)",
+				"url": "https://www.rust-lang.org/"
+			},
+			{
+				"name": "Rails",
+				"logo": "/media/logos/rails.svg",
+				"brandColor": "#171717",
+				"url": "https://rubyonrails.org/"
+			},
+			{
+				"name": "AWS",
+				"logo": "/media/logos/aws.svg",
+				"brandColor": "#141f2e",
+				"url": "https://aws.amazon.com/"
+			},
+			{
+				"name": "GitHub",
+				"logo": "/media/logos/github.svg",
+				"brandColor": "#010409",
+				"url": "https://github.com"
+			},
+			{
+				"name": "Postgres",
+				"logo": "/media/logos/postgres.svg",
+				"brandColor": "#212121",
+				"url": "https://www.postgresql.org/"
+			},
+			{
+				"name": "C#",
+				"logo": "/media/logos/csharp.svg",
+				"brandColor": "#171717",
+				"url": "https://docs.microsoft.com/en-us/dotnet/csharp/"
+			},
+			{
+				"name": "Expo",
+				"logo": "/media/logos/expo.svg",
+				"brandColor": "#18191b",
+				"url": "https://expo.dev/"
+			},
+			{
+				"name": "Perl",
+				"logo": "/media/logos/perl.svg",
+				"brandColor": "#18191b",
+				"url": "https://www.perl.org/"
+			},
+			{
+				"name": "ColdFusion",
+				"logo": "/media/logos/coldfusion.svg",
+				"brandColor": "#171717",
+				"url": "https://www.adobe.com/products/coldfusion-family.html"
+			},
+			{
+				"name": "serverless",
+				"logo": "/media/logos/serverless.svg",
+				"brandColor": "hsl(0 0% 3.9%)",
+				"url": "https://www.serverless.com/"
+			},
+			{
+				"name": "Tauri",
+				"logo": "/media/logos/tauri.svg",
+				"brandColor": "#181818",
+				"url": "https://tauri.app/"
+			},
+			{
+				"name": "tRPC",
+				"logo": "/media/logos/trpc.svg",
+				"brandColor": "#111",
+				"url": "https://trpc.io/"
+			},
+			{
+				"name": "SQL"
+			},
+			{
+				"name": "Python"
+			},
+			{
+				"name": "Node"
+			},
+			{
+				"name": "Next.js"
+			},
+			{
+				"name": ".NET"
+			}
+		],
+		"soft": [
+			"Communication",
+			"Product Planning",
+			"Product Design",
+			"Engineer Development",
+			"Team Growth"
+		]
+	},
+	"testimonials": [
+		{
+			"quote": "[Dean] has helped me develop as an engineer more than he probably realizes.",
+			"attribution": "Junior engineer post promotion"
+		},
+		{
+			"quote": "A strong sense of humility, which when paired with [his] incredible technical skills, is the winning combo that defines the \"Dean\" brand.",
+			"attribution": "Former engineering manager"
+		},
+		{
+			"quote": "Dean excels in working on large projects, no matter the complexity he is on top of it and gets it done well.",
+			"attribution": "Senior coworker"
+		},
+		{
+			"quote": "Dean always makes time to help out with questions as they come up and lend a hand.",
+			"attribution": "Senior engineer"
+		},
+		{
+			"quote": "Hard to imagine anyone who's attitude is better, to be honest. Positive, energetic, and consistent every day.",
+			"attribution": "Engineering manager"
+		},
+		{
+			"quote": "Really appreciate all the help [Dean] gave but more importantly am thankful for the laughs and for making the transition into my first real job pretty seamless.",
+			"attribution": "Former coworker"
+		},
+		{
+			"quote": "[Dean has] set the baseline for what it means to be a good coworker. I have found myself thinking \"What would Dean do?\"",
+			"attribution": "Former coworker"
+		}
+	],
+	"colophon": {
+		"heading": "How this site is made",
+		"tagline": "This website redesigns itself every Monday.",
+		"paragraphs": [
+			"Every week a GitHub Action rolls the dice: a design style, a color palette, a type pairing, a layout, a motion personality, and one wildcard rule. Then it hands the result to Gemini along with a $10 budget and a single empty folder.",
+			"Gemini builds a brand-new site from scratch!",
+			"If the new design passes its checks (accessibility, working links, no invented text, and a security review), it goes live on its own. If it wants to install new packages, it waits for my approval first.",
+			"The first time you visit after a new design ships, a timeline flashes through the whole archive, from the original hand-built site up to this one."
+		],
+		"steps": [
+			{
+				"label": "Roll",
+				"text": "Random style, palette, type, layout, motion, and a wildcard."
+			},
+			{
+				"label": "Design",
+				"text": "Gemini builds a new site inside a sandbox with a $10 budget."
+			},
+			{
+				"label": "Check",
+				"text": "Every word must come from my data. Accessibility and links are verified."
+			},
+			{
+				"label": "Ship",
+				"text": "It goes live automatically, and the old design joins the archive."
+			}
+		],
+		"facts": [
+			{
+				"value": "Every Monday",
+				"label": "a brand-new design"
+			},
+			{
+				"value": "$10",
+				"label": "budget per design"
+			},
+			{
+				"value": "0",
+				"label": "words written by the designer"
+			}
+		],
+		"links": [
+			{
+				"label": "See every past design",
+				"url": "/history"
+			},
+			{
+				"label": "Read the source",
+				"url": "https://github.com/hdwatts/portfolio-2025"
+			}
+		]
+	},
+	"autolinks": [
+		{
+			"text": "Chronograph Private Equity",
+			"url": "https://www.chronograph.pe"
+		},
+		{
+			"text": "Chronograph.pe",
+			"url": "https://www.chronograph.pe"
+		},
+		{
+			"text": "WordTree",
+			"url": "https://www.wordtree.app"
+		},
+		{
+			"text": "Lex",
+			"url": "https://www.lexgame.app"
+		},
+		{
+			"text": "GitHub Action",
+			"url": "https://github.com/hdwatts/portfolio-2025/blob/main/.github/workflows/redesign.yml"
+		},
+		{
+			"text": "Gemini",
+			"url": "https://deepmind.google/models/gemini/"
+		}
+	],
+	"labels": {
+		"nav.home": [
+			"Home"
+		],
+		"nav.history": [
+			"History",
+			"Past Designs",
+			"Archive"
+		],
+		"section.about": [
+			"About",
+			"About Me",
+			"Hello",
+			"Intro"
+		],
+		"section.experience": [
+			"Experience",
+			"Work",
+			"Career",
+			"Employment History"
+		],
+		"section.projects": [
+			"Projects",
+			"Selected Work",
+			"Side Projects",
+			"Things I've Built"
+		],
+		"section.skills": [
+			"Skills",
+			"Technical Skills",
+			"Toolbox",
+			"Stack"
+		],
+		"section.softSkills": [
+			"Soft Skills"
+		],
+		"section.testimonials": [
+			"Testimonials",
+			"Kind Words",
+			"What People Say"
+		],
+		"section.contact": [
+			"Contact",
+			"Connect",
+			"Get in Touch",
+			"Say Hello"
+		],
+		"action.visit": [
+			"Visit",
+			"Visit Site",
+			"Open"
+		],
+		"action.play": [
+			"Play",
+			"Try it",
+			"Give it a try"
+		],
+		"action.resume": [
+			"Resume",
+			"Download Resume",
+			"View Resume"
+		],
+		"action.next": [
+			"Next"
+		],
+		"action.previous": [
+			"Previous"
+		],
+		"action.replayIntro": [
+			"Replay",
+			"Replay Intro"
+		],
+		"action.skipIntro": [
+			"Skip",
+			"Skip Intro"
+		],
+		"action.toggleTheme": [
+			"Toggle Theme",
+			"Light",
+			"Dark"
+		],
+		"action.pauseAnimation": [
+			"Pause Animations",
+			"Play Animations"
+		],
+		"misc.present": [
+			"Present"
+		],
+		"misc.featured": [
+			"Featured"
+		],
+		"misc.techStack": [
+			"Tech Stack",
+			"Built With"
+		],
+		"misc.copyright": [
+			"© hdwatts, 2026"
+		],
+		"section.colophon": [
+			"How This Site Works",
+			"About This Site",
+			"Behind the Scenes",
+			"Colophon"
+		]
+	},
+	"meta": {
+		"siteUrl": "https://hdwatts.com",
+		"siteTitle": "Howard Dean Watts",
+		"description": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of AI tools that automate the extraction of unstructured data from our clients.",
+		"ogImage": "/og-image.png"
+	}
+}
