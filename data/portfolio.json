@@ -9,7 +9,7 @@
 			"Founding Staff Software Engineer at Chronograph.pe",
 			"Creator of WordTree and Lex"
 		],
-		"summary": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of AI to automate the extraction of unstructured data from our clients.",
+		"summary": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of AI tools that automate the extraction of unstructured data from our clients.",
 		"headshot": {
 			"src": "/media/headshot.png",
 			"alt": "Howard Dean Watts",
@@ -58,7 +58,7 @@
 			"end": null,
 			"period": "2017 - Present",
 			"highlights": [
-				"Developed automation tools, including custom microservices and machine learning-powered AWS Lambda functions, significantly improving internal workflows. In a case study reduced a task processing time from 2.5 hours per document to just 1 minute.",
+				"Developed automation tools, including custom microservices and machine learning-powered AWS Lambda functions, significantly improving internal workflows. In one case study, reduced task processing time from 2.5 hours per document to just 1 minute.",
 				"Designed, built, and maintained a high-performance Excel plugin, now used by thousands of employees at leading global fund managers.",
 				"Engineered scalable, high-quality features to extract and transform a dataset encompassing over $29 trillion in assets, enhancing data accessibility and analysis.",
 				"Established foundational best practices for codebase architecture, API design, data security, and employee onboarding, scaling the company from a 3-person startup to a 180-employee enterprise."
@@ -91,8 +91,8 @@
 			"end": "2017",
 			"period": "2016 - 2017",
 			"highlights": [
-				"Led an overhaul of our codebase to prepare for a security audit, making over 26,000 individual improvements across 2,134 files over a 2 month period in order to prevent XSS, CSRF, and SQL Injection attacks.",
-				"Delivered features for high profile clients such as Intel and Amazon in .NET, C#, and ColdFusion."
+				"Led an overhaul of our codebase to prepare for a security audit, making over 26,000 individual improvements across 2,134 files over a 2-month period in order to prevent XSS, CSRF, and SQL injection attacks.",
+				"Delivered features for high-profile clients such as Intel and Amazon in .NET, C#, and ColdFusion."
 			],
 			"stats": [
 				{
@@ -101,7 +101,7 @@
 				},
 				{
 					"value": "2,134 files",
-					"label": "over a 2 month period"
+					"label": "over a 2-month period"
 				}
 			]
 		}
@@ -285,7 +285,7 @@
 				"url": "https://www.perl.org/"
 			},
 			{
-				"name": "Coldfusion",
+				"name": "ColdFusion",
 				"logo": "/media/logos/coldfusion.svg",
 				"brandColor": "#171717",
 				"url": "https://www.adobe.com/products/coldfusion-family.html"
@@ -318,7 +318,7 @@
 				"name": "Node"
 			},
 			{
-				"name": "NextJS"
+				"name": "Next.js"
 			},
 			{
 				"name": ".NET"
@@ -368,8 +368,8 @@
 		"paragraphs": [
 			"Every week a GitHub Action rolls the dice: a design style, a color palette, a type pairing, a layout, a motion personality, and one wildcard rule. Then it hands the result to Gemini along with a $10 budget and a single empty folder.",
 			"Gemini builds a brand-new site from scratch, but it isn't allowed to write a single word. Every sentence here comes from one data file that I maintain, and an automated checker rejects the design if even one heading isn't in it.",
-			"If the new design passes its checks (accessibility, working links, no invented text), it goes live on its own. If it wants to install new packages, it has to wait for my approval first.",
-			"The rapid flash of old designs when the page loaded is the archive: every past version, from the original hand-built site up to this one."
+			"If the new design passes its checks (accessibility, working links, no invented text, and a security review), it goes live on its own. If it wants to install new packages, it waits for my approval first.",
+			"The first time you visit after a new design ships, a timeline flashes through the whole archive, from the original hand-built site up to this one."
 		],
 		"steps": [
 			{
@@ -522,7 +522,7 @@
 	"meta": {
 		"siteUrl": "https://hdwatts.com",
 		"siteTitle": "Howard Dean Watts",
-		"description": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of tools to automate the extraction of unstructured data from our clients.",
+		"description": "Hey there. I am a software developer based in New York, currently at Chronograph Private Equity, where I lead the development of AI tools that automate the extraction of unstructured data from our clients.",
 		"ogImage": "/og-image.png"
 	}
 }
