@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { listDesigns, loadConfig, loadData } from "./lib/paths.mjs";
-import { DESIGN_CSP, ROOT_CSP, cspMeta, headEnd } from "./lib/csp.mjs";
+import { DESIGN_CSP, ROOT_CSP, injectCsp } from "./lib/csp.mjs";
 
 const outDir = path.resolve(process.argv[2] ?? "dist");
 const config = loadConfig();
@@ -17,18 +17,15 @@ const data = loadData();
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
 const designs = listDesigns();
-// Always strip any CSP the page carries and insert ours as the very first
-// thing inside the real <head>. The document must start with exactly
-// [doctype] <html> <head> (the checker enforces the same rule); otherwise fail.
-const CSP_META_RE = /<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi;
+// Strip any CSP the page carries and insert ours first inside the real <head>
+// (see lib/csp.mjs). Pages that don't start with a strict prologue are refused.
 function withCsp(html, policy, label, extra = "") {
-	const stripped = html.replace(CSP_META_RE, "");
-	const at = headEnd(stripped);
-	if (at < 0) {
+	const out = injectCsp(html, policy, extra);
+	if (out === null) {
 		console.error(`finalize-site: ${label} does not start with <!doctype html><html><head>; refusing to publish it.`);
 		process.exit(1);
 	}
-	return stripped.slice(0, at) + cspMeta(policy) + extra + stripped.slice(at);
+	return out;
 }
 
 const live = designs.filter((d) => d.url && !d.legacy && fs.existsSync(path.join(outDir, d.url, "index.html")));

@@ -34,15 +34,26 @@ export const ROOT_CSP = serialize({
 export const cspMeta = (policy) => `<meta http-equiv="Content-Security-Policy" content="${policy}">`;
 
 /**
- * Strict document prologue: optional doctype, <html ...>, then a bare <head>, with
- * only whitespace between them (no comments). Returns the index just after the
- * real <head> tag, or -1. Used by both the checker and the injector so they can
- * never disagree about where <head> is.
+ * Strict document prologue: optional doctype, <html ...>, then a bare <head>,
+ * separated only by HTML whitespace (no comments). Returns the index just after
+ * the real <head> tag, or -1. Shared by the checker and the injector so they
+ * can never disagree; the checker additionally confirms the result with a real
+ * browser parse (see injectCsp + check.mjs).
  */
+const WS = "[\\t\\n\\f\\r ]"; // HTML whitespace exactly (JS \\s is broader)
+const ATTR = `${WS}+[a-z][a-z0-9-]*(?:${WS}*=${WS}*(?:"[^"<>]*"|'[^'<>]*'|[^\\t\\n\\f\\r "'<>=\`]+))?`;
+const PROLOGUE = new RegExp(`^\\uFEFF?${WS}*(?:<!doctype${WS}+html>${WS}*)?<html(?:${ATTR})*${WS}*>${WS}*<head>`, "i");
+
 export function headEnd(html) {
-	// <html> may carry only well-formed attributes; <head> must be bare. A quoted
-	// ">" can't end a tag early, so the CSP can never land inside an attribute.
-	const attr = `\\s+[a-z][a-z0-9-]*(?:\\s*=\\s*(?:"[^"<>]*"|'[^'<>]*'|[^\\s"'<>=\`]+))?`;
-	const m = html.match(new RegExp(`^\\uFEFF?\\s*(?:<!doctype html>\\s*)?<html(?:${attr})*\\s*>\\s*<head>`, "i"));
+	const m = html.match(PROLOGUE);
 	return m ? m[0].length : -1;
+}
+
+const CSP_META_RE = /<meta\b[^>]*http-equiv[\t\n\f\r ]*=[\t\n\f\r ]*["']?content-security-policy[^>]*>/gi;
+
+/** Strip any CSP metas and insert ours first in <head>. Returns null if the prologue is not strict. */
+export function injectCsp(html, policy, extra = "") {
+	const stripped = html.replace(CSP_META_RE, "");
+	const at = headEnd(stripped);
+	return at < 0 ? null : stripped.slice(0, at) + cspMeta(policy) + extra + stripped.slice(at);
 }

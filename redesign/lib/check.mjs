@@ -10,7 +10,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 import { AxeBuilder } from "@axe-core/playwright";
 import { routeDesign } from "./serve.mjs";
-import { headEnd } from "./csp.mjs";
+import { headEnd, injectCsp, DESIGN_CSP } from "./csp.mjs";
 import { loadConfig, loadData } from "./paths.mjs";
 
 export function normalize(s) {
@@ -155,7 +155,7 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 	const shell = fs.readFileSync(path.join(buildDir, "index.html"), "utf8");
 	if (/http-equiv\s*=\s*["']?refresh/i.test(shell)) errors.push("index.html must not use <meta http-equiv=\"refresh\">.");
 	if (/http-equiv\s*=\s*["']?content-security-policy/i.test(shell)) errors.push("index.html must not set its own Content-Security-Policy.");
-	if (headEnd(shell) < 0) errors.push("index.html must start with exactly <!doctype html><html lang="en"><head> (bare <head>, no comments or other content before it).");
+	if (headEnd(shell) < 0) errors.push('index.html must start with exactly <!doctype html><html lang="en"><head> (bare <head>, no comments or other content before it).');
 	if (/<base\b/i.test(shell)) errors.push("index.html must not use <base>.");
 	for (const m of shell.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
 		if (!/\bsrc\s*=/.test(m[1]) && m[2].trim() && !/type\s*=\s*["']?application\/(ld\+)?json/i.test(m[1]))
@@ -164,6 +164,20 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 
 	const browser = await chromium.launch();
 	try {
+		// Confirm with a real HTML parser that the production CSP injection puts the
+		// policy first in <head>, independent of the regex used to place it.
+		const injected = injectCsp(shell, DESIGN_CSP);
+		if (injected !== null) {
+			const probe = await browser.newPage({ javaScriptEnabled: false });
+			await probe.route("**/*", (r) => r.abort());
+			await probe.setContent(injected, { waitUntil: "domcontentloaded" });
+			const ok = await probe.evaluate(() => {
+				const first = document.head.firstElementChild;
+				return !!first && first.tagName === "META" && (first.getAttribute("http-equiv") ?? "").toLowerCase() === "content-security-policy";
+			});
+			await probe.close();
+			if (!ok) errors.push("After CSP injection, the policy is not the first element of <head> when parsed by a browser. Simplify the top of index.html to <!doctype html><html lang=\"en\"><head>.");
+		}
 		for (const [name, viewport] of Object.entries(config.screenshots)) {
 			const context = await browser.newContext({ viewport, deviceScaleFactor: 1, reducedMotion: "no-preference" });
 			const { url: designUrl, blocked } = await routeDesign(context, { date, buildDir });
