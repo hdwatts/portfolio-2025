@@ -155,7 +155,9 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 	if (/http-equiv\s*=\s*["']?refresh/i.test(shell)) errors.push("index.html must not use <meta http-equiv=\"refresh\">.");
 	if (/http-equiv\s*=\s*["']?content-security-policy/i.test(shell)) errors.push("index.html must not set its own Content-Security-Policy.");
 	const headAt = shell.search(/<head[\s>]/i);
-	if (headAt < 0 || /<(script|link|meta|base)\b/i.test(shell.slice(0, headAt))) errors.push("index.html must have a <head> and nothing (scripts, links, meta, base) before it.");
+	// Only the doctype, <html> and comments may precede <head>.
+	const beforeHead = headAt < 0 ? "" : shell.slice(0, headAt).replace(/<!--[\s\S]*?-->/g, "").replace(/<!doctype[^>]*>/i, "").replace(/<html\b[^>]*>/i, "");
+	if (headAt < 0 || /<[a-z]/i.test(beforeHead)) errors.push("index.html must start with <!doctype html><html><head>; no elements may come before <head>.");
 	if (/<base\b/i.test(shell)) errors.push("index.html must not use <base>.");
 	for (const m of shell.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
 		if (!/\bsrc\s*=/.test(m[1]) && m[2].trim() && !/type\s*=\s*["']?application\/(ld\+)?json/i.test(m[1]))

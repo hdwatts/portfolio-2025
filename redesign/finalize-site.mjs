@@ -17,6 +17,20 @@ const data = loadData();
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
 const designs = listDesigns();
+// Always strip any CSP the page carries and insert ours as the very first
+// thing inside the real <head> (not <header>), then verify it landed there.
+const CSP_META_RE = /<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi;
+const HEAD_RE = /<head(\s[^>]*)?>/i;
+function withCsp(html, policy, label, extra = "") {
+	const out = html.replace(CSP_META_RE, "").replace(HEAD_RE, (m) => m + cspMeta(policy) + extra);
+	const m = out.match(HEAD_RE);
+	if (!m || !out.slice(m.index + m[0].length).startsWith(cspMeta(policy))) {
+		console.error(`finalize-site: could not install CSP in ${label}`);
+		process.exit(1);
+	}
+	return out;
+}
+
 const live = designs.filter((d) => d.url && !d.legacy && fs.existsSync(path.join(outDir, d.url, "index.html")));
 const latest = live.at(-1);
 
@@ -26,8 +40,7 @@ for (const d of live) {
 	if (!html.includes('name="robots"')) {
 		html = html.replace(/<\/head>/i, `<meta name="robots" content="noindex"><link rel="canonical" href="${esc(data.meta.siteUrl)}/">\n</head>`);
 	}
-	// CSP goes first in <head> so it applies before any of the design's own tags.
-	if (!html.includes("Content-Security-Policy")) html = html.replace(/<head([^>]*)>/i, `<head$1>${cspMeta(DESIGN_CSP)}`);
+	html = withCsp(html, DESIGN_CSP, file);
 	fs.writeFileSync(file, html);
 }
 
@@ -52,7 +65,7 @@ const timeline = {
 };
 
 const ogImage = latest.screenshots?.desktop ? `${data.meta.siteUrl}${latest.screenshots.desktop}` : `${data.meta.siteUrl}${data.meta.ogImage}`;
-const headStart = `${cspMeta(ROOT_CSP)}
+const headStart = `
 <meta name="hdw-intro" content="${esc(latest.date)}|${frames.length}">
 <script src="/_intro/boot.js"></script>
 <style>html.hdw-intro body{overflow:hidden}html.hdw-intro::after{content:"";position:fixed;inset:0;background:#09090b;z-index:2147483646}</style>`;
@@ -81,9 +94,8 @@ const bodyEnd = `
 let html = fs.readFileSync(path.join(outDir, latest.url, "index.html"), "utf8");
 // Drop the archive-only tags added above, then add the root page's own.
 html = html.replace(/<meta name="robots" content="noindex"><link rel="canonical"[^>]*>\n?/i, "");
-html = html.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/gi, ""); // root gets ROOT_CSP below
 html = html.replace(/<meta\s+name="description"[^>]*>/gi, "");
-html = html.replace(/<head([^>]*)>/i, `<head$1>${headStart}`);
+html = withCsp(html, ROOT_CSP, "home page", headStart);
 html = html.replace(/<\/head>/i, `${seo}\n</head>`);
 html = html.replace(/<\/body>/i, `${bodyEnd}\n</body>`);
 fs.writeFileSync(path.join(outDir, "index.html"), html);
