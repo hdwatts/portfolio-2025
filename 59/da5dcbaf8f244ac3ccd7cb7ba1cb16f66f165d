@@ -1,0 +1,14 @@
+data/portfolio.json
+  h_29c51a938449ee 370
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "59da5dcbaf8f244ac3ccd7cb7ba1cb16f66f165d",
+  "prompts": {},
+  "humans": {
+    "h_29c51a938449ee": {
+      "author": "Howard Dean Watts <howard@hdwatts.com>"
+    }
+  }
+}
