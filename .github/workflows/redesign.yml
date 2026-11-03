@@ -31,6 +31,9 @@ jobs:
     timeout-minutes: 240
     permissions:
       contents: read
+    env:
+      # Shared, world-readable browser location so the unprivileged agent user can run checks.
+      PLAYWRIGHT_BROWSERS_PATH: /opt/ms-playwright
     steps:
       - uses: actions/checkout@v5
         with:
@@ -40,7 +43,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium-headless-shell
+      - name: Install headless Chromium
+        run: |
+          sudo mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" && sudo chown "$(id -u):$(id -g)" "$PLAYWRIGHT_BROWSERS_PATH"
+          npx playwright install --with-deps chromium-headless-shell
+          chmod -R a+rX "$PLAYWRIGHT_BROWSERS_PATH"
       - name: Install Gemini CLI (pinned)
         run: npm install -g "@google/gemini-cli@$(node -p "require('./redesign/config.json').geminiCliVersion")"
       - name: Design

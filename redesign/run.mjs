@@ -99,8 +99,26 @@ function scaffold(prompt) {
 }
 
 // ---------- 3. Gemini ----------
-function writeSettings(telemetryFile, hookLog, priorSpend) {
-	const node = process.execPath;
+// In CI the agent runs as a separate unprivileged user (REDESIGN_AGENT_USER,
+// created by redesign/ci-design.sh). It owns only the sandbox and its own log
+// dir, can read but not write the repo, cannot sudo, and cannot signal this
+// process. Its CLI settings (hooks, telemetry, tool limits) live in a
+// root-owned file, which Gemini CLI requires before it will honor them.
+const AGENT_USER = process.env.REDESIGN_AGENT_USER || null;
+const SETTINGS_DIR = "/etc/gemini-cli-redesign";
+const AGENT_DIR = path.join(LOG_DIR, "agent"); // agent-writable: telemetry, hook log, HOME, npm cache
+const sudo = (...args) => execFileSync("sudo", ["-n", ...args], { stdio: "pipe" });
+
+function prepareAgentDir() {
+	fs.mkdirSync(path.join(AGENT_DIR, "home"), { recursive: true });
+	if (AGENT_USER) {
+		sudo("chown", "-R", `${AGENT_USER}:${AGENT_USER}`, AGENT_DIR, SANDBOX);
+		sudo("chmod", "-R", "u+rwX,go+rX", AGENT_DIR);
+	}
+}
+
+function writeSettings(attempt, telemetryFile, hookLog, priorSpend) {
+	const node = AGENT_USER ? "node" : process.execPath;
 	const hook = (name, extra) => `"${node}" "${path.join(ROOT, "redesign", "hooks", name)}" ${extra} --log "${hookLog}"`;
 	const settings = {
 		general: { enableAutoUpdate: false },
@@ -115,24 +133,32 @@ function writeSettings(telemetryFile, hookLog, priorSpend) {
 			BeforeModel: [{ hooks: [{ type: "command", name: "budget-gate", command: hook("before-model.mjs", `--config "${path.join(ROOT, "redesign", "config.json")}" --telemetry "${telemetryFile}" --prior ${priorSpend}`), timeout: 15000 }] }],
 		},
 	};
-	// System settings have the highest precedence and live outside the sandbox, so the agent cannot rewrite them.
-	const file = path.join(LOG_DIR, `system-settings-${Date.now()}.json`);
-	writeJson(file, settings);
+	const draft = path.join(LOG_DIR, `system-settings-${attempt}.json`); // copy kept for the logs artifact
+	writeJson(draft, settings);
+	if (!AGENT_USER) return draft; // local --unsafe-local runs: the CLI will likely ignore this (see tripwire)
+	const file = path.join(SETTINGS_DIR, `settings-${date}-${attempt}.json`);
+	sudo("install", "-D", "-o", "root", "-g", "root", "-m", "0644", draft, file);
+	sudo("chown", "root:root", SETTINGS_DIR);
+	sudo("chmod", "0755", SETTINGS_DIR);
 	return file;
 }
 
 function runGemini({ prompt, attempt, priorSpend, resume }) {
-	const telemetryFile = path.join(LOG_DIR, `telemetry-${attempt}.log`);
-	const hookLog = path.join(LOG_DIR, "hooks.jsonl");
-	const settingsFile = writeSettings(telemetryFile, hookLog, priorSpend);
+	const telemetryFile = path.join(AGENT_DIR, `telemetry-${attempt}.log`);
+	const hookLog = path.join(AGENT_DIR, "hooks.jsonl");
+	const settingsFile = writeSettings(attempt, telemetryFile, hookLog, priorSpend);
 	const streamFile = path.join(LOG_DIR, `stream-${attempt}.jsonl`);
-	const args = ["-p", prompt, "-m", config.model, "--approval-mode=yolo", "--output-format", "stream-json", "--skip-trust"];
-	if (resume) args.push("--resume", "latest");
+	const cliArgs = ["-p", prompt, "-m", config.model, "--approval-mode=yolo", "--output-format", "stream-json", "--skip-trust"];
+	if (resume) cliArgs.push("--resume", "latest");
 
 	// Allowlisted environment: the Gemini key (unavoidable) and nothing else sensitive.
-	const pass = ["PATH", "HOME", "TMPDIR", "LANG", "TERM", "GEMINI_API_KEY", "npm_config_cache", "PLAYWRIGHT_BROWSERS_PATH"];
 	const env = {
-		...Object.fromEntries(pass.filter((k) => process.env[k]).map((k) => [k, process.env[k]])),
+		PATH: process.env.PATH,
+		LANG: process.env.LANG ?? "C.UTF-8",
+		HOME: path.join(AGENT_DIR, "home"),
+		TMPDIR: path.join(AGENT_DIR, "home"),
+		npm_config_cache: path.join(AGENT_DIR, "home", ".npm"),
+		...(process.env.PLAYWRIGHT_BROWSERS_PATH ? { PLAYWRIGHT_BROWSERS_PATH: process.env.PLAYWRIGHT_BROWSERS_PATH } : {}),
 		GEMINI_CLI_SYSTEM_SETTINGS_PATH: settingsFile,
 		GEMINI_TELEMETRY_ENABLED: "true",
 		GEMINI_TELEMETRY_TARGET: "local",
@@ -143,14 +169,26 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 		npm_config_fund: "false",
 		CI: "true",
 	};
+	const gemini = process.env.GEMINI_BIN ?? "gemini";
 
 	return new Promise((resolve) => {
-		const bin = process.env.GEMINI_BIN ?? "gemini";
-		// Own process group, so anything the agent backgrounds dies with it.
-		const child = spawn(bin, args, { cwd: SANDBOX, env, stdio: ["ignore", "pipe", "pipe"], detached: true });
-		const killGroup = (sig) => {
+		let child;
+		if (AGENT_USER) {
+			// The key travels via --preserve-env (not argv); everything else is explicit.
+			const assigns = Object.entries(env).map(([k, v]) => `${k}=${v}`);
+			child = spawn("sudo", ["-n", "-u", AGENT_USER, "--preserve-env=GEMINI_API_KEY", "--", "/usr/bin/env", ...assigns, gemini, ...cliArgs], {
+				cwd: SANDBOX,
+				env: { PATH: process.env.PATH, GEMINI_API_KEY: process.env.GEMINI_API_KEY },
+				stdio: ["ignore", "pipe", "pipe"],
+			});
+		} else {
+			child = spawn(gemini, cliArgs, { cwd: SANDBOX, env: { ...env, GEMINI_API_KEY: process.env.GEMINI_API_KEY }, stdio: ["ignore", "pipe", "pipe"], detached: true });
+		}
+		// Kill every process the agent owns (including anything it backgrounded).
+		const killAll = (sig) => {
 			try {
-				process.kill(-child.pid, sig);
+				if (AGENT_USER) sudo("pkill", `-${sig === "SIGKILL" ? "KILL" : "TERM"}`, "-u", AGENT_USER);
+				else process.kill(-child.pid, sig);
 			} catch {}
 		};
 		const out = fs.createWriteStream(streamFile);
@@ -159,6 +197,14 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 		let resultStats = null;
 		let killedFor = null;
 		let tampered = false;
+		let settingsIgnored = false;
+		const stop = (why) => {
+			if (killedFor) return;
+			killedFor = why;
+			log(`watchdog: stopping Gemini for ${why}`);
+			killAll("SIGTERM");
+			setTimeout(() => killAll("SIGKILL"), 10_000).unref();
+		};
 		child.stdout.on("data", (chunk) => {
 			out.write(chunk);
 			buf += chunk;
@@ -174,39 +220,48 @@ function runGemini({ prompt, attempt, priorSpend, resume }) {
 				} catch {}
 			}
 		});
-		child.stderr.on("data", (c) => fs.appendFileSync(path.join(LOG_DIR, `stderr-${attempt}.log`), c));
+		let errText = "";
+		child.stderr.on("data", (c) => {
+			fs.appendFileSync(path.join(LOG_DIR, `stderr-${attempt}.log`), c);
+			errText = (errText + c).slice(-8192);
+			// Tripwire: without its system settings the CLI has no hooks and no budget gate.
+			if (/Skipping system settings file/i.test(errText)) {
+				settingsIgnored = true;
+				stop("Gemini CLI ignored the locked settings file (no sandbox/budget hooks)");
+			}
+		});
 
 		const deadline = Date.now() + 45 * 60_000;
 		// Telemetry is append-only. If a byte we've already seen changes or the file
 		// shrinks, someone rewrote it to hide spend: stop and fail the run.
-		let seenLen = 0;
-		let seenHash = "";
 		const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
+		let seenLen = 0;
+		let seenHash = sha(Buffer.alloc(0));
 		const watchdog = setInterval(() => {
 			if (fs.existsSync(telemetryFile)) {
-				const buf = fs.readFileSync(telemetryFile);
-				if (buf.length < seenLen || sha(buf.subarray(0, seenLen)) !== seenHash) tampered = true;
-				seenLen = buf.length;
-				seenHash = sha(buf);
+				const data = fs.readFileSync(telemetryFile);
+				if (data.length < seenLen || sha(data.subarray(0, seenLen)) !== seenHash) tampered = true;
+				seenLen = data.length;
+				seenHash = sha(data);
 			} else if (seenLen > 0) tampered = true;
 			const spent = priorSpend + spendFromTelemetry(telemetryFile, config.pricing).usd;
-			if (tampered) killedFor = "telemetry file was modified during the run";
-			else if (spent >= config.budgetUsd) killedFor = `budget ($${spent.toFixed(2)} ≥ $${config.budgetUsd})`;
-			else if (Date.now() > deadline) killedFor = "45-minute timeout";
-			if (killedFor) {
-				log(`watchdog: stopping Gemini for ${killedFor}`);
-				killGroup("SIGTERM");
-				setTimeout(() => killGroup("SIGKILL"), 10_000).unref();
-				clearInterval(watchdog);
-			}
+			if (tampered) stop("telemetry file was modified during the run");
+			else if (spent >= config.budgetUsd) stop(`budget ($${spent.toFixed(2)} ≥ $${config.budgetUsd})`);
+			else if (Date.now() > deadline) stop("45-minute timeout");
 		}, 2000);
 
 		child.on("close", (code) => {
 			clearInterval(watchdog);
-			killGroup("SIGKILL"); // reap leftover background processes
+			killAll("SIGKILL"); // reap leftover background processes
+			if (AGENT_USER) {
+				// Hand the sandbox back to the pipeline user for building and checks.
+				try {
+					sudo("chown", "-R", `${process.getuid()}:${process.getgid()}`, SANDBOX);
+				} catch {}
+			}
 			out.end();
 			const usage = spendFromTelemetry(telemetryFile, config.pricing);
-			resolve({ code, usage, finalText: finalText.trim(), resultStats, killedFor, tampered });
+			resolve({ code, usage, finalText: finalText.trim(), resultStats, killedFor, tampered, settingsIgnored });
 		});
 	});
 }
@@ -241,6 +296,8 @@ function verifySandbox(before) {
 }
 
 // ---------- main ----------
+if (!DRY && !AGENT_USER && !flag("unsafe-local"))
+	die("Real runs need agent isolation (REDESIGN_AGENT_USER), which redesign/ci-design.sh sets up in GitHub Actions. Locally, Gemini CLI also ignores a non-root-owned settings file, so no sandbox or budget hooks would apply. Use --dry-run, or pass --unsafe-local if you accept that.");
 const { picks, recent } = rollVariants();
 const prompt = renderPrompt(picks, recent);
 log("variants:", picks);
@@ -266,10 +323,12 @@ for (let attempt = 1; attempt <= (DRY ? 1 : config.attempts); attempt++) {
 				? "Follow the instructions in GEMINI.md and build this week's portfolio design now."
 				: `The publishing checks failed. Fix every problem below, re-run \`npm run check\` until it passes, then stop.\n\n${formatReport(result)}`;
 		log(`attempt ${attempt}: running Gemini (${config.model}), spent so far $${spend.toFixed(2)}`);
+		prepareAgentDir(); // every attempt: the pipeline reclaims the sandbox between attempts
 		const run = await runGemini({ prompt: instruction, attempt, priorSpend: spend, resume: attempt > 1 });
 		spend += run.usage.usd;
 		tokens = { input: tokens.input + run.usage.inputTokens, output: tokens.output + run.usage.outputTokens, calls: tokens.calls + run.usage.calls };
 		summary = run.finalText || summary;
+		if (run.settingsIgnored) die(`Gemini CLI refused the locked settings file, so the sandbox and budget hooks were not active. Run aborted after $${spend.toFixed(2)}. See stderr-${attempt}.log in the logs artifact.`);
 		if (run.tampered) die(`The agent's telemetry file was modified during attempt ${attempt}, so spend can't be trusted. Run aborted.`);
 		log(`attempt ${attempt}: exit ${run.code}${run.killedFor ? ` (stopped: ${run.killedFor})` : ""}, $${run.usage.usd.toFixed(2)} over ${run.usage.calls} calls`);
 		verifySandbox(before);

@@ -34,3 +34,6 @@ designs/*/.snap/
 designs/*/.gemini/
 redesign/template/node_modules/
 redesign/template/dist/
+
+# downloaded workflow logs
+redesign-logs/
