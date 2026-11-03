@@ -367,7 +367,7 @@
 		"tagline": "This website redesigns itself every Monday.",
 		"paragraphs": [
 			"Every week a GitHub Action rolls the dice: a design style, a color palette, a type pairing, a layout, a motion personality, and one wildcard rule. Then it hands the result to Gemini along with a $10 budget and a single empty folder.",
-			"Gemini builds a brand-new site from scratch, but it isn't allowed to write a single word. Every sentence here comes from one data file that I maintain, and an automated checker rejects the design if even one heading isn't in it.",
+			"Gemini builds a brand-new site from scratch!",
 			"If the new design passes its checks (accessibility, working links, no invented text, and a security review), it goes live on its own. If it wants to install new packages, it waits for my approval first.",
 			"The first time you visit after a new design ships, a timeline flashes through the whole archive, from the original hand-built site up to this one."
 		],
