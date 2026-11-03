@@ -10,6 +10,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 import { AxeBuilder } from "@axe-core/playwright";
 import { routeDesign } from "./serve.mjs";
+import { headEnd } from "./csp.mjs";
 import { loadConfig, loadData } from "./paths.mjs";
 
 export function normalize(s) {
@@ -154,10 +155,7 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 	const shell = fs.readFileSync(path.join(buildDir, "index.html"), "utf8");
 	if (/http-equiv\s*=\s*["']?refresh/i.test(shell)) errors.push("index.html must not use <meta http-equiv=\"refresh\">.");
 	if (/http-equiv\s*=\s*["']?content-security-policy/i.test(shell)) errors.push("index.html must not set its own Content-Security-Policy.");
-	const headAt = shell.search(/<head[\s>]/i);
-	// Only the doctype, <html> and comments may precede <head>.
-	const beforeHead = headAt < 0 ? "" : shell.slice(0, headAt).replace(/<!--[\s\S]*?-->/g, "").replace(/<!doctype[^>]*>/i, "").replace(/<html\b[^>]*>/i, "");
-	if (headAt < 0 || /<[a-z]/i.test(beforeHead)) errors.push("index.html must start with <!doctype html><html><head>; no elements may come before <head>.");
+	if (headEnd(shell) < 0) errors.push("index.html must start with exactly <!doctype html><html ...><head ...> (no comments or other content before <head>).");
 	if (/<base\b/i.test(shell)) errors.push("index.html must not use <base>.");
 	for (const m of shell.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
 		if (!/\bsrc\s*=/.test(m[1]) && m[2].trim() && !/type\s*=\s*["']?application\/(ld\+)?json/i.test(m[1]))

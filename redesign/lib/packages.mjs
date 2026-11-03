@@ -35,9 +35,12 @@ export function packageReview(date) {
 		for (const [key, e] of lock) {
 			if (e.resolved && !e.resolved.startsWith("https://registry.npmjs.org/")) unusual.push(`${key} resolves to ${e.resolved}`);
 			else if (e.link) unusual.push(`${key} is a link`);
+			// Bundled deps ship inside their parent's tarball, which the parent's integrity hash covers.
+			if (!e.link && !e.inBundle && (!e.resolved || !e.integrity)) unusual.push(`${key} has no resolved URL or integrity hash`);
 			const t = tplLock.get(key);
 			if (!t) lockAdded.push(`${key}@${e.version}`);
-			else if (t.integrity && e.integrity && t.integrity !== e.integrity && t.version === e.version) unusual.push(`${key}@${e.version} integrity differs from template`);
+			else if (t.version !== e.version) unusual.push(`${key} changed version ${t.version} → ${e.version}`);
+			else if (t.integrity !== e.integrity || t.resolved !== e.resolved) unusual.push(`${key}@${e.version} tarball differs from template`);
 		}
 	}
 	const lockOnly = lockAdded.filter((x) => !added.some((a) => x.startsWith(a.split("@")[0] + "@")));

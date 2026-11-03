@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { listDesigns, loadConfig, loadData } from "./lib/paths.mjs";
-import { DESIGN_CSP, ROOT_CSP, cspMeta } from "./lib/csp.mjs";
+import { DESIGN_CSP, ROOT_CSP, cspMeta, headEnd } from "./lib/csp.mjs";
 
 const outDir = path.resolve(process.argv[2] ?? "dist");
 const config = loadConfig();
@@ -18,17 +18,17 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").repl
 
 const designs = listDesigns();
 // Always strip any CSP the page carries and insert ours as the very first
-// thing inside the real <head> (not <header>), then verify it landed there.
+// thing inside the real <head>. The document must start with exactly
+// [doctype] <html> <head> (the checker enforces the same rule); otherwise fail.
 const CSP_META_RE = /<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi;
-const HEAD_RE = /<head(\s[^>]*)?>/i;
 function withCsp(html, policy, label, extra = "") {
-	const out = html.replace(CSP_META_RE, "").replace(HEAD_RE, (m) => m + cspMeta(policy) + extra);
-	const m = out.match(HEAD_RE);
-	if (!m || !out.slice(m.index + m[0].length).startsWith(cspMeta(policy))) {
-		console.error(`finalize-site: could not install CSP in ${label}`);
+	const stripped = html.replace(CSP_META_RE, "");
+	const at = headEnd(stripped);
+	if (at < 0) {
+		console.error(`finalize-site: ${label} does not start with <!doctype html><html><head>; refusing to publish it.`);
 		process.exit(1);
 	}
-	return out;
+	return stripped.slice(0, at) + cspMeta(policy) + extra + stripped.slice(at);
 }
 
 const live = designs.filter((d) => d.url && !d.legacy && fs.existsSync(path.join(outDir, d.url, "index.html")));
