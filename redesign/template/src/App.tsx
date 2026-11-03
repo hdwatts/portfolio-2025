@@ -38,6 +38,21 @@ export function App() {
 				))}
 			</section>
 
+			<section className="flex flex-col gap-2">
+				<h2 className="text-xl font-semibold">{data.colophon.heading}</h2>
+				<p className="font-semibold">{data.colophon.tagline}</p>
+				{data.colophon.paragraphs.map((p) => (
+					<p key={p}>{p}</p>
+				))}
+				<div className="flex gap-4 underline">
+					{data.colophon.links.map((l) => (
+						<a key={l.url} href={l.url}>
+							{l.label}
+						</a>
+					))}
+				</div>
+			</section>
+
 			<nav className="flex gap-4 underline">
 				{person.links.map((l) => (
 					<a key={l.url} href={l.url}>

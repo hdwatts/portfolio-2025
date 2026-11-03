@@ -362,6 +362,58 @@
 			"attribution": "Former coworker"
 		}
 	],
+	"colophon": {
+		"heading": "How this site is made",
+		"tagline": "This website redesigns itself every Monday.",
+		"paragraphs": [
+			"Every week a GitHub Action rolls the dice: a design style, a color palette, a type pairing, a layout, a motion personality, and one wildcard rule. Then it hands the result to Gemini along with a $10 budget and a single empty folder.",
+			"Gemini builds a brand-new site from scratch, but it isn't allowed to write a single word. Every sentence here comes from one data file that I maintain, and an automated checker rejects the design if even one heading isn't in it.",
+			"If the new design passes its checks (accessibility, working links, no invented text), it goes live on its own. If it wants to install new packages, it has to wait for my approval first.",
+			"The rapid flash of old designs when the page loaded is the archive: every past version, from the original hand-built site up to this one."
+		],
+		"steps": [
+			{
+				"label": "Roll",
+				"text": "Random style, palette, type, layout, motion, and a wildcard."
+			},
+			{
+				"label": "Design",
+				"text": "Gemini builds a new site inside a sandbox with a $10 budget."
+			},
+			{
+				"label": "Check",
+				"text": "Every word must come from my data. Accessibility and links are verified."
+			},
+			{
+				"label": "Ship",
+				"text": "It goes live automatically, and the old design joins the archive."
+			}
+		],
+		"facts": [
+			{
+				"value": "Every Monday",
+				"label": "a brand-new design"
+			},
+			{
+				"value": "$10",
+				"label": "budget per design"
+			},
+			{
+				"value": "0",
+				"label": "words written by the designer"
+			}
+		],
+		"links": [
+			{
+				"label": "See every past design",
+				"url": "/history"
+			},
+			{
+				"label": "Read the source",
+				"url": "https://github.com/hdwatts/portfolio-2025"
+			}
+		]
+	},
 	"labels": {
 		"nav.home": [
 			"Home"
@@ -459,6 +511,12 @@
 		],
 		"misc.copyright": [
 			"© hdwatts, 2026"
+		],
+		"section.colophon": [
+			"How This Site Works",
+			"About This Site",
+			"Behind the Scenes",
+			"Colophon"
 		]
 	},
 	"meta": {

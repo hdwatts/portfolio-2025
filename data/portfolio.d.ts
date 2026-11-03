@@ -79,6 +79,20 @@ export interface Writing {
 	paragraphs: string[];
 }
 
+/** How the site itself is made (the weekly redesign). Rendered by every design. */
+export interface Colophon {
+	heading: string;
+	/** One-line hook. Every design must display this. */
+	tagline: string;
+	paragraphs: string[];
+	/** The pipeline as short labelled steps, in order. */
+	steps: { label: string; text: string }[];
+	/** Big-number facts, e.g. { value: "$10", label: "budget per design" }. */
+	facts: Stat[];
+	/** Includes the /history archive and the public source repo. */
+	links: { label: string; url: string }[];
+}
+
 export type LabelKey =
 	| "nav.home"
 	| "nav.history"
@@ -89,6 +103,7 @@ export type LabelKey =
 	| "section.softSkills"
 	| "section.testimonials"
 	| "section.contact"
+	| "section.colophon"
 	| "action.visit"
 	| "action.play"
 	| "action.resume"
@@ -121,6 +136,7 @@ export interface Portfolio {
 	projects: Project[];
 	skills: { technical: Skill[]; soft: string[] };
 	testimonials: Testimonial[];
+	colophon: Colophon;
 	labels: Record<LabelKey, string[]>;
 	meta: { siteUrl: string; siteTitle: string; description: string; ogImage: string };
 }

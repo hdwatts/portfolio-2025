@@ -231,6 +231,11 @@ export async function checkDesign({ date, buildDir, snapDir }) {
 				const allText = normalize(found.runs.map((r) => r.parts.join(" ")).join(" "));
 				if (!allText.includes(normalize(data.person.name))) errors.push(`The page must show the name "${data.person.name}".`);
 				for (const p of data.projects) if (!allText.includes(normalize(p.name))) errors.push(`Project "${p.name}" is not shown.`);
+				if (data.colophon) {
+					if (!allText.includes(normalize(data.colophon.tagline))) errors.push(`The colophon tagline "${data.colophon.tagline}" is not shown (see data.colophon).`);
+					const missingColophon = data.colophon.links.map((l) => l.url).filter((u) => !hrefs.has(normHref(u)));
+					if (missingColophon.length) errors.push(`Colophon links missing: ${missingColophon.join(", ")}`);
+				}
 
 				// --- Accessibility (static pass with motion reduced so animations don't skew contrast) ---
 				await page.emulateMedia({ reducedMotion: "reduce" });
